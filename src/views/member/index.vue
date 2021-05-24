@@ -1,25 +1,58 @@
 <template>
 	<div class="page-container">
-		<div class="leftMenu">
-			<sidebar></sidebar>
+		<div class="leftMenu" v-if="!noSidebar">
+			<sidebar :sidebar="dataList"></sidebar>
 		</div>
-		<div class="righCon">
-			<page-title></page-title>
+		<div class="righCon" :class="{ noSidebar: noSidebar }">
 			<router-view />
 		</div>
 	</div>
 </template>
 <script>
 import sidebar from "./sidebar";
-import pageTitle from "./pageTitle";
 export default {
 	data() {
-		return {};
+		return {
+			dataList: [
+				{
+					title: "我的资料",
+					path: "/information",
+				},
+				{
+					title: "我的订单",
+					path: "/order/list",
+				},
+				{
+					title: "我的表单",
+					path: "/form",
+				},
+				{
+					title: "我的收藏",
+					path: "/collection",
+				},
+				{
+					title: "收货地址",
+					path: "/address",
+				},
+				{
+					title: "购物车",
+					path: "/memberCart",
+				},
+			],
+		};
+	},
+	computed: {
+		noSidebar() {
+			let flag = false;
+			if (this.$route.path == "/order/detail") {
+				flag = true;
+			}
+			return flag;
+		},
 	},
 	methods: {},
 	components: {
 		sidebar,
-		pageTitle,
 	},
 };
 </script>
@@ -36,6 +69,10 @@ export default {
 	float: left;
 	border: 1px solid #eee;
 	padding: 0 10px 20px 10px;
+}
+.noSidebar {
+	width: 100%;
+	border: none;
 }
 </style>
 

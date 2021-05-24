@@ -17,38 +17,18 @@
 export default {
 	data() {
 		return {
-			dataList: [
-				{
-					title: "我的资料",
-					path: "/information",
-				},
-				{
-					title: "我的订单",
-					path: "/order",
-				},
-				{
-					title: "我的表单",
-					path: "/form",
-				},
-				{
-					title: "我的收藏",
-					path: "/collection",
-				},
-				{
-					title: "收货地址",
-					path: "/address",
-				},
-				{
-					title: "购物车",
-					path: "/memberCart",
-				},
-			],
+			dataList: [],
 		};
+	},
+	props: ["sidebar"],
+	mounted() {
+		this.dataList = this.sidebar;
 	},
 	computed: {
 		currentPage() {
 			return function (path) {
-				return path == this.$route.path;
+				let cpath = this.$route.path;
+				return path == cpath;
 			};
 		},
 	},
