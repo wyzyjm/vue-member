@@ -1,21 +1,17 @@
 <template>
 	<div class="app-container">
-		<page-title :pagetitle="title">
-			<slot slot="slot">插槽，订单列表可以插入搜索</slot>
-		</page-title>
+		<cart></cart>
 	</div>
 </template>
 <script>
-import pageTitle from "../pageTitle";
+import cart from "../../cart/index";
 export default {
 	data() {
-		return {
-			title: "购物车",
-		};
+		return {};
 	},
 	methods: {},
 	components: {
-		pageTitle,
+		cart,
 	},
 };
 </script>
