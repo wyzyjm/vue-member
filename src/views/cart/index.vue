@@ -1,7 +1,7 @@
 <template>
 	<div class="app-container">
 		<page-title :pagetitle="title"> </page-title>
-		<div v-if="cartList.length > 0 || unvalidList.length > 0">
+		<div v-if="!cartList.length > 0 || !unvalidList.length > 0">
 			<div class="cartList">
 				<div v-if="cartList.length > 0">
 					<el-table
@@ -235,7 +235,16 @@
 				</div>
 			</div>
 		</div>
-		<div v-else>111</div>
+		<div class="noData" v-else>
+			<div class="empty">
+				<div class="icon">
+					<svg-icon name="icon-qicheqianlian-"></svg-icon>
+				</div>
+				<p>购物车内暂时没有商品，登录后将显示您之间加入的商品</p>
+				<el-button type="primary" size="small">登录</el-button>
+				<el-button type="primary" size="small" plain>去逛逛</el-button>
+			</div>
+		</div>
 	</div>
 </template> 
 <script>
@@ -471,6 +480,24 @@ export default {
 }
 .totalPrice {
 	padding-left: 30px;
+}
+.noData {
+	min-height: 300px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.empty {
+	padding-left: 110px;
+	position: relative;
+}
+.icon {
+	width: 100px;
+	font-size: 76px;
+	color: #409eff;
+	position: absolute;
+	left: 0;
+	top: 0;
 }
 </style>
 
