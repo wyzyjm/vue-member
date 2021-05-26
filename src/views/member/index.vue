@@ -68,7 +68,7 @@ export default {
 	width: calc(100% - 220px);
 	float: left;
 	border: 1px solid #eee;
-	padding: 0 10px 20px 10px;
+	padding: 0 20px 20px 20px;
 }
 .noSidebar {
 	width: 100%;
