@@ -1,7 +1,7 @@
 <template>
 	<div class="app-container">
 		<page-title :pagetitle="title"> </page-title>
-		<div v-if="!cartList.length > 0 || !unvalidList.length > 0">
+		<div v-if="cartList.length > 0 || unvalidList.length > 0">
 			<div class="cartList">
 				<div v-if="cartList.length > 0">
 					<el-table
@@ -20,7 +20,9 @@
 							<template slot-scope="scope">
 								<div class="product">
 									<div class="productImg">
-										<img :src="scope.row.skuImg" />
+										<custom-img
+											:src="scope.row.skuImg"
+										></custom-img>
 									</div>
 									<div class="productInfo">
 										<p class="title">
@@ -117,7 +119,9 @@
 							<template slot-scope="scope">
 								<div class="product">
 									<div class="productImg">
-										<img :src="scope.row.skuImg" />
+										<custom-img
+											:src="scope.row.skuImg"
+										></custom-img>
 									</div>
 									<div class="productInfo">
 										<p class="title">
@@ -270,7 +274,7 @@ export default {
 						skuName:
 							"货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称", //货品名称
 						skuImg:
-							"https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-363c59550aae.jpg", //货品图片
+							"https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-36350aae.jpg", //货品图片
 						skuSpec: [
 							{
 								specName: "规格名称",
