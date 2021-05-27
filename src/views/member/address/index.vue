@@ -62,9 +62,7 @@
           @click="setDefault(item.id)"
           >设为默认地址</el-button
         >
-        <el-button type="text" @click="showDialog('edit', item.id)"
-          >编辑</el-button
-        >
+        <el-button type="text" @click="eidtLogs(item)">编辑</el-button>
         <el-button type="text" @click="deleteAddress(item)">删除</el-button>
       </div>
     </el-card>
@@ -73,8 +71,13 @@
     <!-- 
       定义ref 向自组件传值 : dialogFormVisible:弹窗显示与隐藏  dialogStatus:弹窗类型 create:新增  edit: 编辑
       confirm事件 : 收货地址关闭触发的事件, 会把 收货信息传回来
+      编辑收货地址: 直接修改自组建值
      -->
-    <AddressForm ref="addressDialog" @confirm="confirmDialog"></AddressForm>
+    <AddressForm
+      ref="addressDialog"
+      :setAddrForm="current"
+      @confirm="confirmDialog"
+    ></AddressForm>
     <!-- 收货人地址弹窗 结束 -->
 
     <!-- @cancel="closeDialog"
@@ -87,8 +90,6 @@ import AddressForm from "@/views/components/addressForm"; // 收货人地址
 export default {
   data() {
     return {
-      isShow: false, // 是否显示
-      dialogName: "新增收货地址", // 弹窗标题
       mostNum: 10, // 最多个数
       // 收货地址管理
       logisticsInfoList: [
@@ -145,6 +146,7 @@ export default {
         display: "flex",
         justifyContent: "space-between",
       },
+      current: {}, // 弹窗传值
     };
   },
   components: {
@@ -158,20 +160,15 @@ export default {
       // this.logisticsInfoList = 后台返回值
     },
     // 弹窗展示
-    showDialog(status, id) {
+    showDialog(status) {
       const _this = this.$refs["addressDialog"]; // 直接修改弹窗数据
       _this.dialogFormVisible = true;
       _this.dialogStatus = status;
-      if (id) {
-        _this.showId = id;
-      }
     },
-    // // 弹窗确认事件
-    confirmDialog(data) {
-      console.log(data);
-      // 1. 向后台发送添加请求
-      // 2. 成功后发起请求
-      this.getList();
+    // 编辑
+    eidtLogs(item) {
+      this.current = JSON.parse(JSON.stringify(item)); // 赋值
+      this.showDialog("edit");
     },
     // 设为默认
     setDefault(id) {
@@ -202,6 +199,19 @@ export default {
           })
           .catch(() => {});
       }
+    },
+    // 弹窗确认事件
+    confirmDialog(data, status) {
+      console.log(data);
+      this.current = {};
+      if (status === "create") {
+        console.log("这是创建收货地址");
+      } else {
+        console.log("这是编辑收货地址");
+      }
+      // 1. 向后台发送添加请求
+      // 2. 成功后发起请求
+      this.getList();
     },
   },
 };
