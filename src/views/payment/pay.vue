@@ -5,7 +5,7 @@
   </div>
 </template>
 <script>
-import QRCode from "qrcodejs2";
+// import QRCode from "qrcodejs2";
 export default {
   data() {
     return {};
