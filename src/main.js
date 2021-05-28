@@ -13,7 +13,7 @@ import store from './store'
 import router from './router'
 
 import '../static/js/environment.js'
-import '@/resource'
+// import '@/resource'
 
 
 import CustomImg from '@/components/CustomImg'
