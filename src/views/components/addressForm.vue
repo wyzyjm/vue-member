@@ -100,14 +100,14 @@
           </el-col>
           <el-col :span="1" class="txtCenter">-</el-col>
           <el-col :span="17">
-            <!-- <el-form-item prop="consigneePhone"> -->
-            <el-input
-              type="tel"
-              placeholder="请输入您的手机号码"
-              v-model.trim="addrForm.consigneePhone"
-              @input="checkInputValue('consigneePhone')"
-            ></el-input>
-            <!-- </el-form-item> -->
+            <el-form-item prop="consigneePhone">
+              <el-input
+                type="tel"
+                placeholder="请输入您的手机号码"
+                v-model.trim="addrForm.consigneePhone"
+                @input="checkInputValue('consigneePhone')"
+              ></el-input>
+            </el-form-item>
           </el-col>
         </el-form-item>
         <!-- 固定电话 -->
@@ -126,25 +126,25 @@
           </el-col>
           <el-col :span="1" class="txtCenter">-</el-col>
           <el-col :span="17">
-            <!-- <el-form-item prop="consigneeTel"> -->
-            <el-input
-              type="tel"
-              placeholder="请输入您的固定电话"
-              v-model.trim="addrForm.consigneeTel"
-              @input="checkInputValue('consigneeTel')"
-            ></el-input>
-            <!-- </el-form-item> -->
+            <el-form-item prop="consigneeTel">
+              <el-input
+                type="tel"
+                placeholder="请输入您的固定电话"
+                v-model.trim="addrForm.consigneeTel"
+                @input="checkInputValue('consigneeTel')"
+              ></el-input>
+            </el-form-item>
           </el-col>
         </el-form-item>
 
         <!-- 邮政编码 必填 -->
-        <el-form-item label="邮政编码" prop="consigneeZipCode" class="zipCode">
+        <el-form-item label="邮政编码" class="zipCode" prop="consigneeZipCode">
           <!-- 文本框 -->
           <el-input
             type="text"
             placeholder="请输入邮政编码"
-            v-model.trim="addrForm.consigneeZipCode"
-            @input="checkInputValue('consigneeZipCode')"
+            v-model="addrForm.consigneeZipCode"
+            @input="checkInputValue()"
           ></el-input>
         </el-form-item>
       </el-form>
@@ -179,20 +179,26 @@ export default {
   data() {
     // 校验 手机号
     var checkPhone = (rule, value, callback) => {
-      if (!/^\d{11}$/.test(value)) {
+      if (value && !/^\d{11}$/.test(value)) {
         return callback(new Error("请输入正确的手机号码"));
+      } else {
+        callback();
       }
     };
     // 校验 固定电话
     var checkTel = (rule, value, callback) => {
       if (!/^\d{7,8}$/.test(value)) {
         return callback(new Error("请输入正确的电话号码"));
+      } else {
+        callback();
       }
     };
     // 校验 邮编
     var checkZipCode = (rule, value, callback) => {
       if (!value) {
         return callback(new Error("请输入邮政编码"));
+      } else {
+        callback();
       }
     };
 
@@ -1429,7 +1435,7 @@ export default {
           },
           {
             id: 456,
-            value: "河南省",
+            value: "河北省",
           },
         ],
         // 市
@@ -1447,7 +1453,7 @@ export default {
         phoneCode: [
           {
             id: 12,
-            value: "0086",
+            value: "+86",
           },
           {
             id: 13,
@@ -1457,12 +1463,12 @@ export default {
         // 电话区号
         telCode: [
           {
-            id: 12,
+            id: 123245,
             value: "0086",
           },
           {
-            id: 13,
-            value: "+87",
+            id: 14234253,
+            value: "0087",
           },
         ],
       },
@@ -1481,40 +1487,30 @@ export default {
       }
     },
     // 确定
-    saveAddrForm(formName) {
-      // 表单预校验 有bug
-      // this.$refs[formName].validate((valid) => {
-      //   console.log(valid);
-      //   // 表单校验
-      //   if (!valid) return;
-      //   /**
-      //    * 确认事件，
-      //    * 表单通过验证，
-      //    * 调用者决定做什么事
-      //    */
-      //   this.$emit("confirm", this.addrForm, this.dialogStatus);
-      //   // if(this.dialogStatus === 'create'){
-      //   //   console.log('这是创建收货地址');
-      //   // }else {
-      //   //   console.log('这是编辑收货地址');
-      //   // }
-      //   console.log("确定");
-      //   this.dialogFormVisible = false; // 添加成功后隐藏对话框
-      // });
-      console.log(this.$refs[formName]);
-
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
+    async saveAddrForm(formName) {
+      /**
+       * 1. 表单预校验
+       * 2. 校验通过,
+       * 3. 是否有id,且是编辑eidt, 得到参数
+       * 4. 发送请求
+       * 5. 关闭弹窗
+       * 6. 派发给父组件一个事件
+       */
+      try {
+        const result = await this.$refs[formName].validate();
+        if (!result) return;
+        // 发送请求
+        // const res = await this.$http('url',this.addrForm)
+        this.dialogFormVisible = false; // 关闭弹窗
+        this.$emit("confirm", this.addrForm, this.dialogStatus); // 传出去表单对象 + 哪种表单
+      } catch (error) {
+        console.log(error);
+      }
     },
     // 弹窗关闭
     dialogClose() {
       this.$refs.addrFormRef.resetFields(); // 重置表单
+      // console.log("重置表单");
     },
     // 检验只能输入数字
     checkInputValue(typeName) {
