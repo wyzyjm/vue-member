@@ -1,179 +1,175 @@
 <template>
-  <div class="address-container">
-    <el-dialog
-      center
-      :title="dialogStatus === 'create' ? `新增收货地址` : `编辑收货地址`"
-      :visible.sync="dialogFormVisible"
-      width="620px"
-      @open="handleOpen"
-      @close="dialogClose"
-    >
-      <div>
-        <el-form
-          ref="addrFormRef"
-          label-width="90px"
-          size="medium"
-          :model="addrForm"
-          :rules="addrFormRules"
-        >
-          <!-- 国家/地区 必填 -->
-          <el-form-item label="国家/地区" prop="consigneeCountry">
-            <!-- select选择器 -->
-            <el-select v-model="addrForm.consigneeCountry" placeholder="请选择">
+  <el-dialog
+    center
+    :title="dialogStatus === 'create' ? `新增收货地址` : `编辑收货地址`"
+    :visible.sync="dialogFormVisible"
+    width="620px"
+    @open="handleOpen"
+    @close="dialogClose"
+  >
+    <div>
+      <el-form
+        label-width="90px"
+        size="medium"
+        :model="addrForm"
+        :rules="addrFormRules"
+        ref="addrFormRef"
+      >
+        <!-- 国家/地区 必填 -->
+        <el-form-item label="国家/地区" prop="consigneeCountry">
+          <!-- select选择器 -->
+          <el-select v-model="addrForm.consigneeCountry" placeholder="请选择">
+            <el-option
+              v-for="(item, index) in frontData.conuntryOptions"
+              :key="index"
+              :label="item.name"
+              :value="item.short"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <!-- 收货人 必填 -->
+        <el-form-item label="收货人" prop="consigneeName">
+          <!-- 文本框 -->
+          <el-input
+            v-model.trim="addrForm.consigneeName"
+            placeholder="请输入收货人姓名"
+          ></el-input>
+        </el-form-item>
+
+        <!-- 街道地址 必填-->
+        <el-form-item label="街道地址" prop="consigneeAddr">
+          <!-- textarea -->
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 1, maxRows: 3 }"
+            placeholder="街道地址，邮政信箱，公司名称，转交方，公寓，套房，单元，大厦，楼层等"
+            v-model.trim="addrForm.consigneeAddr"
+          ></el-input>
+        </el-form-item>
+        <!-- 州/省/地区 必填-->
+        <el-form-item label="州/省/地区" required>
+          <!-- 级联选择 -->
+          <el-col :span="10">
+            <el-form-item prop="consigneeProvince">
+              <el-select
+                v-model="addrForm.consigneeProvince"
+                placeholder="省份"
+              >
+                <el-option
+                  v-for="item in frontData.province"
+                  :key="item.id"
+                  :label="item.value"
+                  :value="item.id"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="1" class="txtCenter">-</el-col>
+          <el-col :span="10">
+            <el-form-item prop="consigneeCity">
+              <el-select v-model="addrForm.consigneeCity" placeholder="城市">
+                <el-option
+                  v-for="item in frontData.city"
+                  :key="item.id"
+                  :label="item.value"
+                  :value="item.id"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-form-item>
+        <!-- 手机区号 + 手机号 -->
+        <el-form-item label="手机">
+          <!-- select选择器+文本框 -->
+          <el-col :span="6">
+            <el-select
+              v-model="addrForm.consigneePhoneHead"
+              placeholder="请选择"
+            >
               <el-option
                 v-for="(item, index) in frontData.conuntryOptions"
                 :key="index"
-                :label="item.name"
-                :value="item.short"
+                :label="item.tel"
+                :value="item.tel"
               >
               </el-option>
             </el-select>
-          </el-form-item>
-          <!-- 收货人 必填 -->
-          <el-form-item label="收货人" prop="consigneeName">
-            <!-- 文本框 -->
+          </el-col>
+          <el-col :span="1" class="txtCenter">-</el-col>
+          <el-col :span="17">
+            <!-- <el-form-item prop="consigneePhone"> -->
             <el-input
-              v-model.trim="addrForm.consigneeName"
-              placeholder="请输入收货人姓名"
+              type="tel"
+              placeholder="请输入您的手机号码"
+              v-model.trim="addrForm.consigneePhone"
+              @input="checkInputValue('consigneePhone')"
             ></el-input>
-          </el-form-item>
-          <!-- 手机区号 + 手机号 -->
-          <el-form-item label="手机">
-            <!-- select选择器+文本框 -->
-            <el-col :span="6">
-              <el-select
-                v-model="addrForm.consigneePhoneHead"
-                placeholder="请选择"
+            <!-- </el-form-item> -->
+          </el-col>
+        </el-form-item>
+        <!-- 固定电话 -->
+        <el-form-item label="固定电话">
+          <!-- 下拉+文本框 -->
+          <el-col :span="6">
+            <el-select v-model="addrForm.consigneeTelHead" placeholder="请选择">
+              <el-option
+                v-for="(item, index) in frontData.telCode"
+                :key="index"
+                :label="item.value"
+                :value="item.value"
               >
-                <el-option
-                  v-for="(item, index) in frontData.conuntryOptions"
-                  :key="index"
-                  :label="item.tel"
-                  :value="item.tel"
-                >
-                </el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="1" class="txtCenter">-</el-col>
-            <el-col :span="17">
-              <el-form-item prop="consigneePhone">
-                <el-input
-                  type="tel"
-                  placeholder="请输入您的手机号码"
-                  v-model.trim="addrForm.consigneePhone"
-                  @input="checkInputValue('consigneePhone')"
-                ></el-input>
-              </el-form-item>
-            </el-col>
-          </el-form-item>
-          <!-- 固定电话 -->
-          <el-form-item label="固定电话">
-            <!-- 下拉+文本框 -->
-            <el-col :span="6">
-              <el-select
-                v-model="addrForm.consigneeTelHead"
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="(item, index) in frontData.telCode"
-                  :key="index"
-                  :label="item.value"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="1" class="txtCenter">-</el-col>
-            <el-col :span="17">
-              <el-form-item prop="consigneeTel">
-                <el-input
-                  type="tel"
-                  placeholder="请输入您的固定电话"
-                  v-model.trim="addrForm.consigneeTel"
-                  @input="checkInputValue('consigneeTel')"
-                ></el-input>
-              </el-form-item>
-            </el-col>
-          </el-form-item>
-          <!-- 街道地址 必填-->
-          <el-form-item label="街道地址" prop="consigneeAddr">
-            <!-- textarea -->
+              </el-option>
+            </el-select>
+          </el-col>
+          <el-col :span="1" class="txtCenter">-</el-col>
+          <el-col :span="17">
+            <!-- <el-form-item prop="consigneeTel"> -->
             <el-input
-              type="textarea"
-              :autosize="{ minRows: 1, maxRows: 3 }"
-              placeholder="街道地址，邮政信箱，公司名称，转交方，公寓，套房，单元，大厦，楼层等"
-              v-model.trim="addrForm.consigneeAddr"
+              type="tel"
+              placeholder="请输入您的固定电话"
+              v-model.trim="addrForm.consigneeTel"
+              @input="checkInputValue('consigneeTel')"
             ></el-input>
-          </el-form-item>
-          <!-- 州/省/地区 必填-->
-          <el-form-item label="州/省/地区" required>
-            <!-- 级联选择 -->
-            <el-col :span="10">
-              <el-form-item prop="consigneeProvince">
-                <el-select
-                  v-model="addrForm.consigneeProvince"
-                  placeholder="省份"
-                >
-                  <el-option
-                    v-for="item in frontData.province"
-                    :key="item.id"
-                    :label="item.value"
-                    :value="item.id"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="1" class="txtCenter">-</el-col>
-            <el-col :span="10">
-              <el-form-item prop="consigneeCity">
-                <el-select v-model="addrForm.consigneeCity" placeholder="城市">
-                  <el-option
-                    v-for="item in frontData.city"
-                    :key="item.id"
-                    :label="item.value"
-                    :value="item.id"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-form-item>
-          <!-- 邮政编码 必填 -->
-          <el-form-item
-            label="邮政编码"
-            prop="consigneeZipCode"
-            class="zipCode"
-          >
-            <!-- 文本框 -->
-            <el-input
-              type="text"
-              placeholder="请输入邮政编码"
-              v-model.trim="addrForm.consigneeZipCode"
-              @input="checkInputValue('consigneeZipCode')"
-            ></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div slot="footer">
-        <!-- 取消 -->
-        <el-button type="info" size="medium" @click="dialogFormVisible = false"
-          >取消</el-button
-        >
-        <!-- 确定 -->
-        <el-button type="primary" size="medium" @click="save('addrFormRef')"
-          >确定</el-button
-        >
-      </div>
-    </el-dialog>
-  </div>
+            <!-- </el-form-item> -->
+          </el-col>
+        </el-form-item>
+
+        <!-- 邮政编码 必填 -->
+        <el-form-item label="邮政编码" prop="consigneeZipCode" class="zipCode">
+          <!-- 文本框 -->
+          <el-input
+            type="text"
+            placeholder="请输入邮政编码"
+            v-model.trim="addrForm.consigneeZipCode"
+            @input="checkInputValue('consigneeZipCode')"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div slot="footer">
+      <!-- 取消 -->
+      <el-button type="info" size="medium" @click="dialogFormVisible = false"
+        >取消</el-button
+      >
+      <!-- 确定 -->
+      <el-button
+        type="primary"
+        size="medium"
+        @click="saveAddrForm('addrFormRef')"
+        >确定</el-button
+      >
+    </div>
+  </el-dialog>
 </template>
 
 <script>
 export default {
   name: "AddressForm",
   props: {
-    // 表单信息
+    // 编辑表单时接收表单信息
     setAddrForm: {
       type: Object,
       required: false,
@@ -189,7 +185,7 @@ export default {
     };
     // 校验 固定电话
     var checkTel = (rule, value, callback) => {
-      if (!/^\d{8}$/.test(value)) {
+      if (!/^\d{7,8}$/.test(value)) {
         return callback(new Error("请输入正确的电话号码"));
       }
     };
@@ -201,22 +197,24 @@ export default {
     };
 
     return {
+      // 页面参数
       dialogStatus: "", // 哪种弹窗 create:创建 edit:编辑
       dialogFormVisible: false, // 是否显示弹窗
+
       // 收货地址表单
       addrForm: {
-        consigneeCountry: "",
-        consigneeName: "",
-        consigneePhoneHead: "",
-        consigneePhone: "",
-        consigneeTelHead: "",
-        consigneeTel: "",
-        consigneeAddr: "",
-        consigneeProvince: "",
-        consigneeCity: "",
-        consigneeZipCode: "",
+        consigneeCountry: "", // 国家
+        consigneeName: "", // 收货人名称
+        consigneePhoneHead: "", // 手机区号
+        consigneePhone: "", // 手机号
+        consigneeTelHead: "", // 电话区号
+        consigneeTel: "", // 电话号
+        consigneeAddr: "", // 详细地址
+        consigneeProvince: "", // 省/州/地区
+        consigneeCity: "", // 地区
+        consigneeZipCode: "", // 邮政编码
       },
-      // 表单校验规则
+      // 收货地址表单 校验规则
       addrFormRules: {
         // 国家
         consigneeCountry: [
@@ -259,7 +257,7 @@ export default {
           { required: true, validator: checkZipCode, trigger: "blur" },
         ],
       },
-      // 前台数据
+      // 省市区数据
       frontData: {
         // 国家
         conuntryOptions: [
@@ -1472,46 +1470,57 @@ export default {
   },
   // 方法
   methods: {
-    // 弹窗打开前
+    /**
+     * 弹窗打开前
+     * 1. 是否有接收到值, 且是否为 编辑
+     * 2. 都为true, 则给表单赋值
+     */
     handleOpen() {
       if (this.setAddrForm && this.dialogStatus === "edit") {
-        // 有数据 且是 编辑
         this.addrForm = this.setAddrForm;
       }
     },
     // 确定
-    save(formName) {
-      // 表单预校验
+    saveAddrForm(formName) {
+      // 表单预校验 有bug
+      // this.$refs[formName].validate((valid) => {
+      //   console.log(valid);
+      //   // 表单校验
+      //   if (!valid) return;
+      //   /**
+      //    * 确认事件，
+      //    * 表单通过验证，
+      //    * 调用者决定做什么事
+      //    */
+      //   this.$emit("confirm", this.addrForm, this.dialogStatus);
+      //   // if(this.dialogStatus === 'create'){
+      //   //   console.log('这是创建收货地址');
+      //   // }else {
+      //   //   console.log('这是编辑收货地址');
+      //   // }
+      //   console.log("确定");
+      //   this.dialogFormVisible = false; // 添加成功后隐藏对话框
+      // });
+      console.log(this.$refs[formName]);
+
       this.$refs[formName].validate((valid) => {
-        // 表单校验
-        if (!valid) return;
-        /**
-         * 确认事件，
-         * 表单通过验证，
-         * 调用者决定做什么事
-         */
-        this.$emit("confirm", this.addrForm, this.dialogStatus);
-        // if(this.dialogStatus === 'create'){
-        //   console.log('这是创建收货地址');
-        // }else {
-        //   console.log('这是编辑收货地址');
-        // }
-        this.dialogFormVisible = false; // 添加成功后隐藏对话框
+        if (valid) {
+          alert("submit!");
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
       });
     },
     // 弹窗关闭
     dialogClose() {
-      this.$refs.addrFormRef.resetFields();
+      this.$refs.addrFormRef.resetFields(); // 重置表单
     },
-    // 校验输入类型
+    // 检验只能输入数字
     checkInputValue(typeName) {
       this.addrForm[typeName] = this.addrForm[typeName].replace(/[^\d]/g, ""); // 只能输入数字
     },
   },
-  // 监控
-  watch: {},
-  // 计算属性
-  computed: {},
 };
 </script>
 
