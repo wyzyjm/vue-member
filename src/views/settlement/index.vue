@@ -74,7 +74,15 @@
       </el-radio-group>
       <el-divider></el-divider>
       <p><strong>发票信息</strong></p>
-      <div>电子发票 <el-button type="text">开发票</el-button></div>
+      <div>电子发票 
+        <template v-if="receipt==''">
+        <el-button type="text" @click="openReceipt">开发票</el-button>
+        </template>
+        <template v-else>
+          {{receipt}}  商品明细
+          <el-button type="text" @click="openReceipt">修改</el-button>
+        </template>
+        </div>
       <el-divider></el-divider>
       <p><strong>给卖家留言</strong></p>
       <el-input
@@ -87,33 +95,43 @@
       >
       </el-input>
       <el-divider></el-divider>
-      <div style="float: right; text-align: right;line-height:24px">
+      <div style="float: right; text-align: right; line-height: 24px">
         共 <span class="text-danger">3</span> 件商品<br />
         商品总额： <span>¥ 300.00</span><br />
         运费总计： <span>¥ 5.00</span>
       </div>
-    <div style="clear:both"></div>
+      <div style="clear: both"></div>
     </div>
     <div class="order-foot background-grey text-grey">
-      <div class="foot-price"><strong class="text-normal">实付：</strong><span class="text-danger">¥350.00</span></div>
+      <div class="foot-price">
+        <strong class="text-normal">实付：</strong
+        ><span class="text-danger">¥350.00</span>
+      </div>
       <div>寄送至：北京 大兴区 亦庄经济开发区 地盛西路1号数码庄园</div>
       <div>收货人：Daisy 182****4241</div>
     </div>
     <div class="trade-btn">
       <el-button type="primary">提交订单</el-button>
     </div>
+    <receipt ref="getReceipt"></receipt>
   </div>
 </template>
 <script>
+import receipt from "./components/receipt";
 export default {
   data() {
     return {
       stepActive: 2,
       test: "",
-      radio: "",
+      radio: 3,
       showAInfo: false,
       showAddATip: false,
+      textarea:'',
+      receipt:''
     };
+  },
+  components: {
+    receipt,
   },
   mounted() {
     let a = this.showAInfo;
@@ -127,6 +145,9 @@ export default {
         this.showAInfo = true;
       }
     },
+    openReceipt(){
+      this.$refs.getReceipt.dialogVisible = true;
+    }
   },
 };
 </script>
@@ -155,7 +176,7 @@ export default {
 .order-foot {
   text-align: right;
   padding: 10px;
-  
+
   clear: both;
   line-height: 24px;
 }

@@ -45,7 +45,7 @@ export function parseTime(time, cFormat) {
   const time_str = format.replace(/{([ymdhisa])+}/g, (result, key) => {
     const value = formatObj[key]
     // Note: getDay() returns 0 on Sunday
-    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value ] }
+    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value] }
     return value.toString().padStart(2, '0')
   })
   return time_str
@@ -114,4 +114,20 @@ export function param2Obj(url) {
     }
   })
   return obj
+}
+export function telValidate(inputVal) {
+  var telReg = /^[1][3,4,5,6,7,8,9][0-9]{9}$/;
+  if (!telReg.test(inputVal)) {
+    return false;
+  } else {
+    return true;
+  }
+}
+export function emailValidate(val) {
+  var reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$"); 
+  if (!reg.test(val)) {
+    return false;
+  } else {
+    return true;
+  }
 }
