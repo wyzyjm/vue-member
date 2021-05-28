@@ -1,0 +1,149 @@
+{
+  "id": "2571909",
+  "name": "订购支付VUE",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "947061",
+      "name": "加",
+      "font_class": "jia",
+      "unicode": "e65a",
+      "unicode_decimal": 58970
+    },
+    {
+      "icon_id": "5901139",
+      "name": "下",
+      "font_class": "xia",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    },
+    {
+      "icon_id": "5664683",
+      "name": "搜索",
+      "font_class": "sousuo",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "6204100",
+      "name": "右",
+      "font_class": "you4",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    },
+    {
+      "icon_id": "14918551",
+      "name": "左",
+      "font_class": "zuo",
+      "unicode": "e619",
+      "unicode_decimal": 58905
+    },
+    {
+      "icon_id": "579289",
+      "name": "操作成功",
+      "font_class": "caozuochenggong",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
+      "icon_id": "1309828",
+      "name": "对",
+      "font_class": "dui",
+      "unicode": "e625",
+      "unicode_decimal": 58917
+    },
+    {
+      "icon_id": "1379965",
+      "name": "待发货",
+      "font_class": "icon-test",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "2546218",
+      "name": "首页-待付款",
+      "font_class": "daifukuan",
+      "unicode": "e63f",
+      "unicode_decimal": 58943
+    },
+    {
+      "icon_id": "5390969",
+      "name": "已发货",
+      "font_class": "yifahuo",
+      "unicode": "e708",
+      "unicode_decimal": 59144
+    },
+    {
+      "icon_id": "8351869",
+      "name": "问号",
+      "font_class": "wenhao",
+      "unicode": "e6ac",
+      "unicode_decimal": 59052
+    },
+    {
+      "icon_id": "8492855",
+      "name": "已完成2",
+      "font_class": "yiwancheng",
+      "unicode": "e71f",
+      "unicode_decimal": 59167
+    },
+    {
+      "icon_id": "8492870",
+      "name": "已取消2",
+      "font_class": "yiquxiao",
+      "unicode": "e726",
+      "unicode_decimal": 59174
+    },
+    {
+      "icon_id": "10487554",
+      "name": "会员",
+      "font_class": "huiyuan",
+      "unicode": "e696",
+      "unicode_decimal": 59030
+    },
+    {
+      "icon_id": "13866966",
+      "name": "安全",
+      "font_class": "anquanzhuye",
+      "unicode": "e64f",
+      "unicode_decimal": 58959
+    },
+    {
+      "icon_id": "15685599",
+      "name": "角标选中",
+      "font_class": "jiaobiaoxuanzhong",
+      "unicode": "e6e6",
+      "unicode_decimal": 59110
+    },
+    {
+      "icon_id": "16271676",
+      "name": "时间",
+      "font_class": "shijian",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "16350235",
+      "name": "错",
+      "font_class": "cuo",
+      "unicode": "e715",
+      "unicode_decimal": 59157
+    },
+    {
+      "icon_id": "2038793",
+      "name": "购物车-23",
+      "font_class": "qicheqianlian-",
+      "unicode": "e61a",
+      "unicode_decimal": 58906
+    },
+    {
+      "icon_id": "4633129",
+      "name": "下载",
+      "font_class": "xiazai",
+      "unicode": "e659",
+      "unicode_decimal": 58969
+    }
+  ]
+}

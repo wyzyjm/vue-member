@@ -88,7 +88,7 @@ export const constantRoutes = [
                     path: '/memberCart',
                     name: 'memberCart',
                     component: () => import('@/views/member/cart/index'),
-                    meta: { title: '我的收货地址', icon: '' }
+                    meta: { title: '我的购物车', icon: '' }
                 }
             ]
         },
