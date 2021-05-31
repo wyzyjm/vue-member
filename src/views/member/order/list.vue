@@ -1,7 +1,9 @@
 <template>
   <div class="app-container">
     <page-title :pagetitle='title'>
-			<slot slot="slot">搜索</slot>
+      <el-input placeholder="请输入内容" v-model="searchVal" class="input-with-select">
+        <el-button slot="append" icon="el-icon-search"></el-button>
+      </el-input>
 		</page-title>
     <div>
 
@@ -12,12 +14,20 @@
           :label="item.text" 
           :name="item.text"
           >
-          <div v-if="list.length">
             <listItem :item="list" />
-          </div>
-          <div v-else class="notData">暂无数据</div>
         </el-tab-pane>
       </el-tabs>
+      
+      <el-pagination
+        class="page"
+        background
+        @current-change="handleCurrentChange"
+        layout="prev, pager, next, jumper"
+        :total="total"
+        :current-page="currentPage"
+        :page-size="pageSize"
+      >
+      </el-pagination>
     </div>
   </div>
 </template>
@@ -33,6 +43,7 @@ export default {
   data() {
     return {
       title: '我的订单',
+      searchVal: '',
       tabsModel: 123,
       activeName: '全部订单',
       tabsArr: [
@@ -61,17 +72,32 @@ export default {
 					apiType: "/memberCart",
 				},
       ],
-      list:[]
+      list:[],
+      total: 0, // 总条数
+      currentPage: 1, // 当前页
+      pageSize: 10, // 每页条数
  
     }
   },
   methods: {
     handleClick(tab, event) {
       console.log(tab, event);
-    }
+    },
+    // 监听页码 变化
+    handleCurrentChange(val) {
+      console.log(`当前页:${val}`);
+    },
   }
 }
 </script>
+<style lang="scss" scoped>
+  .el-select .el-input {
+    width: 130px;
+  }
+  .input-with-select .el-input-group__prepend {
+    background-color: #fff;
+  }
+</style>
 <style lang='scss'>
 .el-tabs__nav-wrap::after {
     content: "";
@@ -82,6 +108,10 @@ export default {
     height: 0px;
     background-color: #ffffff;
     z-index: 1;
+}
+.page {
+  text-align: center;
+  margin-top: 30px;
 }
 </style>
 

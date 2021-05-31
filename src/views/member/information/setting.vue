@@ -6,12 +6,15 @@
             <el-step title="步骤 3"></el-step>
         </el-steps>
         <div class="step-icon" v-show="submitedSuccess">
-            <i class="el-icon-document-checked icon"></i>
+            <svg-icon name="icon-anquanzhuye" class="icon"></svg-icon>
             <p>为确认是您本人操作，请完成身份认证</p>
         </div>
         <div class="step-icon" v-show="!submitedSuccess">
-            <i class="el-icon-success icon"></i>
+            <svg-icon name="icon-caozuochenggong" class="icon"></svg-icon>
             <p>设置完成！</p>
+            <el-button
+            type="primary"
+            @click="goHome">返回首页</el-button>
         </div>
         <div class="form-list" v-show="submitedSuccess">
             <div class="el-form-item">
@@ -29,7 +32,10 @@
                     <el-button @click="getVerfyCode" class="get-code-btn">{{btnText}}</el-button>
                 </el-form-item>
                 <el-form-item class="item-btn">
-                    <el-button type="primary" plain @click="exit">取消</el-button>
+                    <el-button
+                    type="primary"
+                    plain 
+                    @click="exit">取消</el-button>
                     <el-button
                     v-show="!hasSubmited"
                     type="primary"
@@ -45,7 +51,11 @@
     </div>
 </template>
 <script>
+import svgIcon from '@/components/SvgIcon'
 export default {
+    components: {
+        svgIcon
+    },
     data() {
         return {
             active: 1,
@@ -99,6 +109,9 @@ export default {
                 }
                 this.btnText = count < 10 ? `0${count}s后重新获取` : `${count}s后重新获取`;
             }, 1000);
+        },
+        goHome() {
+            this.$router.push('/information')
         }
     }
 }

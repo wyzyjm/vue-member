@@ -15,7 +15,7 @@
       :key="index"
       class="order">
           <div class="order-id">
-            <span>下单时间：{{data.createTime}}</span><span>订单号：{{data.orderNumber}}</span>
+            <span>下单时间：{{data.createTime}}</span><span class="ml-20">订单号：{{data.orderNumber}}</span>
           </div>
           <ul class="order-list">
             <li class="order-item">
@@ -25,7 +25,9 @@
                 :key="i"
                 class="goods-information">
                   <div class="goods-cont">
-                    <a :href="item.goodsUrl" class="goods-img"><img :src="item.skuImg" :alt="item.skuName"></a>
+                    <a :href="item.goodsUrl" class="goods-img">
+                      <custom-img :src="item.skuImg"></custom-img>
+                    </a>
                     <div class="goods-title">
                       <p>{{item.skuName}}</p>
                       <p class="col-9">
@@ -54,11 +56,11 @@
               </div>
               <div class="operate">
                 <div v-if="data.orderStatus == 1">
-                  <p class="p-y"><i>svg</i> 剩余1时58分</p>
+                  <p class="p-y col-danger"><svg-icon name="icon-shijian"></svg-icon> 剩余1时58分</p>
                   <el-button type="primary">付款</el-button>
                 </div>
                 <el-button v-if="data.orderStatus == 2" type="primary">确认收货</el-button>
-                <el-button type="text">查看订单</el-button>
+                <el-button type="text" @click="viewOrder">查看订单</el-button>
                 <el-button v-if="data.orderStatus == 2" type="text">取消订单</el-button>
                 <el-button v-else type="text">查看物流</el-button>
               </div>
@@ -71,8 +73,17 @@
 
 <script>
 
+import customImg from '@/components/CustomImg'
+import svgIcon from '@/components/SvgIcon'
+
 export default {
+  data() {
+    return {
+    }
+  },
   components: {
+    customImg,
+    svgIcon
   },
   props: {
     list: {
@@ -167,6 +178,9 @@ export default {
   computed: {
   },
   methods: {
+    viewOrder() {
+      this.$router.push('/order/detail')
+    }
   }
 };
 </script>
@@ -191,6 +205,9 @@ ul,li{
 }
 .m-y{
   margin: 5px;
+}
+.ml-20{
+  margin-left: 20px;
 }
 .border-bottom{
   border-bottom: 1px solid rgba(222, 222, 224, 1);
@@ -248,7 +265,7 @@ ul,li{
     position: relative;
     >div{
       width: 100px;
-      height: 140px;
+      height: 130px;
       display: table-cell;
       vertical-align: middle;
       border-bottom:1px solid rgba(222, 222, 224, 1);
@@ -280,7 +297,6 @@ ul,li{
     .goods-img{
       width: 120px;
       height: 120px;
-      background: #ddd;
       margin:0 10px;
       overflow: hidden;
     }
@@ -291,6 +307,9 @@ ul,li{
   button{
     padding: 5px 8px;
     margin-bottom: 3px;
+  }
+  .el-button+.el-button{
+    margin-left: 0;
   }
 }
 </style>
