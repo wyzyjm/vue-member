@@ -14,7 +14,7 @@
           :label="item.text" 
           :name="item.text"
           >
-            <listItem :item="list" />
+            <listItem :list="list" />
         </el-tab-pane>
       </el-tabs>
       
@@ -32,6 +32,7 @@
   </div>
 </template>
 <script>
+import { getList } from '@/api/table'
 import pageTitle from '@/views/components/pageTitle'
 import listItem from './components/list-item'
 
@@ -43,43 +44,55 @@ export default {
   data() {
     return {
       title: '我的订单',
-      searchVal: '',
+      searchVal: '1',
       tabsModel: 123,
       activeName: '全部订单',
       tabsArr: [
 				{
 					text: "全部订单",
-					apiType: "/information",
+          type: null
 				},
 				{
 					text: "待付款",
-					apiType: "/order/list",
+          type: 0
 				},
 				{
 					text: "待发货",
-					apiType: "/form",
+          type: 1
 				},
 				{
 					text: "待收货",
-					apiType: "/collection",
+          type: 2
 				},
 				{
 					text: "已完成",
-					apiType: "/address",
+          type: 3
 				},
 				{
 					text: "已取消",
-					apiType: "/memberCart",
+          type: 4
 				},
       ],
       list:[],
-      total: 0, // 总条数
+      total: 10, // 总条数
       currentPage: 1, // 当前页
       pageSize: 10, // 每页条数
- 
+      listQuery: {
+        page: 1,
+        limit: 20
+      }
     }
   },
+  created() {
+    this.getList()
+  },
   methods: {
+    getList() {
+      getList(this.listQuery).then(response => {
+        console.log(response.data) 
+        this.list = response.data.list
+      })
+    },
     handleClick(tab, event) {
       console.log(tab, event);
     },
