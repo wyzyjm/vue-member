@@ -1,10 +1,6 @@
 <template>
     <div class="content">
-        <el-steps :active="active" align-center class="step-bar">
-            <el-step title="步骤 1"></el-step>
-            <el-step title="步骤 2"></el-step>
-            <el-step title="步骤 3"></el-step>
-        </el-steps>
+        <ce-steps :active="active" :datalist="datalist"></ce-steps>
         <div class="step-icon" v-show="submitedSuccess">
             <svg-icon name="icon-anquanzhuye" class="icon"></svg-icon>
             <p>为确认是您本人操作，请完成身份认证</p>
@@ -51,14 +47,16 @@
     </div>
 </template>
 <script>
+import ceSteps from "@/components/CeSteps"
 import svgIcon from '@/components/SvgIcon'
 export default {
     components: {
+        ceSteps,
         svgIcon
     },
     data() {
         return {
-            active: 1,
+            active: 0,
             newPhoneInputeShow: false,
             getCodeMsg: false,
             hasSubmited: false,
@@ -74,7 +72,21 @@ export default {
                 type: [],
                 resource: '',
                 desc: ''
-            }
+            },
+            datalist: [
+                {
+                    title: "验证身份",
+                    description: "",
+                },
+                {
+                    title: "更换手机",
+                    description: "",
+                },
+                {
+                    title: "更换成功",
+                    description: "",
+                }
+            ],
         };
     },
 
@@ -84,7 +96,7 @@ export default {
         },
         next() {
             if(this.formLabelAlign.name){
-                if(this.active++ > 0) this.hasSubmited = true;
+                if(this.active++ >= 0) this.hasSubmited = true;
             } else {
                 this.$message('请输入验证码！');
             }

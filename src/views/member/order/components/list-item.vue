@@ -9,10 +9,11 @@
       <span>订单状态</span>
       <span class="operate">操作</span>
     </div>
-    <ul class="item-card-content">
+    <ul class="item-card-content" :data="list">
       <li
-      v-for="(data, index) in list"
-      :key="index"
+      v-for="(data) in list"
+      :key="data.id"
+      :id="data.id"
       class="order">
           <div class="order-id">
             <span>下单时间：{{data.createTime}}</span><span class="ml-20">订单号：{{data.orderNumber}}</span>
@@ -51,18 +52,32 @@
                 <p class="col-9 border-bottom p-y m-y">含运费¥{{data.freight}}</p>
                 <p class="col-9">{{data.paymentTypeName}}</p>
               </div>
-              <div class="col-danger">
-                <span>{{data.orderStatus}}</span>
+              <div :class="{'col-danger':data.orderStatus != 3}">
+                <span>{{statePayment[data.orderStatus].type}}</span>
               </div>
               <div class="operate">
-                <div v-if="data.orderStatus == 1">
+                <div v-if="data.orderStatus == 0">
                   <p class="p-y col-danger"><svg-icon name="icon-shijian"></svg-icon> 剩余1时58分</p>
                   <el-button type="primary">付款</el-button>
                 </div>
-                <el-button v-if="data.orderStatus == 2" type="primary">确认收货</el-button>
-                <el-button type="text" @click="viewOrder">查看订单</el-button>
-                <el-button v-if="data.orderStatus == 2" type="text">取消订单</el-button>
-                <el-button v-else type="text">查看物流</el-button>
+                <el-button v-if="data.orderStatus == 2" type="primary" @click.prevent="confirmReceipt(data.id)">确认收货</el-button>
+                <el-button type="text" @click.prevent="viewOrder">查看订单</el-button>
+                <el-popover
+                  v-if="data.orderStatus == 2" 
+                  placement="bottom-end"
+                  width="200"
+                  trigger="hover">
+                    <el-timeline :reverse="reverse">
+                      <el-timeline-item
+                        v-for="(activity, index) in activities"
+                        :key="index"
+                        :timestamp="activity.timestamp">
+                        {{activity.content}}
+                      </el-timeline-item>
+                    </el-timeline>
+                  <el-button type="text" slot="reference" @click.prevent="checkLogistics">查看物流</el-button>
+                </el-popover>
+                <el-button v-else-if="data.orderStatus != 3" type="text" @click.prevent="cancelOrder">取消订单</el-button>
               </div>
             </li>
           </ul>
@@ -79,6 +94,33 @@ import svgIcon from '@/components/SvgIcon'
 export default {
   data() {
     return {
+      showAlt: false,
+      // 订单状态
+      statePayment: {
+        0: {
+          type: '待付款'
+        },
+        1: {
+          type: '待发货'
+        },
+        2: {
+          type: '待收货'
+        },
+        3: {
+          type: '已完成'
+        },
+        4: {
+          type: '已关闭'
+        }
+      },
+      reverse: true,
+      activities: [{
+        content: '活动按期开始',
+        timestamp: '2018-04-15'
+      }, {
+        content: '创建成功',
+        timestamp: '2018-04-11'
+      }]
     }
   },
   components: {
@@ -88,91 +130,7 @@ export default {
   props: {
     list: {
       type: Array,
-      default: () => [
-        {
-          "id" : 123,
-          "orderNumber":202105101719088093,
-          "createTime":1620717797,
-          "currencySymbol":"¥",
-          "consigneeName":"收货人姓名",
-          "sumPayable":"实付款",
-            "freight" : 5,
-          "paymentTypeName":"微信支付",
-          "orderStatus":1,
-          "orderProductSkuList":[
-              {
-                  "productId":1345,
-                  "skuId":12,
-                  "skuImg":"/public/assets/images/img.png",
-                  "skuName":"手机",
-                  "skuSpec":[
-                      {
-                          "specName":"内存",
-                          "specValue":"8+256g",
-                      },
-                      {
-                          "specName":"内存2",
-                          "specValue":"8+256g",
-                      }
-                  ],
-                  "skuPrice":500,
-                  "quantity":2,
-                  "goodsUrl":"/goods/detail.html"
-              },
-              {
-                  "productId":1345,
-                  "skuId":12,
-                  "skuImg":"/public/assets/images/img.png",
-                  "skuName":"手机",
-                  "skuSpec":[
-                      {
-                          "specName":"内存",
-                          "specValue":"8+256g",
-                      },
-                      {
-                          "specName":"内存2",
-                          "specValue":"8+256g",
-                      }
-                  ],
-                  "skuPrice":5000,
-                  "quantity":2,
-                  "goodsUrl":"/goods/detail.html"
-              }
-          ]
-        },
-        {
-          "id" : 123,
-          "orderNumber":202105101719088093,
-          "createTime":1620717797,
-          "currencySymbol":"¥",
-          "consigneeName":"收货人姓名",
-          "sumPayable":"实付款",
-            "freight" : 5,
-          "paymentTypeName":"微信支付",
-          "orderStatus":1,
-          "orderProductSkuList":[
-              {
-                  "productId":1345,
-                  "skuId":12,
-                  "skuImg":"/public/assets/images/img.png",
-                  "skuName":"手机第三方士大夫电商电商多所多所多所多手机第三方士大夫电商电商多所多所多所多所多所多",
-                  "skuSpec":[
-                      {
-                          "specName":"内存",
-                          "specValue":"8+256g",
-                      },
-                      {
-                          "specName":"内存2",
-                          "specValue":"8+256g",
-                      }
-                  ],
-                  "skuPrice":5000,
-                  "quantity":2,
-                  "goodsUrl":"/goods/detail.html"
-              }
-          ]
-        }
-      ]
+      default: () => []
     }
   },
   computed: {
@@ -180,7 +138,42 @@ export default {
   methods: {
     viewOrder() {
       this.$router.push('/order/detail')
+    },
+    checkLogistics(id) {
+      console.log(id);
+      this.$router.push('/order/detail')
+    },
+    confirmReceipt(id) {
+      console.log(id);
+      this.$confirm('确认收到所有商品吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(() => {
+          console.log('确认成功!');
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消操作'
+          });          
+        });
+    },
+    cancelOrder() {
+      this.$confirm('确定取消该订单吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      }).then(() => {
+        console.log('订单取消成功!');
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消操作'
+        });          
+      });
     }
+  },
+  showAltType(i) {
+    console.log(i)
+    this.showAlt = this.showAlt;
   }
 };
 </script>
