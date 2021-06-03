@@ -1,5 +1,5 @@
 <template>
-	<span class="stepCon" v-if="this.stepData.length">
+	<span class="stepCon" v-if="this.stepData.length" >
 		<el-steps
 			:active="active"
 			finish-status="finish"
@@ -24,6 +24,7 @@ export default {
 		return {
 			activeId: 0,
 			stepData: [],
+			style:''
 		};
 	},
 	watch: {

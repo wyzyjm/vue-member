@@ -1,42 +1,109 @@
 <template>
   <div class="app-container wrapper">
     <div class="order-title">
-      <span>订单结算</span>
-      <el-steps
-        class="steps-wrapper"
-        :active="stepActive"
-        finish-status="success"
-      >
-        <el-step title="我的购物车"></el-step>
-        <el-step title="填写核对订单信息"></el-step>
-        <el-step title="成功提交订单"></el-step>
-      </el-steps>
+      <span class="order-subtitle">订单结算</span>
+      <div class="steps-wrapper">
+        <ce-steps
+          :active="stepActive"
+          :datalist="datalist"
+          style="padding: 0"
+        ></ce-steps>
+      </div>
     </div>
     <p class="order-subtitle">填写并核对订单信息</p>
     <div class="order-details">
       <p><strong>收货人信息</strong></p>
-      <el-button style="float: right; margin-top: -45px" type="text"
+      <el-button
+        style="float: right; margin-top: -45px"
+        type="text"
+        @click="openAddress('create')"
         >新增收货地址</el-button
       >
       <div :class="['address-list', { 'show-detail': showAInfo }]">
         <p style="color: #f56c6c" v-show="showAddATip">请添加收货信息</p>
-        <div style="float: left; width: 100px">
-          <el-radio-group v-model="radio">
-            <el-radio style="margin-bottom: 10px" :label="3">disa</el-radio
-            ><br />
-            <el-radio style="margin-bottom: 10px" :label="6">sdfa</el-radio
-            ><br />
-            <el-radio style="margin-bottom: 10px" :label="9">asdfa</el-radio>
-          </el-radio-group>
+        <div class="address-group">
+          <div class="address-item">
+            <span class="name active">dasiy</span>
+            <div class="more">
+              <span>dasiy</span>
+              <span>内蒙古</span>
+              <span>鄂尔多斯市</span>
+              <span>达拉特旗</span>
+              <span>美好小区2303</span>
+              <span>18599898987</span>
+            </div>
+            <div class="address-btns">
+              <el-button type="text" size="mini">设为默认</el-button>
+              <el-button type="text" size="mini">编辑</el-button>
+              <el-button type="text" size="mini">删除</el-button>
+            </div>
+          </div>
+          <div class="address-item">
+            <span class="name active">dasiy</span>
+            <div class="more">
+              <span>dasiy</span>
+              <span>内蒙古</span>
+              <span>鄂尔多斯市</span>
+              <span>达拉特旗</span>
+              <span>美好小区2303</span>
+              <span>18599898987</span>
+            </div>
+            <div class="address-btns">
+              <el-button type="text" size="mini">设为默认</el-button>
+              <el-button type="text" size="mini">编辑</el-button>
+              <el-button type="text" size="mini">删除</el-button>
+            </div>
+          </div>
+          <div class="address-item">
+            <span class="name active">dasiy</span>
+            <div class="more">
+              <span>dasiy</span>
+              <span>内蒙古</span>
+              <span>鄂尔多斯市</span>
+              <span>达拉特旗</span>
+              <span>美好小区2303</span>
+              <span>18599898987</span>
+            </div>
+            <div class="address-btns">
+              <el-button type="text" size="mini">设为默认</el-button>
+              <el-button type="text" size="mini">编辑</el-button>
+              <el-button type="text" size="mini">删除</el-button>
+            </div>
+          </div>
+          <div class="address-item">
+            <span class="name active">dasiy</span>
+            <div class="more">
+              <span>dasiy</span>
+              <span>内蒙古</span>
+              <span>鄂尔多斯市</span>
+              <span>达拉特旗</span>
+              <span>美好小区2303</span>
+              <span>18599898987</span>
+            </div>
+            <div class="address-btns">
+              <el-button type="text" size="mini">设为默认</el-button>
+              <el-button type="text" size="mini">编辑</el-button>
+              <el-button type="text" size="mini">删除</el-button>
+            </div>
+          </div>
+          <div class="address-item">
+            <span class="name active">dasiy</span>
+            <div class="more">
+              <span>dasiy</span>
+              <span>内蒙古</span>
+              <span>鄂尔多斯市</span>
+              <span>达拉特旗</span>
+              <span>美好小区2303</span>
+              <span>18599898987</span>
+            </div>
+            <div class="address-btns">
+              <el-button type="text" size="mini">设为默认</el-button>
+              <el-button type="text" size="mini">编辑</el-button>
+              <el-button type="text" size="mini">删除</el-button>
+            </div>
+          </div>
         </div>
-        <div class="address-detail" style="overflow: hidden">
-          <p>
-            <span>dddddadf</span><span>ddddeeee</span
-            ><el-button type="primary" size="mini">默认地址</el-button>
-          </p>
-          <p><span>ddddddadf</span> <span>erqer</span></p>
-          <p><span>eerre</span></p>
-        </div>
+       
       </div>
       <p class="show-more" @click="showAddress">
         <span v-show="showAInfo">
@@ -73,16 +140,18 @@
         <el-radio :label="9">备选项</el-radio>
       </el-radio-group>
       <el-divider></el-divider>
+      <product-list :productList="productlist"></product-list>
       <p><strong>发票信息</strong></p>
-      <div>电子发票 
-        <template v-if="receipt==''">
-        <el-button type="text" @click="openReceipt">开发票</el-button>
+      <div>
+        电子发票
+        <template v-if="receipt == ''">
+          <el-button type="text" @click="openReceipt">开发票</el-button>
         </template>
         <template v-else>
-          {{receipt}}  商品明细
+          {{ receipt }} 商品明细
           <el-button type="text" @click="openReceipt">修改</el-button>
         </template>
-        </div>
+      </div>
       <el-divider></el-divider>
       <p><strong>给卖家留言</strong></p>
       <el-input
@@ -114,30 +183,72 @@
       <el-button type="primary">提交订单</el-button>
     </div>
     <receipt ref="getReceipt"></receipt>
+    <address-form ref="address"></address-form>
   </div>
 </template>
 <script>
+import ceSteps from "@/components/CeSteps";
 import receipt from "./components/receipt";
+
+import productList from "@/views/components/productList";
+import addressForm from "@/views/components/addressForm";
 export default {
   data() {
     return {
-      stepActive: 2,
+      datalist: [
+        {
+          title: "我的购物车",
+          description: "",
+        },
+        {
+          title: "填写核对订单信息",
+          description: "",
+        },
+        {
+          title: "成功提交订单",
+          description: "",
+        },
+      ],
+      stepActive: 1,
       test: "",
       radio: 3,
       showAInfo: false,
       showAddATip: false,
-      textarea:'',
-      receipt:''
+      textarea: "",
+      receipt: "",
+      productlist: [
+        {
+          productId: 144,
+          skuId: 271,
+          skuName: "货品名称",
+          skuImg:
+            "/repository/image / 1 f6fa47f - d790 - 4907 - 95 cc - 1 c06f290f71b.jpg",
+          skuPrice: 22222210.0,
+          quantity: 11,
+          aggregateAmount: 1210.0,
+          skuSpec: [
+            {
+              specName: "内存",
+              specValue: "8+256g",
+            },
+          ],
+          productUrl: "/product/144. html",
+        },
+      ],
     };
   },
   components: {
     receipt,
+    ceSteps,
+    addressForm,
+    productList,
   },
-  mounted() {
-    let a = this.showAInfo;
-    console.log(a);
-  },
+  mounted() {},
   methods: {
+    openAddress(type) {
+      this.$refs.address.dialogFormVisible = true;
+      this.$refs.address.dialogStatus = type;
+    },
     showAddress() {
       if (this.showAInfo) {
         this.showAInfo = false;
@@ -145,18 +256,77 @@ export default {
         this.showAInfo = true;
       }
     },
-    openReceipt(){
+    openReceipt() {
       this.$refs.getReceipt.dialogVisible = true;
-    }
+    },
   },
 };
 </script>
 <style scoped>
+.address-group {
+  line-height: 26px;
+}
+.address-item {
+  display: flex;
+  margin: 10px 0;
+}
+.address-item .more {
+  max-width: 600px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.address-item .more span {
+  margin-left: 10px;
+}
+.address-item .name {
+  padding: 0 26px;
+  border: 1px solid #ddd;
+}
+.address-item:hover {
+  background-color: #ecf5ff;
+}
+.address-item .active {
+  border: 1px solid #409eff;
+  position: relative;
+  overflow: hidden;
+}
+.address-btns {
+  flex: 1;
+  text-align: right;
+}
+.address-item .active::after {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-color: #409eff;
+  -webkit-transform: skewY(-45deg);
+  transform: skewY(-45deg);
+  position: absolute;
+  bottom: -10px;
+  right: 0;
+  z-index: 1;
+}
+.address-item .active::before {
+  content: "";
+  display: block;
+  width: 4px;
+  height: 6px;
+  border-right: #ffffff solid 2px;
+  border-bottom: #ffffff solid 2px;
+  -webkit-transform: rotate(35deg);
+  transform: rotate(35deg);
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  z-index: 2;
+}
 .order-title {
   border: 1px solid #ddd;
-  padding: 36px;
+  padding: 10px;
 }
-.order-title span {
+.order-title .order-subtitle {
   display: inline-block;
   font-size: 20px;
   font-weight: normal;
@@ -187,11 +357,12 @@ export default {
   text-align: right;
 }
 .address-list {
-  max-height: 38px;
+height: 45px;
   overflow: hidden;
 }
 .show-detail {
-  max-height: 130px;
+  height: auto;
+  max-height: 120px;
   overflow: auto;
 }
 .show-more {
@@ -257,6 +428,12 @@ export default {
   bottom: 2px;
   right: 2px;
   z-index: 2;
+}
+.default-address-icon {
+  background: #409eff;
+  padding: 2px 4px;
+  color: white;
+  font-style: normal;
 }
 </style>
 

@@ -108,13 +108,13 @@ export const constantRoutes = [
             component: () => import('@/views/payment/index'),
             children: [
                 {
-                    path: 'pay',
+                    path: '/payment/pay',
                     name: 'pay',
                     component: () => import('@/views/payment/pay'),
                     meta: { title: '订单支付', icon: '' }
                 },
                 {
-                    path: 'result',
+                    path: '/payment/result',
                     name: 'payResult',
                     component: () => import('@/views/payment/result'),
                     meta: { title: '支付结果', icon: '' }

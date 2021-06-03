@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-table
-      :data="orderProductSkuList"
+      :data="productList"
       style="width: 100%">
       <el-table-column
         label="商品信息">

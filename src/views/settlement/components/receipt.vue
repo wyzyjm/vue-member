@@ -1,6 +1,6 @@
 <template>
   <div class="app-container wrapper">
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="40%">
+    <el-dialog title="发票信息" :visible.sync="dialogVisible" width="40%">
       <el-form ref="form" :rules="rules" :model="form" label-width="120px">
         <el-form-item label="发票抬头">
           <el-radio-group v-model="form.type" @change="changeType">
@@ -35,12 +35,11 @@
         <el-form-item label="收票人手机" prop="tel">
           <el-select
             class="no-error"
-            v-model="form.region"
+            v-model="form.regionNo"
             placeholder=""
-            style="width: 100px"
+            style="width: 70px"
           >
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+            <el-option label="+86" value="86"></el-option>
           </el-select>
           <el-input
             v-model="form.tel"
@@ -80,6 +79,7 @@ export default {
         catalog: 0,
         tel: "",
         mail: "",
+        regionNo:"86",
         companyName: "",
         companyNumber: "",
       },
