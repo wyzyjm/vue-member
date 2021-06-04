@@ -1,19 +1,20 @@
 <template>
   <div class="app-container">
     <page-title :pagetitle='title'>
-      <el-input placeholder="请输入内容" v-model="searchVal" class="input-with-select">
-        <el-button slot="append" icon="el-icon-search"></el-button>
-      </el-input>
+      <slot slot="slot">
+        <div class="search">
+          <el-input class="input_inner" placeholder="商品名称/商品编号/订单号" v-model="searchVal"></el-input>
+          <el-button class="get-code-btn" icon="el-icon-search"></el-button>
+        </div>
+      </slot>
 		</page-title>
     <div>
 
-      <el-tabs v-model="activeName" @tab-click="handleClick" class="tabs">
-        <el-tab-pane 
+      <el-tabs @tab-click="handleClick" class="tabs">
+        <el-tab-pane
           v-for="(item, index) in tabsArr" 
-          :key="index"
-          :label="item.text" 
-          :name="item.text"
-          >
+          :key="index">
+          <el-badge slot="label" :value="200" :max="99" class="item">{{item.text}}</el-badge>
             <listItem :list="list" />
         </el-tab-pane>
       </el-tabs>
@@ -44,7 +45,7 @@ export default {
   data() {
     return {
       title: '我的订单',
-      searchVal: '1',
+      searchVal: null,
       tabsModel: 123,
       activeName: '全部订单',
       tabsArr: [
@@ -104,12 +105,21 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  .el-select .el-input {
-    width: 130px;
+  .search{
+    width: 300px;
+    position: relative;
+    bottom: 10px;
+    .get-code-btn{
+        position: absolute;
+        right: 1px;
+        top: 1px;
+        border: none;
+    }
   }
-  .input-with-select .el-input-group__prepend {
-    background-color: #fff;
-  }
+.item {
+  margin-top: 10px;
+  line-height: 23px;
+}
 </style>
 <style lang='scss'>
 .el-tabs__nav-wrap::after {

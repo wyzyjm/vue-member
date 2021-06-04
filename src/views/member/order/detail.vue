@@ -2,55 +2,58 @@
   <div class="app-container">
       订单详情
     <!-- 进度条 -->
-    <ce-steps :active="active" :datalist="datalist" class="border-bottom"></ce-steps>
+    <ce-steps :active="data.orderStatusFlow+1" :datalist="datalist" class="border-bottom"></ce-steps>
 
     <!-- 订单编号、按钮 -->
     <div class="order-type">
-      <div>订单号：153008702655</div>
-      <div class="col-danger"><svg-icon name="icon-shijian"></svg-icon>剩余0时29分</div>
-      <div>订单状态：<span class="font-20 col-danger">待付款</span></div>
+      <div>订单号：{{data.order.orderNumber}}</div>
+      <div
+      v-if="data.orderStatusFlow == 1"
+      class="col-danger"
+      ><svg-icon name="icon-shijian"></svg-icon>剩余0时29分</div>
+      <div>订单状态：<span class="font-20 col-danger">{{data.orderStatusFlow}}</span></div>
       <div>
-        <el-button type="text">取消订单</el-button>
+        <el-button v-if="data.orderStatusFlow == 0 || data.paymentTypeName == '货到付款'" type="text">取消订单</el-button>
         <el-button type="primary" plain>查看发票信息</el-button>
-        <el-button type="primary" plain>修改地址</el-button>
-        <el-button type="primary">付款</el-button>  
-        <el-button type="primary">确认收货</el-button>  
+        <el-button v-if="data.orderStatusFlow == 0" type="primary" plain @click="showDialog('edit')">修改地址</el-button>
+        <el-button v-if="data.orderStatusFlow == 0" type="primary">付款</el-button>  
+        <el-button v-if="data.orderStatusFlow == 2" type="primary">确认收货</el-button>  
       </div>
     </div>
 
     <!-- 收货信息 -->
-    <ul class="border detial">
-      <li class="detial-item">
+    <ul class="border detail">
+      <li class="detail-item">
         <p class="title">商品清单/结算信息</p>
-        <div class="border-right item-list">
-          <p>收货人：这个名字很长</p>
-          <p>所在地区：北京市大兴区</p>
-          <p>详细地址：亦庄经济技术开发区地盛西路1号地盛西路1号亦庄经济技术开发区</p>
-          <p>手机号码：+86 18512341234</p>
-          <p>固定电话：010-46732122</p>
-          <p>邮政编码：100000</p>
+        <div class="item-list">
+          <p class="consignee"><span>收货人：</span><span>{{data.order.consigneeName}}</span></p>
+          <p class="consignee"><span>所在地区：</span><span>{{data.order.consigneeProvince}}{{data.order.consigneeCity}}{{data.order.consigneeCounty}}</span></p>
+          <p class="consignee"><span>详细地址：</span><span>{{data.order.consigneeAddr}}</span></p>
+          <p class="consignee"><span>手机号码：</span><span> +{{data.order.consigneePhoneHead}} {{data.order.consigneePhone}}</span></p>
+          <p class="consignee"><span>固定电话：</span><span>{{data.order.consigneeTelHead}}-{{data.order.consigneeTel}}</span></p>
+          <p class="consignee"><span>邮政编码：</span><span>{{data.order.consigneeZipCode}}</span></p>
         </div>
       </li>
-      <li class="detial-item">
+      <li class="detail-item">
         <p class="title">订单信息</p>
-        <div class="border-right item-list">
-            <span>支付方式：微信支付</span>
+        <div class="item-list">
+            <span>支付方式：{{data.paymentTypeName}}</span>
             <el-button type="text">支付信息<svg-icon name="icon-xia"></svg-icon></el-button>
             <div class="slot-content">
               <p v-for="(item, index) in paymentData" :key="index">交易号：2344657687990809090</p>
             </div>
-          <p>配送方式：快递发货</p>
+          <p>配送方式：{{data.order.logName}}</p>
         </div>
       </li>
-      <li class="detial-item">
+      <li class="detail-item">
         <p class="title">物流信息</p>
         <div class="item-list">
           <el-timeline :reverse="reverse">
             <el-timeline-item
-              v-for="(activity, index) in activities"
+              v-for="(activity, index) in data.order.LogsList"
               :key="index"
-              :timestamp="activity.timestamp">
-              {{activity.content}}
+              :timestamp="activity.createTime">
+              {{activity.remark}}
             </el-timeline-item>
           </el-timeline>
         </div>
@@ -61,39 +64,49 @@
     <div class="border">
       <p class="title">商品清单/结算信息</p>
       <div class="product-list">
-        <product-list :productList="productList"></product-list>
+        <product-list :productList="data.order.orderProductSkuList"></product-list>
         <div class="message-board">
           <div>
             <p>给卖家留言</p>
-            <textarea name="" id="" placeholder="我的留言是不可修改的"></textarea>
+            <textarea name="" id="" placeholder="我的留言是不可修改的" v-model="data.order.sellerMsg">  </textarea>
           </div>
           <div class="message-pay">
-            <p>共 <span class="col-danger font-20">3</span> 件商品</p>
-            <p>商品总额：  ¥ 300.00</p>
-            <p>运费总计：  ¥ 5.00</p>
-            <p class="col-danger font-20">实付金额： <span class="font-bold">¥ 305.00</span></p>
+            <p>共 <span class="col-danger font-20">{{data.order.quantity}}</span> 件商品</p>
+            <p>商品总额：  {{data.order.currencySymbol}} {{data.totalAmount}}</p>
+            <p>运费总计：  {{data.order.currencySymbol}} {{data.order.freight ? data.order.freight : 0}}</p>
+            <p class="col-danger font-20">实付金额： <span class="font-bold">{{data.order.currencySymbol}} {{data.order.sumPayable}}</span></p>
           </div>
         </div>
       </div>
     </div>
 
+    <AddressForm
+      ref="addressDialog"
+      :setAddrForm="current"
+      @confirm="confirmDialog"
+    ></AddressForm>
 
   </div>
 </template>
 <script>
-import ceSteps from "@/components/CeSteps"
+import { getDetail } from '@/api/table'
+import ceSteps from '@/components/CeSteps'
 import svgIcon from '@/components/SvgIcon'
+import AddressForm from "@/views/components/addressForm"; // 收货人地址弹窗
 import productList from '@/views/components/productList'
 
 export default {
   components: {
     ceSteps,
     svgIcon,
+    AddressForm,
     productList
   },
   data() {
     return {
       active: 0,
+      data: null,
+      current: {}, // 弹窗传值
       datalist: [
         {
           title: "提交订单",
@@ -112,53 +125,8 @@ export default {
           description: "",
         },
       ],
-      productList: [{
-          "productId": 144,
-          "skuId": 271,
-          "skuName": "货品名称",
-          "skuImg": "/repository/image / 1 f6fa47f - d790 - 4907 - 95 cc - 1 c06f290f71b.jpg",
-          "skuPrice": 1121210.0,
-          "quantity": 11,
-          "aggregateAmount": 1210.0,
-          "skuSpec": [{
-              "specName": "内存",
-              "specValue": "8+256g"
-          }],
-          "productUrl": "/product/144. html"
-      },{
-          "productId": 144,
-          "skuId": 271,
-          "skuName": "货品名称",
-          "skuImg": "/repository/image / 1 f6fa47f - d790 - 4907 - 95 cc - 1 c06f290f71b.jpg",
-          "skuPrice": 110.0,
-          "quantity": 11,
-          "aggregateAmount": 1210.0,
-          "skuSpec": [{
-              "specName": "内存",
-              "specValue": "8+256g"
-          }],
-          "productUrl": "/product/144. html"
-      }],
       reverse: true,
-      activities: [{
-        content: '活动按期开始',
-        timestamp: '2018-04-15'
-      }, {
-        content: '通过审核',
-        timestamp: '2018-04-13'
-      }, {
-        content: '创建成功',
-        timestamp: '2018-04-11'
-      },{
-        content: '活动按期开始',
-        timestamp: '2018-04-15'
-      }, {
-        content: '通过审核',
-        timestamp: '2018-04-13'
-      }, {
-        content: '创建成功',
-        timestamp: '2018-04-11'
-      }],
+      // activities: [],
       paymentData: [
         {
           key: '交易号',
@@ -167,8 +135,43 @@ export default {
       ]
     }
   },
+  created() {
+    this.getDetail()
+  },
   methods: {
+    getDetail() {
+      getDetail(this.listQuery).then(response => {
+        console.log(response.data) 
+        this.data = response.data
+      })
+    },
     
+    // 弹窗 显示
+    showDialog(status) {
+      const _this = this.$refs["addressDialog"]; // 获取当前弹窗组件实例
+      _this.dialogFormVisible = true; // 修改弹窗 显示状态
+      _this.dialogStatus = status; // 修改弹窗 类型 create:创建 | edit:编辑
+    },
+    // 弹窗确认事件
+    confirmDialog(data, addFormData, status) {
+      /**
+       * 1. 获取子组件传过来的 表单信息, 和 状态
+       * 2. 根据状态, 对将表单信息进行处理
+       */
+      console.log(data);
+      // this.current = {};
+      // if (status === "create") {
+      //   console.log("这是创建收货地址");
+      // } else {
+      //   console.log("这是编辑收货地址");
+      // }
+      // this.getList();
+    },
+    // 编辑
+    eidtAddress(item) {
+      // this.current = JSON.parse(JSON.stringify(item)); // 赋值
+      // this.showDialog("edit");
+    },
   }
 }
 </script>
@@ -205,12 +208,12 @@ ul,li{
   align-items: center;
   margin: 30px 0;
 }
-.detial{
+.detail{
   margin-bottom: 30px;
   display: flex;
   justify-content: space-between;
 }
-.detial-item{
+.detail-item{
   flex: 1;
 }
 .title{
@@ -222,8 +225,8 @@ ul,li{
   margin: 0 40px;
 }
 .item-list{
-  height: 230px;
-  padding: 10px 20px;
+  height: 260px;
+  padding: 10px;
   margin: 20px 10px;
   overflow-y: auto;
 }
@@ -245,6 +248,18 @@ ul,li{
 .item-list::-webkit-scrollbar-button {
     height: 0;
     background: none;
+}
+.consignee{
+  display: flex;
+}
+.consignee span{
+  width: 100px;
+  text-align: right;
+  line-height: 1.3;
+}
+.consignee span:nth-child(2){
+  width: calc(100% - 110px);
+  text-align: left;
 }
 .message-board{
   display: flex;

@@ -7,3 +7,19 @@ export function getList(params) {
     params
   })
 }
+
+export function getDetail(params) {
+  return request({
+    url: '/vue-admin-template/detail/data',
+    method: 'get',
+    params
+  })
+}
+
+export function getInformation(params) {
+  return request({
+    url: '/vue-admin-template/information/data',
+    method: 'get',
+    params
+  })
+}
