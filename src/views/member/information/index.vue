@@ -7,11 +7,11 @@
         <!-- 头像 -->
         <div class="block user">
             <el-image
-            :src="data.url"
+            :src="data.user.avatar"
             class="uimges"
             @click="vicpWarpShow = true"></el-image>
           <div class="username">
-              <p><i></i>{{data.user.levelName}}</p>
+              <p class="member-order"><svg-icon name="icon-huiyuan" class="icon"></svg-icon>{{data.user.levelName}}</p>
               <p>{{data.user.userName}}</p>
           </div>
         </div>
@@ -20,9 +20,66 @@
           <div class="item">
             <p>
               <span>昵称</span>
-              <span>还没有昵称</span>
+              <span>{{data.user.nickName ? data.user.nickName : '还没有昵称'}}</span>
+            </p>
+              <el-button type="text" @click="modifyShow = true">编辑</el-button>
+          </div>
+          <div class="item">
+            <p>
+              <span>姓名</span>
+              <span>{{data.user.name ? data.user.name : '还没有姓名'}}</span>
             </p>
             <el-button type="text" @click="modifyShow = true">编辑</el-button>
+          </div>
+          <div class="item">
+            <p>
+              <span>手机</span>
+              <span>{{data.user.phone ? data.user.phone : '还没有手机号'}}</span>
+            </p>
+            <div>
+              <el-button type="text" @click="setting">更换手机</el-button>
+              <el-button type="text" @click="modifyShow = true">绑定手机</el-button>
+              <el-button type="text">解绑手机</el-button>
+            </div>
+          </div>
+          <div class="item">
+            <p>
+              <span>邮箱</span>
+              <span>{{data.user.email ? data.user.email : '还没有添加邮箱'}}</span>
+            </p>
+            <div>
+              <el-button type="text" @click="modifyShow = true">更换邮箱</el-button>
+              <el-button type="text" @click="modifyShow = true">绑定邮箱</el-button>
+              <el-button type="text" @click="modifyShow = true">解绑邮箱</el-button>
+            </div>
+          </div>
+          <div class="item">
+            <p>
+              <span>QQ</span>
+              <span>{{data.user.qq ? data.user.qq : '还没有绑定QQ'}}</span>
+            </p>
+            <el-button type="text" @click="modifyShow = true">解绑</el-button>
+          </div>
+          <div class="item">
+            <p>
+              <span>微信</span>
+              <span>{{data.user.weChat ? data.user.weChat : '还没有绑定微信'}}</span>
+            </p>
+            <el-button type="text" @click="modifyShow = true">解绑</el-button>
+          </div>
+          <div class="item">
+            <p>
+              <span>微博</span>
+              <span>{{data.user.weibo ? data.user.weibo : '还没有绑定微博'}}</span>
+            </p>
+            <el-button type="text" @click="modifyShow = true">解绑</el-button>
+          </div>
+          <div class="item">
+            <p>
+              <span>密码</span>
+              <span>{{data.user.pwd}}</span>
+            </p>
+            <el-button type="text" @click="modifyShow = true">重置密码</el-button>
           </div>
           <div
             v-for="(item, index) in data.customList"
@@ -30,11 +87,10 @@
             class="item">
             <p>
               <span>{{item.attrName}}</span>
-              <span>{{item.description ? item.description : '还没有姓名'}}</span>
+              <span>{{item.description}}</span>
             </p>
             <div>
               <el-button type="text">编辑</el-button>
-              <el-button type="text" @click="setting">更换手机号</el-button>
             </div>
           </div>
         </div>
@@ -52,16 +108,18 @@
 </template>
 
 <script>
-// import { getData } from '@/api/information'
+import { getInformation } from '@/api/table'
 import pageTitle from "@/views/components/pageTitle"
+import svgIcon from '@/components/SvgIcon'
 import imagesUpload from './components/imagesUpload'
 import modify from './components/modify'
 
 export default {
   components: { 
+    pageTitle,
+    svgIcon,
     imagesUpload,
-    modify,
-    pageTitle
+    modify
   },
   data() {
     return {
@@ -70,40 +128,19 @@ export default {
       modifyShow: false,
       imagecropperKey: 0,
       image: 'https://wpimg.wallstcn.com/577965b9-bb9e-4e02-9f0c-095b41417191',
-      data: {
-        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-        user: {
-            "userId": 123,
-            "levelId": 34,
-            "levelName": "黄金会员",
-            "userName": "用户名",
-            "nickName": "昵称",
-                "name": "姓名",
-            "avatar": "头像路径",
-            "phone": "手机",
-            "email": "zhongqi@300.cn",
-            "qq": "1423568976",
-            "weChat": "微信",
-            "weibo": "微博",
-            "pwd": "密码"
-        },
-        customList: [{
-            "attrId": 1234,
-            "attrName": "自定义属性名称",
-            "attrValue": "属性值", 
-            "attrDetailType": 0,
-            "attrDetailType": "text",
-            "description": "提示语",
-            "optionsData": "篮球,乒乓球,羽毛球,各种球", 
-            "unit": "kg",
-            "required": true
-        }]
-      }
+      data: null
     }
   },
   created() {
+    this.getInformation()
   },
   methods: {
+    getInformation() {
+      getInformation(this.listQuery).then(response => {
+        console.log(response.data) 
+        this.data = response.data;
+      })
+    },
     cropSuccess(resData) {
       this.vicpWarpShow = false
       this.imagecropperKey = this.imagecropperKey + 1
@@ -132,6 +169,9 @@ export default {
   position: relative;
   .username{
     text-align: center;
+    p{
+      text-align: left;
+    }
   }
   &::after{
     content: '编辑头像';
@@ -150,6 +190,16 @@ export default {
     border-radius: 50%;
     overflow: hidden;
   }
+}
+.member-order{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.icon{
+  font-size: 20px;
+  display: inline-block;
+  margin-right: 10px;
 }
 .item{
   display: flex;

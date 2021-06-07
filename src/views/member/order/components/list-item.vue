@@ -61,7 +61,7 @@
                   <el-button type="primary">付款</el-button>
                 </div>
                 <el-button v-if="data.orderStatus == 2" type="primary" @click.prevent="confirmReceipt(data.id)">确认收货</el-button>
-                <el-button type="text" @click.prevent="viewOrder">查看订单</el-button>
+                <el-button type="text" @click.prevent="viewOrder(data.id)">查看订单</el-button>
                 <el-popover
                   v-if="data.orderStatus == 2" 
                   placement="bottom-end"
@@ -136,8 +136,8 @@ export default {
   computed: {
   },
   methods: {
-    viewOrder() {
-      this.$router.push('/order/detail')
+    viewOrder(id) {
+      this.$router.push(`/order/detail?orderId=${id}`)
     },
     checkLogistics(id) {
       console.log(id);
