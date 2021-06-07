@@ -119,6 +119,12 @@ export const constantRoutes = [
                     meta: { title: '订单支付', icon: '' }
                 },
                 {
+                    path: '/payment/poppay',
+                    name: 'pay',
+                    component: () => import('@/views/payment/poppay'),
+                    meta: { title: '订单支付', icon: '' }
+                },
+                {
                     path: '/payment/result',
                     name: 'payResult',
                     component: () => import('@/views/payment/result'),

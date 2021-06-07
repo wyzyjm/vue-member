@@ -16,13 +16,17 @@
         >
       </div>
       <div class="order-info">
-        请您在
-        <span class="order-timer text-danger">23分01秒</span>
-        内完成支付，否则订单会被自动取消
-        <el-button type="text" class="right" @click="viewDetail">订单详情
+        <div style="line-height:40px">
+          请您在
+          <span class="order-timer text-danger">23分01秒</span>
+          内完成支付，否则订单会被自动取消
+        </div>
+
+        <span  :class="['right', { 'text-blue': showDetail }]" @click="viewDetail"
+          >订单详情
           <svg-icon v-if="showDetail" name="icon-shang"></svg-icon>
           <svg-icon v-else name="icon-xia"></svg-icon>
-          </el-button>
+        </span>
       </div>
       <el-divider></el-divider>
       <div class="order-detail" v-show="showDetail">
@@ -68,81 +72,6 @@
           </div>
         </div>
       </el-card>
-
-      <el-card>
-        <p class="pay-title">微信支付</p>
-        <div class="vchat-wrapper">
-          <p>
-            距离二维码过期还剩
-            <span>57</span> 秒，过期后请刷新页面重新获取二维码
-          </p>
-          <div class="vchat-img">
-            <div class="code">
-              <img src="../../assets/images/no-img.svg" />
-              <div class="vchat-bg">
-                <img src="../../assets/images/icon-red.png" /><span class="text"
-                  >请使用微信扫一扫<br />扫描二维码支付</span
-                >
-              </div>
-            </div>
-            <div class="guide">
-              <img src="../../assets/images/phone.png" />
-            </div>
-          </div>
-        </div>
-        <div class="offline-wrapper">
-          <el-form ref="form" :model="form" label-width="120px" :rules="rules">
-            <el-row>
-              <el-col :span="11">
-                <el-form-item label="First Name" prop="firstname">
-                  <el-input v-model="form.firstname"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="11">
-                <el-form-item label="Last Name" prop="lastname">
-                  <el-input v-model="form.lastname"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="11">
-                <el-form-item label="Send Money" prop="money">
-                  <el-input v-model="form.money"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="11">
-                <el-form-item label="MTCN# No." prop="number">
-                  <el-input v-model="form.number"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="11">
-                <el-form-item label="Currency" prop="currency">
-                  <el-input v-model="form.currency"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="11">
-                <el-form-item label="Country" prop="country">
-                  <el-input v-model="form.country"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-
-            <el-form-item label="Contents">
-              <el-input type="textarea" v-model="form.contents"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="onSubmit"
-                >Complete Order Now</el-button
-              >
-              <el-button>Pay Later</el-button>
-            </el-form-item>
-          </el-form>
-        </div>
-        <span class="el-icon-arrow-left"></span>
-        <el-button type="text">选择其他支付方式</el-button>
-      </el-card>
     </el-card>
     <el-dialog title="" :visible.sync="dialogVisible" width="530px">
       <div class="text-normal" style="text-align: center">
@@ -152,7 +81,10 @@
           <br />2、如果您已完成，请点击“已完成付款”
         </p>
         <p>
-          <el-button type="primary" style="margin-right:30px" @click="dialogVisible = false"
+          <el-button
+            type="primary"
+            style="margin-right: 30px"
+            @click="dialogVisible = false"
             >重新支付</el-button
           >
           <el-button type="primary" plain @click="dialogVisible = false"
@@ -167,107 +99,72 @@
 export default {
   data() {
     return {
-      form: {
-        firstname: "",
-        lastname: "",
-        money: "",
-        number: "",
-        currency: "",
-        country: "",
-        contents: "",
-      },
-      showDetail:false,
+      showDetail: false,
       dialogVisible: false,
-      rules: {
-        firstname: [
-          { required: true, message: "请输入名字", trigger: "blur" },
-          {
-            min: 1,
-            max: 25,
-            message: "长度在 1 到 25 个字符",
-            trigger: "blur",
-          },
-        ],
-        lastname: [
-          { required: true, message: "请输入姓", trigger: "blur" },
-          {
-            min: 1,
-            max: 25,
-            message: "长度在 1 到 25 个字符",
-            trigger: "blur",
-          },
-        ],
-        money: [
-          { required: true, message: "请输入汇款金额", trigger: "blur" },
-          {
-            min: 1,
-            max: 50,
-            message: "长度在 1 到 50 个字符",
-            trigger: "blur",
-          },
-        ],
-        number: [
-          { required: true, message: "请输入MTCN#号", trigger: "blur" },
-          {
-            min: 1,
-            max: 50,
-            message: "长度在 1 到 50 个字符",
-            trigger: "blur",
-          },
-        ],
-        currency: [
-          { required: true, message: "请输入币种", trigger: "blur" },
-          {
-            min: 1,
-            max: 10,
-            message: "长度在 1 到 10 个字符",
-            trigger: "blur",
-          },
-        ],
-        country: [
-          { required: true, message: "请输入国家", trigger: "blur" },
-          {
-            min: 1,
-            max: 25,
-            message: "长度在 1 到 25 个字符",
-            trigger: "blur",
-          },
-        ],
-      },
     };
   },
   methods: {
-    onSubmit() {
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          alert("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
-    },
     openPay() {
       this.dialogVisible = true;
     },
-    viewDetail(){
-      if(this.showDetail){
-        this.showDetail = false
-      }else{
+    viewDetail() {
+      if (this.showDetail) {
+        this.showDetail = false;
+      } else {
         this.showDetail = true;
       }
-    }
+    },
+    timerCount(maxtime) {
+      if (maxtime > 0) {
+        let mins = Math.floor(maxtime / 60);
+        let seconds = Math.floor(maxtime % 60);
+        --maxtime;
+      } else {
+        clearInterval();
+      }
+    },
+    // var maxtime = 10 * 60; //
+    //    function CountDown() {
+    //      if (maxtime >= 0) {
+    //        minutes = Math.floor(maxtime / 60);
+    //        seconds = Math.floor(maxtime % 60);
+    //        msg =  minutes + "分" + seconds + "秒";
+    //        document.all["timer"].innerHTML = msg;
+
+    //          --maxtime;
+    //      } else{
+    //        clearInterval(timer);
+    //        alert("时间到，结束!");
+    //      }
+    //    }
+    //    timer = setInterval("CountDown()", 1000);
   },
 };
 </script>
 <style scoped>
-.pop-info{
-  width:300px;
+
+.online,
+.offline{
+  margin-bottom:150px;
+}
+.online .item,
+.offline .item {
+  display: inline-block;
+  vertical-align: middle;
+  width: 180px;
+}
+.online::after {
+  display: block;
+  content: "";
+  clear: both;
+}
+.pop-info {
+  width: 300px;
   text-align: left;
   margin: 10px auto 30px auto;
   line-height: 20px;
 }
-.pop-title{
+.pop-title {
   font-size: 20px;
   margin-bottom: 30px;
 }
@@ -284,63 +181,13 @@ export default {
   flex: 1;
   text-align: right;
   line-height: 30px;
+  cursor:pointer
 }
 .order-detail {
   line-height: 20px;
 }
 .order-detail span {
   margin-right: 10px;
-}
-.offline-wrapper {
-  width: 800px;
-  margin: 20px auto;
-}
-.online .item,
-.offline .item {
-  display: inline-block;
-  vertical-align: middle;
-  width: 180px;
-}
-.online::after {
-  display: block;
-  content: "";
-  clear: both;
-}
-.pay-title {
-  font-size: 20px;
-}
-.vchat-img {
-  margin-left: 200px;
-}
-.vchat-img .code {
-  display: inline-block;
-  vertical-align: middle;
-  width: 300px;
-  text-align: center;
-}
-.vchat-img .guide {
-  display: inline-block;
-  vertical-align: middle;
-  width: 400px;
-}
-.vchat-img .guide img {
-  height: 390px;
-}
-.vchat-bg img {
-  vertical-align: middle;
-  margin-right: 30px;
-}
-.vchat-img .vchat-bg {
-  width: 300px;
-  background-color: #f56c6c;
-  color: white;
-  margin: 0 auto;
-  padding: 8px;
-}
-.vchat-bg .text {
-  display: inline-block;
-  vertical-align: middle;
-  line-height: 18px;
 }
 </style>
 
