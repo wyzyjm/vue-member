@@ -64,7 +64,7 @@
     <div class="border">
       <p class="title">商品清单/结算信息</p>
       <div class="product-list">
-        <product-list :productList="data.order.orderProductSkuList"></product-list>
+        <product-list :productList="data.order.orderProductSkuList" :currencySymbol="data.order.currencySymbol"></product-list>
         <div class="message-board">
           <div>
             <p>给卖家留言</p>
@@ -107,6 +107,7 @@ export default {
       active: 0,
       data: null,
       current: {}, // 弹窗传值
+      currencySymbol: null,
       datalist: [
         {
           title: "提交订单",

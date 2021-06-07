@@ -34,7 +34,7 @@
         label="单价"
         width="180">
         <template slot-scope="{row}">
-          <span class="col-danger">¥{{ row.skuPrice }}</span>
+          <span class="col-danger">{{currencySymbol}}{{ row.skuPrice }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -48,7 +48,7 @@
         label="小计"
         width="180">
         <template slot-scope="{row}">
-          <span class="col-danger">¥{{ row.aggregateAmount }}</span>
+          <span class="col-danger">{{currencySymbol}}{{ row.aggregateAmount }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -58,6 +58,10 @@
 
 export default {
   props: {
+    currencySymbol: {
+        type: String,
+        default: true
+    },
     productList: {
         type: Array,
         default: () => []
