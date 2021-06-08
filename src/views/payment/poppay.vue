@@ -1,45 +1,7 @@
 <template>
   <div class="app-container wrapper">
     <el-card>
-      <div class="order-info">
-        <span class="info">
-          订单提交成功，请尽快付款！订单号：154561619986</span
-        >
-        <span class="right"
-          >应付金额：<strong class="text-danger" style="font-size: 24px"
-            >￥139.00 </strong
-          >元</span
-        >
-      </div>
-      <div class="order-info">
-        <div style="line-height: 4<!-- -->0px">
-          请您在
-          <span class="order-timer text-danger">23分01秒</span>
-          内完成支付，否则订单会被自动取消
-        </div>
-
-        <span
-          :class="['right', { 'text-blue': showDetail }]"
-          @click="viewDetail"
-          >订单详情
-          <svg-icon v-if="showDetail" name="icon-shang"></svg-icon>
-          <svg-icon v-else name="icon-xia"></svg-icon>
-        </span>
-      </div>
-      <el-divider></el-divider>
-      <div class="order-detail" v-show="showDetail">
-        <p>
-          <span
-            >收货地址：北京朝阳区小红门乡小红门鸿博家园D区7号楼2单元2301</span
-          >
-          <span>收货人：**绪</span>
-          <span>****2562</span>
-        </p>
-        商品名称：大艺电动扳手2106-5无刷锂电扳手电动螺丝刀冲击扳手套筒起子工具冲击钻无线钻孔机手持家用手电钻工具
-        无刷扳手（88F双电标配+套筒礼包）,德阳酱油 树德森酱油
-        纯粮酿造味极鲜调味汁 原味晒露黄豆酱油1.8L/瓶 720天阳光自然酿造
-        黄豆酱油680ml+陈醋680ml【2瓶组合装
-      </div>
+      <corderinfo :orderInfo="orderInfo" :orderDetail="orderDetail"></corderinfo>
       <el-card class="box-card" style="margin-left: 40px; margin-top: 20px">
         <p class="pay-title">
           <strong>微信支付</strong>
@@ -76,8 +38,15 @@
         </div>
         <div class="offline-wrapper">
           <div>
-            <p class="offline-title"><strong>西联支付</strong></p>
+            <p class="offline-title">
+              <strong>{{ payInfo.payName }}</strong>
+            </p>
             <div class="oreveiver-list">
+              <!-- <div class="oreceiver-item" v-for="item in payeeList" :key="item.id">
+                <span class="item-title"> {{item.attrName}}</span>
+                <span>{{item.attrValue}}</span>
+              </div> -->
+
               <div class="oreceiver-item">
                 <span class="item-title"> First Name:</span>
                 <span>hua</span>
@@ -106,7 +75,7 @@
               </div>
             </div>
 
-            <div class="oreveiver-list">
+            <!-- <div class="oreveiver-list">
               <div class="oreceiver-item">
                 <span class="item-title"> Beneficiary’s Bank：:</span>
                 <span>hua</span>
@@ -129,13 +98,19 @@
                 <span class="item-title">BANK Address：</span>
                 <span>dddddddd</span>
               </div>
-            </div>
+            </div> -->
             <div style="clear: both"></div>
             <el-divider></el-divider>
-            <p class="offline-subtitle">Western Union info of Sender</p>
+            <p class="offline-subtitle">{{ payInfo.payName }} info of Sender</p>
           </div>
           <!-- 西联支付+速汇金表单 -->
-          <el-form ref="form" :model="form" label-width="120px" :rules="rules" style="width:600px;margin:0 auto">
+          <el-form
+            ref="form"
+            :model="form"
+            label-width="120px"
+            :rules="rules"
+            style="width: 600px; margin: 0 auto"
+          >
             <el-row>
               <el-col :span="11">
                 <el-form-item label="First Name" prop="firstname">
@@ -180,12 +155,20 @@
               <el-button type="primary" @click="onSubmit"
                 >Complete Order Now</el-button
               >
-              <el-button @click="$router.push('')">Pay Later</el-button>
+              <el-button @click="$router.push('/payment/pay')"
+                >Pay Later</el-button
+              >
             </el-form-item>
           </el-form>
 
           <!-- 银行转账表单 -->
-          <el-form ref="bankform" :model="bankform" label-width="170px" :rules="bankrules" style="width:500px;margin:0 auto">
+          <el-form
+            ref="bankform"
+            :model="bankform"
+            label-width="170px"
+            :rules="bankrules"
+            style="width: 500px; margin: 0 auto"
+          >
             <el-form-item label="Bank Transaction No." prop="number">
               <el-input v-model="bankform.number"></el-input>
             </el-form-item>
@@ -202,7 +185,9 @@
               <el-button type="primary" @click="onSubmit"
                 >Complete Order Now</el-button
               >
-              <el-button @click="$router.push('')">Pay Later</el-button>
+              <el-button @click="$router.push('/order/list')"
+                >Pay Later</el-button
+              >
             </el-form-item>
           </el-form>
         </div>
@@ -215,6 +200,7 @@
   </div>
 </template>
 <script>
+import corderinfo from './components/orderinfo.vue'
 export default {
   data() {
     return {
@@ -293,8 +279,7 @@ export default {
             trigger: "blur",
           },
         ],
-       
-        
+
         currency: [
           { required: true, message: "请输入币种", trigger: "blur" },
           {
@@ -304,7 +289,6 @@ export default {
             trigger: "blur",
           },
         ],
-        
       },
       form: {
         firstname: "",
@@ -316,19 +300,26 @@ export default {
         contents: "",
       },
       bankform: {
-          number: '',
-          money: '',
-          currency: '',
-          contents: '',
-          },
-      showDetail: false,
+        number: "",
+        money: "",
+        currency: "",
+        contents: "",
+      },
+      payInfo: {},
+      payeeList: [],
+      orderInfo: {},
+      orderDetail: {},
     };
+  },
+  components:{
+    corderinfo
   },
   methods: {
     onSubmit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
           alert("submit!");
+          this.$router.push("/payment/result");
         } else {
           console.log("error submit!!");
           return false;
@@ -343,7 +334,70 @@ export default {
       }
     },
   },
-  mounted() {},
+  mounted() {
+    let data = {
+      payId: 23456,
+      payName: "Western Union",
+      qrEffectiveTime: 23145476,
+      qrImg: "../二维码.png",
+      payeeList: [
+        {
+          attrName: "配置名称",
+          attrValue: "属性值",
+        },
+      ],
+    };
+    this.payInfo = data;
+    this.payeeList = data.payeeList;
+
+    //data
+    let data2 = {
+      orderId: 88,
+      userId: 99,
+      userName: "小明",
+      orderNo: "202105111523178740",
+      amount: 2420.0,
+      currencySymbol: "￥",
+      createTime: 23454567879,
+      failureTime: 3600,
+      payType: 0,
+      payList: [
+        {
+          id: 1,
+          payName: "微信支付",
+          payImg: "../../../src/assets/images/vchat.png",
+        },
+        {
+          id: 2,
+          payName: "支付宝",
+          payImg: "../../assets/images/alipay.png",
+        },
+        {
+          id: 3,
+          payName: "paypal",
+          payImg: "../../assets/images/paypal.png",
+        },
+      ],
+      orderDetail: {
+        id: 123,
+        consigneeName: "收货人名称",
+        consigneeProvince: "省",
+        consigneeCity: "市",
+        consigneeCounty: "区",
+        consigneeAddr: "详细地址值",
+        consigneePhoneHead: "0086",
+        consigneePhone: 18636908524,
+        productName: ["商品名称", "手机", "电脑", "电动车"],
+      },
+    };
+    // for(let i in data){
+    //  this.$set(this.orderInfo,i,data[i])
+    // }
+    this.orderInfo = data2
+    this.orderDetail = data2.orderDetail;
+    this.payList = data2.payList;
+    console.log(this.orderInfo);
+  },
 };
 </script>
 <style scoped>

@@ -22,88 +22,25 @@
       <div :class="['address-list', { 'show-detail': showAInfo }]">
         <p style="color: #f56c6c" v-show="showAddATip">请添加收货信息</p>
         <div class="address-group">
-          <div class="address-item">
-            <span class="name active">dasiy</span>
+          <div v-for="(item,index) in addressList" :key="item.id" :class="['address-item',{'active':item.active}]" @click="choseAddress(index)">
+            <span class="name ">{{item.consigneeName}}</span>
             <div class="more">
-              <span>dasiy</span>
-              <span>内蒙古</span>
-              <span>鄂尔多斯市</span>
-              <span>达拉特旗</span>
-              <span>美好小区2303</span>
-              <span>18599898987</span>
+              <span>{{item.consigneeName}}</span>
+              <span>{{item.consigneeCountry}}</span>
+              <span>{{item.consigneeProvince}}</span>
+              <span>{{item.consigneeCity}}</span>
+              <span>{{item.consigneeAddr}}</span>
+              <span>{{item.consigneePhone}}</span>
+              <span v-if="item.isDefault" class="default-address-icon">默认地址</span>
             </div>
             <div class="address-btns">
-              <el-button type="text" size="mini">设为默认</el-button>
+              <el-button v-if="!item.isDefault" type="text" size="mini">设为默认</el-button>
               <el-button type="text" size="mini">编辑</el-button>
               <el-button type="text" size="mini">删除</el-button>
             </div>
           </div>
-          <div class="address-item">
-            <span class="name active">dasiy</span>
-            <div class="more">
-              <span>dasiy</span>
-              <span>内蒙古</span>
-              <span>鄂尔多斯市</span>
-              <span>达拉特旗</span>
-              <span>美好小区2303</span>
-              <span>18599898987</span>
-            </div>
-            <div class="address-btns">
-              <el-button type="text" size="mini">设为默认</el-button>
-              <el-button type="text" size="mini">编辑</el-button>
-              <el-button type="text" size="mini">删除</el-button>
-            </div>
-          </div>
-          <div class="address-item">
-            <span class="name active">dasiy</span>
-            <div class="more">
-              <span>dasiy</span>
-              <span>内蒙古</span>
-              <span>鄂尔多斯市</span>
-              <span>达拉特旗</span>
-              <span>美好小区2303</span>
-              <span>18599898987</span>
-            </div>
-            <div class="address-btns">
-              <el-button type="text" size="mini">设为默认</el-button>
-              <el-button type="text" size="mini">编辑</el-button>
-              <el-button type="text" size="mini">删除</el-button>
-            </div>
-          </div>
-          <div class="address-item">
-            <span class="name active">dasiy</span>
-            <div class="more">
-              <span>dasiy</span>
-              <span>内蒙古</span>
-              <span>鄂尔多斯市</span>
-              <span>达拉特旗</span>
-              <span>美好小区2303</span>
-              <span>18599898987</span>
-            </div>
-            <div class="address-btns">
-              <el-button type="text" size="mini">设为默认</el-button>
-              <el-button type="text" size="mini">编辑</el-button>
-              <el-button type="text" size="mini">删除</el-button>
-            </div>
-          </div>
-          <div class="address-item">
-            <span class="name active">dasiy</span>
-            <div class="more">
-              <span>dasiy</span>
-              <span>内蒙古</span>
-              <span>鄂尔多斯市</span>
-              <span>达拉特旗</span>
-              <span>美好小区2303</span>
-              <span>18599898987</span>
-            </div>
-            <div class="address-btns">
-              <el-button type="text" size="mini">设为默认</el-button>
-              <el-button type="text" size="mini">编辑</el-button>
-              <el-button type="text" size="mini">删除</el-button>
-            </div>
-          </div>
+          
         </div>
-       
       </div>
       <p class="show-more" @click="showAddress">
         <span v-show="showAInfo">
@@ -116,31 +53,31 @@
       <el-divider></el-divider>
       <p><strong>配送方式</strong></p>
 
-      <el-radio-group v-model="radio">
-        <el-radio :label="3">备选项</el-radio>
-        <el-radio :label="6">备选项</el-radio>
-        <el-radio :label="9">备选项</el-radio>
+      <el-radio-group v-model="distributionVal">
+        <el-radio
+          v-for="item in distributionList"
+          :key="item.id"
+          :label="item.id"
+          >{{ item.name }}</el-radio
+        >
       </el-radio-group>
-
       <el-divider></el-divider>
       <p><strong>支付方式</strong></p>
-      <el-radio-group v-model="radio">
-        <el-tooltip
-          class="item"
-          effect="light"
-          content="即时到账，支持支付宝、微信、Paypal等支付方式"
-          placement="bottom-end"
-        >
-          <el-radio :label="3"
-            >备选项 <i class="el-icon-question"></i
-          ></el-radio>
-        </el-tooltip>
-
-        <el-radio :label="6">备选项</el-radio>
-        <el-radio :label="9">备选项</el-radio>
+      <el-radio-group v-model="payVal">
+        <el-radio v-for="item in payList" :key="item.type" :disabled="!item.isAvailable" :label="item.type"
+          >{{ item.typeName }}
+          <el-tooltip
+            class="item"
+            effect="light"
+            :content="item.prompt"
+            placement="bottom-end"
+          >
+            <svg-icon name="icon-wenhao"></svg-icon>
+          </el-tooltip>
+        </el-radio>
       </el-radio-group>
       <el-divider></el-divider>
-      <product-list :productList="productlist"></product-list>
+      <product-list :productList="productlist" :currencySymbol="currency"></product-list>
       <p><strong>发票信息</strong></p>
       <div>
         电子发票
@@ -165,22 +102,22 @@
       </el-input>
       <el-divider></el-divider>
       <div style="float: right; text-align: right; line-height: 24px">
-        共 <span class="text-danger">3</span> 件商品<br />
-        商品总额： <span>¥ 300.00</span><br />
-        运费总计： <span>¥ 5.00</span>
+        共 <span class="text-danger">{{totalNum}}</span> 件商品<br />
+        商品总额： <span>{{currency}} {{totalPrice}}</span><br />
+        运费总计： <span>{{currency}} {{freight}}</span>
       </div>
       <div style="clear: both"></div>
     </div>
     <div class="order-foot background-grey text-grey">
       <div class="foot-price">
         <strong class="text-normal">实付：</strong
-        ><span class="text-danger">¥350.00</span>
+        ><span class="text-danger">{{currency}}{{realPayment}}</span>
       </div>
       <div>寄送至：北京 大兴区 亦庄经济开发区 地盛西路1号数码庄园</div>
       <div>收货人：Daisy 182****4241</div>
     </div>
     <div class="trade-btn">
-      <el-button type="primary">提交订单</el-button>
+      <el-button type="primary" @click="submit">提交订单</el-button>
     </div>
     <receipt ref="getReceipt"></receipt>
     <address-form ref="address"></address-form>
@@ -192,6 +129,8 @@ import receipt from "./components/receipt";
 
 import productList from "@/views/components/productList";
 import addressForm from "@/views/components/addressForm";
+
+// import { getdata1 } from "@/api/settlement";
 export default {
   data() {
     return {
@@ -235,6 +174,76 @@ export default {
           productUrl: "/product/144. html",
         },
       ],
+      distributionVal: "",
+      distributionList: [
+        {
+          id: 1,
+          name: "快递发货",
+        },
+      ],
+      payVal: "",
+      payList: [
+        {
+          id: 402,
+          type: 0,
+          typeName: "在线支付",
+          prompt: "即时到账，支持支付宝、微信、Paypal等支付方式",
+          isAvailable:true
+        },
+        {
+          id: 403,
+          type: 1,
+          typeName: "线下支付",
+          prompt: "即时到账，支持支付宝、微信、Paypal等支付方式",
+          isAvailable:true
+        },
+        {
+          id: 404,
+          type: 2,
+          typeName: "货到付款",
+          prompt: "即时到账，支持支付宝、微信、Paypal等支付方式",
+          isAvailable:false
+        },
+      ],
+      addressList: [
+        {
+          id: 1,
+          consigneeName: "小明是收货人",
+          consigneeCountry: "中国",
+          consigneeProvince: "河南省",
+          consigneeCity: "新乡市",
+          consigneeCounty: "辉县市",
+          consigneeAddr: "百泉镇御龙湾",
+          consigneeZipCode: 453600,
+          consigneePhoneHead: 222,
+          consigneePhone: 18365478219,
+          consigneeTelHead: 373,
+          consigneeTel: 6769083,
+          isDefault: true,
+          active:true
+        },
+        {
+          id: 2,
+          consigneeName: "小明是收货人2",
+          consigneeCountry: "中国",
+          consigneeProvince: "河南省",
+          consigneeCity: "新乡市",
+          consigneeCounty: "辉县市",
+          consigneeAddr: "百泉镇御龙湾",
+          consigneeZipCode: 453600,
+          consigneePhoneHead: 222,
+          consigneePhone: 18365478219,
+          consigneeTelHead: 373,
+          consigneeTel: 6769083,
+          isDefault: false,
+          active:false
+        }
+      ],
+      freight:0,
+      realPayment:0,
+      totalNum:10,
+      totalPrice:1233.0,
+      currency:"¥"
     };
   },
   components: {
@@ -243,7 +252,53 @@ export default {
     addressForm,
     productList,
   },
-  mounted() {},
+  mounted() {
+    // getdata1().then((res) => {
+    //   if (res.data.success) {
+    //     let data = res.data.data;
+    //     if ("distributionList" in data.distributionList) {
+    //       this.distributionList = data.distributionList;
+    //     }
+    //   }
+    // });
+    this.distributionVal = this.distributionList[0].id;
+    this.payVal = this.payList[0].type;
+    let data1 = {
+      // 物流信息集合
+      distributionList: [
+        {
+          id: 1,
+          name: "快递发货",
+        },
+      ],
+      // 支付方式集合
+      payList: [
+        {
+          id: 1,
+          type: 0,
+          typeName: "在线支付",
+          prompt: "即时到账，支持支付宝、微信、Paypal等支付方式",
+          isAvaiable:true
+        },
+
+        {
+          id: 1,
+          type: 1,
+          typeName: "线下支付",
+          prompt: "即时到账，支持支付宝、微信、Paypal等支付方式",
+          isAvaiable:true
+        },
+
+        {
+          id: 1,
+          type: 2,
+          typeName: "货到付款",
+          prompt: "即时到账，支持支付宝、微信、Paypal等支付方式",
+          isAvaiable:true
+        },
+      ],
+    };
+  },
   methods: {
     openAddress(type) {
       this.$refs.address.dialogFormVisible = true;
@@ -259,6 +314,19 @@ export default {
     openReceipt() {
       this.$refs.getReceipt.dialogVisible = true;
     },
+    choseAddress(index){
+      for(let i=0;i<this.addressList.length;i++){
+        this.addressList[i].active = false;
+      }
+      this.addressList[index].active = true;
+      let activeItem = JSON.stringify(this.addressList[index]);
+      this.addressList.splice(index,1)
+      this.addressList.unshift(JSON.parse(activeItem))
+
+    },
+    submit(){
+      this.$router.push({path:'/payment/pay',query:{payVal:this.payVal}})
+    }
   },
 };
 </script>
@@ -269,6 +337,7 @@ export default {
 .address-item {
   display: flex;
   margin: 10px 0;
+  cursor: pointer;
 }
 .address-item .more {
   max-width: 600px;
@@ -286,7 +355,10 @@ export default {
 .address-item:hover {
   background-color: #ecf5ff;
 }
-.address-item .active {
+.address-item.active{
+  background-color: #ecf5ff;
+}
+.address-item.active .name{
   border: 1px solid #409eff;
   position: relative;
   overflow: hidden;
@@ -295,7 +367,7 @@ export default {
   flex: 1;
   text-align: right;
 }
-.address-item .active::after {
+.address-item.active .name::after {
   content: "";
   display: block;
   width: 16px;
@@ -308,7 +380,7 @@ export default {
   right: 0;
   z-index: 1;
 }
-.address-item .active::before {
+.address-item.active .name::before {
   content: "";
   display: block;
   width: 4px;
@@ -357,7 +429,7 @@ export default {
   text-align: right;
 }
 .address-list {
-height: 45px;
+  height: 45px;
   overflow: hidden;
 }
 .show-detail {
@@ -434,6 +506,7 @@ height: 45px;
   padding: 2px 4px;
   color: white;
   font-style: normal;
+  font-size: 12px;
 }
 </style>
 
