@@ -1,16 +1,16 @@
 const Mock = require('mockjs')
 
 const data = Mock.mock({
-    data: {
-        orderStatusFlow: 0,
-        paymentTypeName: "货到付款",
-        totalAmount: 1210.0,
+    data: {    
+        "orderStatus": 1,
+        "paymentTypeName": "货到付款",
+        "totalAmount": 1210.0,
         // 订单日志
-        logList: [{
+        "logList": [{
             time: 123456849879564,
             content: "订单创建成功！"
         }],
-        order: {
+        "order": {
             "id": 87,
             "currencySymbol": "￥",
             "orderNumber": 202105111500398400,
@@ -44,16 +44,17 @@ const data = Mock.mock({
             }],
             "LogsList": [{
                 "remark": "订单创建",
-                "createTime": 123165465468798
+                "createTime": 1623122346000
             }],
-            "invoice" : {
-                "id" : 1234,
-                "invoiceTitle":1,
-                "taxNum":"公司名称",
-                "takerPhoneHead":"0086",
-                "takerPhone":13500402886,
-                "takerEmail":"zhongqi@300.cn",
-                "invoiceDownLink":"电子发票下载链接",
+            "invoice" : {    
+              "id" : 1234,
+              "invoiceTitle":1,
+              "taxpayerNum":"纳税人识别号",
+              "invoiceContent" :"发票内容",
+              "takerPhone":"+8613500402886",
+              "takerEmail":"zhongqi@300.cn",
+              "invoiceDownLink":"电子发票下载链接"
+        
             },
             "sellerMsg" : "给卖家的留言"
         }

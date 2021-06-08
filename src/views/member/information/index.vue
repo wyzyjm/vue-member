@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
-    <page-title :pagetitle='title'>
+    <PageTitle :pagetitle='title'>
 			<!-- <slot slot="slot">搜索</slot> -->
-		</page-title>
-    <div class="content">
+		</PageTitle>
+    <div class="content" v-if="data">
         <!-- 头像 -->
         <div class="block user">
             <el-image
@@ -11,7 +11,7 @@
             class="uimges"
             @click="vicpWarpShow = true"></el-image>
           <div class="username">
-              <p class="member-order"><svg-icon name="icon-huiyuan" class="icon"></svg-icon>{{data.user.levelName}}</p>
+              <p class="member-order"><SvgIcon name="icon-huiyuan" class="icon"></SvgIcon>{{data.user.memberLevel}}</p>
               <p>{{data.user.userName}}</p>
           </div>
         </div>
@@ -34,7 +34,7 @@
           <div class="item">
             <p>
               <span>手机</span>
-              <span>{{data.user.phone ? data.user.phone : '还没有手机号'}}</span>
+              <span>{{data.user.phoneHead}}{{data.user.phone ? data.user.phone : '还没有手机号'}}</span>
             </p>
             <div>
               <el-button type="text" @click="setting">更换手机</el-button>
@@ -109,15 +109,15 @@
 
 <script>
 import { getInformation } from '@/api/table'
-import pageTitle from "@/views/components/pageTitle"
-import svgIcon from '@/components/SvgIcon'
+import PageTitle from "@/views/components/pageTitle"
+import SvgIcon from '@/components/SvgIcon'
 import imagesUpload from './components/imagesUpload'
 import modify from './components/modify'
 
 export default {
   components: { 
-    pageTitle,
-    svgIcon,
+    PageTitle,
+    SvgIcon,
     imagesUpload,
     modify
   },

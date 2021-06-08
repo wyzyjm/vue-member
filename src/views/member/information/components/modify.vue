@@ -5,7 +5,7 @@
                 <span>昵称填写</span>
                 <i class="vicp-close" @click="off"><i class="vicp-icon4"></i></i>
             </div>
-            <div class="modify-cont">
+            <div class="modify-cont" v-if="form">
                 <el-form 
                 ref="form" 
                 :model="form" 
@@ -131,6 +131,22 @@ export default {
         }
     },
 	data() {
+        // 校验 手机号
+        var checkPhone = (rule, value, callback) => {
+        if (value && !/^\d{11}$/.test(value)) {
+            return callback(new Error("请输入正确的手机号码"));
+        } else {
+            callback();
+        }
+        };
+        // 校验 固定电话
+        var checkTel = (rule, value, callback) => {
+        if (!/^\d{7,8}$/.test(value)) {
+            return callback(new Error("请输入正确的电话号码"));
+        } else {
+            callback();
+        }
+        };
 		return {
             form: {
                 name: '',

@@ -1,23 +1,23 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" v-if="data">
       订单详情
     <!-- 进度条 -->
-    <ce-steps :active="data.orderStatusFlow+1" :datalist="datalist" class="border-bottom"></ce-steps>
+    <CeSteps :active="data.orderStatus+1" :datalist="datalist" class="border-bottom"/>
 
     <!-- 订单编号、按钮 -->
     <div class="order-type">
       <div>订单号：{{data.order.orderNumber}}</div>
       <div
-      v-if="data.orderStatusFlow == 1"
+      v-if="data.orderStatus == 0"
       class="col-danger"
-      ><svg-icon name="icon-shijian"></svg-icon>剩余0时29分</div>
-      <div>订单状态：<span class="font-20 col-danger">{{data.orderStatusFlow}}</span></div>
+      ><SvgIcon name="icon-shijian"/>剩余0时29分</div>
+      <div>订单状态：<span class="font-20 col-danger">{{statePayment[data.orderStatus].type}}</span></div>
       <div>
-        <el-button v-if="data.orderStatusFlow == 0 || data.paymentTypeName == '货到付款'" type="text">取消订单</el-button>
-        <el-button type="primary" plain>查看发票信息</el-button>
-        <el-button v-if="data.orderStatusFlow == 0" type="primary" plain @click="showDialog('edit')">修改地址</el-button>
-        <el-button v-if="data.orderStatusFlow == 0" type="primary">付款</el-button>  
-        <el-button v-if="data.orderStatusFlow == 2" type="primary">确认收货</el-button>  
+        <el-button v-if="data.orderStatus == 0 || data.paymentTypeName == '货到付款'&&data.orderStatus == 1 " type="text" @click.prevent="cancelOrder('id')">取消订单</el-button>
+        <el-button type="primary" plain @click="dialogTableVisible = true">查看发票信息</el-button>
+        <el-button v-if="data.orderStatus == 0" type="primary" plain @click="showDialog('edit')">修改地址</el-button>
+        <el-button v-if="data.orderStatus == 0" type="primary">付款</el-button>  
+        <el-button v-if="data.orderStatus == 2" type="primary">确认收货</el-button>  
       </div>
     </div>
 
@@ -45,14 +45,14 @@
           <p>配送方式：{{data.order.logName}}</p>
         </div>
       </li>
-      <li class="detail-item">
+      <li class="detail-item" v-if="data.orderStatus > 1 && data.paymentTypeName != '货到付款'">
         <p class="title">物流信息</p>
         <div class="item-list">
           <el-timeline :reverse="reverse">
             <el-timeline-item
               v-for="(activity, index) in data.order.LogsList"
               :key="index"
-              :timestamp="activity.createTime">
+              :timestamp="formatDate(activity.createTime)">
               {{activity.remark}}
             </el-timeline-item>
           </el-timeline>
@@ -64,7 +64,9 @@
     <div class="border">
       <p class="title">商品清单/结算信息</p>
       <div class="product-list">
-        <product-list :productList="data.order.orderProductSkuList" :currencySymbol="data.order.currencySymbol"></product-list>
+        <ProductList
+        :productList="data.order.orderProductSkuList"
+        :currencySymbol="data.order.currencySymbol"/>
         <div class="message-board">
           <div>
             <p>给卖家留言</p>
@@ -86,21 +88,42 @@
       @confirm="confirmDialog"
     ></AddressForm>
 
+    <!-- 查看发票信息 -->
+    <el-dialog center title="发票信息" :visible.sync="dialogTableVisible">
+        <div class="invoice">
+          <p class="invoice-item"><span>发票抬头</span><span>{{data.order.invoice.invoiceTitle}}</span></p>
+          <p class="invoice-item"><span>纳税人识别号</span><span>{{data.order.invoice.taxpayerNum}}</span></p>
+          <p class="invoice-item"><span>发票内容</span><span>{{data.order.invoice.invoiceContent}}</span></p>
+          <p class="invoice-item"><span>收票人手机</span><span>{{data.order.invoice.takerPhone}}</span></p>
+          <p class="invoice-item"><span>收票人邮箱</span><span>{{data.order.invoice.takerEmail}}</span></p>
+        </div>
+        <div slot="footer">
+          <!-- 取消 -->
+          <el-button type="info" size="medium" @click="dialogTableVisible = false">关闭</el-button>
+          <!-- 确定 -->
+          <el-button
+            v-if="data.orderStatus == 0"
+            type="primary"
+            size="medium"
+            >修改</el-button>
+        </div>
+    </el-dialog>
+
   </div>
 </template>
 <script>
 import { getDetail } from '@/api/table'
-import ceSteps from '@/components/CeSteps'
-import svgIcon from '@/components/SvgIcon'
+import CeSteps from '@/components/CeSteps'
+import SvgIcon from '@/components/SvgIcon'
 import AddressForm from "@/views/components/addressForm"; // 收货人地址弹窗
-import productList from '@/views/components/productList'
+import ProductList from '@/views/components/productList'
 
 export default {
   components: {
-    ceSteps,
-    svgIcon,
+    CeSteps,
+    SvgIcon,
     AddressForm,
-    productList
+    ProductList
   },
   data() {
     return {
@@ -108,6 +131,7 @@ export default {
       data: null,
       current: {}, // 弹窗传值
       currencySymbol: null,
+      dialogTableVisible: false,
       datalist: [
         {
           title: "提交订单",
@@ -126,6 +150,24 @@ export default {
           description: "",
         },
       ],
+      // 订单状态
+      statePayment: {
+        0: {
+          type: '待付款'
+        },
+        1: {
+          type: '待发货'
+        },
+        2: {
+          type: '待收货'
+        },
+        3: {
+          type: '已完成'
+        },
+        4: {
+          type: '已关闭'
+        }
+      },
       reverse: true,
       // activities: [],
       paymentData: [
@@ -173,6 +215,40 @@ export default {
       // this.current = JSON.parse(JSON.stringify(item)); // 赋值
       // this.showDialog("edit");
     },
+    // 取消订单
+    cancelOrder(id) {
+      console.log(id);
+      this.$confirm('确定取消该订单？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(() => {
+          console.log('确认成功!');
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消操作'
+          });          
+        });
+    },
+    //时间转换
+    toDou(n){
+          return n<10?'0'+n:''+n;
+     },
+    formatDate(date) {
+        date = new Date(Number(date));
+        var o = {
+            "Y": date.getFullYear(),
+            "M": date.getMonth() + 1,                 //月份 
+            "d": date.getDate(),                    //日 
+            "h": date.getHours(),                   //小时 
+            "m": date.getMinutes(),                 //分 
+            "s": date.getSeconds(),                 //秒 
+            "q": Math.floor((date.getMonth() + 3) / 3), //季度 
+            "S": date.getMilliseconds()             //毫秒 
+        };
+        let time = `${o.Y}-${this.toDou(o.M)}-${this.toDou(o.d)}  ${this.toDou(o.h)}:${this.toDou(o.m)}:${this.toDou(o.s)}`
+        return time;
+    }
   }
 }
 </script>
@@ -230,6 +306,10 @@ ul,li{
   padding: 10px;
   margin: 20px 10px;
   overflow-y: auto;
+  border-right: 1px solid #C0C4CC;
+}
+.detail-item:last-child .item-list{
+  border-right: none;
 }
 .item-list::-webkit-scrollbar {
     width: 8px;
@@ -274,6 +354,17 @@ ul,li{
 }
 .message-pay{
   text-align: right;
+}
+.invoice{
+  min-height: 150px;
+  margin-left: 25%;
+  line-height: 2.5;
+}
+.invoice-item span:nth-child(1){
+  width: 120px;
+  text-align: right;
+  display: inline-block;
+  margin-right: 10px;
 }
 </style>
 

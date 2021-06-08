@@ -3,9 +3,10 @@ const Mock = require('mockjs')
 const data = Mock.mock({
     data: {
         user: {
-            "userId": "@id",
-            "levelId": 34,
-            "levelName": "黄金会员",
+            "userId": "@id",        
+            "memberId": 34,
+            "memberIcon" : "图标图片地址",
+            "memberLevel" : "黄金会员",
             "userName": "用户名",
             "nickName": "昵称",
              "name": "姓名",
@@ -21,7 +22,7 @@ const data = Mock.mock({
             "attrId": "@id",
             "attrName": "自定义属性名称",
             "attrValue": "属性值", 
-            "attrDetailType": 0,
+            "attrType": 0,
             "attrDetailType": "text",
             "description": "提示语",
             "optionsData": "篮球,乒乓球,羽毛球,各种球", 

@@ -1,13 +1,13 @@
 <template>
   <div class="app-container">
-    <page-title :pagetitle='title'>
+    <PageTitle :pagetitle='title'>
       <slot slot="slot">
         <div class="search">
           <el-input class="input_inner" placeholder="商品名称/商品编号/订单号" v-model="searchVal"></el-input>
           <el-button class="get-code-btn" icon="el-icon-search"></el-button>
         </div>
       </slot>
-		</page-title>
+		</PageTitle>
     <div>
 
       <el-tabs @tab-click="handleClick" class="tabs">
@@ -34,12 +34,12 @@
 </template>
 <script>
 import { getList } from '@/api/table'
-import pageTitle from '@/views/components/pageTitle'
+import PageTitle from '@/views/components/pageTitle'
 import listItem from './components/list-item'
 
 export default {
   components: {
-    pageTitle,
+    PageTitle,
     listItem
   },
   data() {
