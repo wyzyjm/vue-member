@@ -253,6 +253,8 @@
 </template> 
 <script>
 import pageTitle from "../components/pageTitle";
+import {cartData} from "@/api/cart"
+import {getList} from "@/api/table"
 export default {
 	data() {
 		return {
@@ -359,7 +361,12 @@ export default {
 	},
 	methods: {
 		//初始化数据
-		renderData() {
+		 renderData() {
+			 
+			 cartData({tenantId:1600018169}).then(res =>{
+				 console.log(res)
+			 })
+			//let res = await cartLists({tenantId:1600018169})
 			this.data.shoppingCartList.forEach((e) => {
 				if (e.statusTip == 3) {
 					this.cartList.push(e);

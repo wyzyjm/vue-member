@@ -36,6 +36,16 @@ module.exports = {
       warnings: false,
       errors: true
     },
+    proxy: {
+      "/api": {
+          target: "http://172.22.146.56:8888/", //要跨域的域名 目标地址
+          changeOrigin: true, //是否开启跨域  是否更改源路径
+          ws: true,
+          pathRewrite: {
+              "^/fwebapi": ""  // /api/ / 凡是/api开头的地址都可以跨域
+          }
+      }
+  },
     before: require('./mock/mock-server.js')
   },
   configureWebpack: {
