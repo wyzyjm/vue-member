@@ -23,3 +23,10 @@ export function getInformation(params) {
     params
   })
 }
+export function memberDetail(params) {
+  return request({
+    url: '/fwebapi/member/detail/getMemberDetail',
+    method: 'get',
+    params
+  })
+}
