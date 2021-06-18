@@ -16,6 +16,9 @@ const name = defaultSettings.title || '会员中心' // page title
 const port = process.env.port || process.env.npm_config_port || 9528 // dev port
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
+
+
+
 module.exports = {
   /**
    * You will need to set publicPath if you plan to deploy your site under a sub path,
@@ -29,25 +32,8 @@ module.exports = {
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
-  devServer: {
-    port: port,
-    open: true,
-    overlay: {
-      warnings: false,
-      errors: true
-    },
-    proxy: {
-      "/api": {
-          target: "http://172.22.146.56:8888/", //要跨域的域名 目标地址
-          changeOrigin: true, //是否开启跨域  是否更改源路径
-          ws: true,
-          pathRewrite: {
-              "^/fwebapi": ""  // /api/ / 凡是/api开头的地址都可以跨域
-          }
-      }
-  },
-    before: require('./mock/mock-server.js')
-  },
+ 
+ 
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
