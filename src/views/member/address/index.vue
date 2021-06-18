@@ -103,6 +103,15 @@
 <script>
 import PageTitle from "@/views/components/pageTitle"; // 头部
 import AddressForm from "@/views/components/addressForm"; // 收货人地址弹窗
+
+import {
+  getAddressList,
+  addAddressList,
+  setAddressList,
+  deleteAddressList,
+  eidtAddressList,
+} from "@/api/address"; // 购物车api
+
 export default {
   data() {
     return {
@@ -174,11 +183,21 @@ export default {
     PageTitle,
     AddressForm,
   },
+  created(){
+    this.getList()
+  },
   methods: {
+    // 租户id 1600018169
     // 获取地址列表
-    getList() {
+    async getList() {
       // 发起请求,重新渲染数据
       // this.logisticsInfoList = 后台返回值
+      try {
+        const {data : res} = await getAddressList({ tenantId: 1600018169 });
+        console.log(res);
+      } catch (error) {
+        console.log(error);
+      }
     },
     // 设为默认地址
     setDefault(id) {
