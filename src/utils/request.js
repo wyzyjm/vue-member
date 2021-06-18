@@ -9,7 +9,7 @@ const service = axios.create({
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
-
+service.defaults.headers.post['Content-Type'] = 'application/json'
 // request interceptor
 service.interceptors.request.use(
   config => {
