@@ -155,7 +155,7 @@ export default {
     },
     // 新增收货地址
     async addAddress() {
-      var num = 2;
+      var num = 3;
       const data = {
         consigneeCountry: "中国",
         consigneeAddr: "详细地址",
@@ -169,7 +169,7 @@ export default {
         consigneeTel: "6769038",
         consigneeTelHead: "8633",
         consigneeZipCode: "453600",
-        receiverTitle: "新增",
+        receiverCode: "新增",
       };
       try {
         const { status } = await addAddressList(data);
@@ -246,37 +246,36 @@ export default {
 
     // 编辑
     async eidtAddress(item) {
-      // this.current = JSON.parse(JSON.stringify(item)); // 赋值
-      // this.showDialog("edit");
+      this.current = JSON.parse(JSON.stringify(item)); // 赋值
+      this.showDialog("edit");
 
       // const copyItem = JSON.parse(JSON.stringify(item))
       // copyItem.receiverCode = copyItem.id
       // copyItem.consigneeName ="我是编辑后的名字"
-      console.log(item);
-      const copyItem = {
-        consigneeProvince: item.consigneeProvince + "修改",
-        consigneeAddr: item.consigneeAddr + "修改了一下",
-        consigneeCity: item.consigneeCity,
-        consigneeCountry: item.consigneeCountry,
-        consigneeCounty: item.consigneeCounty,
-        consigneeName: "我是编辑后的名字",
-        consigneePhone: item.consigneePhone,
-        consigneePhoneHead: item.consigneePhoneHead,
-        consigneeTel: item.consigneeTel,
-        consigneeTelHead: item.consigneeTelHead,
-        consigneeZipCode: item.consigneeZipCode,
-        receiverCode: item.id,
-      };
-      console.log(copyItem);
-      const params = {
-        tenantId: 1600018169,
-      };
-      try {
-        const res = await eidtAddressList(copyItem, params);
-        console.log(res);
-      } catch (error) {
-        console.log("修改失败", error);
-      }
+      // console.log(item);
+      // const copyItem = {
+      //   consigneeProvince: item.consigneeProvince + "修改",
+      //   consigneeAddr: item.consigneeAddr + "修改了一下",
+      //   consigneeCity: item.consigneeCity,
+      //   consigneeCountry: item.consigneeCountry,
+      //   consigneeCounty: item.consigneeCounty,
+      //   consigneeName: "我是编辑后的名字",
+      //   consigneePhone: item.consigneePhone,
+      //   consigneePhoneHead: item.consigneePhoneHead,
+      //   consigneeTel: item.consigneeTel,
+      //   consigneeTelHead: item.consigneeTelHead,
+      //   consigneeZipCode: item.consigneeZipCode,
+      //   receiverCode: item.id,
+      // };
+      // console.log(copyItem);
+      // try {
+      //   const res = await eidtAddressList(copyItem);
+      //   console.log(res);
+      //   if (res.status !== 200) return;
+      //   this.getList();
+      // } catch (error) {
+      //   console.dir("修改失败", error);
+      // }
     },
 
     // 弹窗 显示
