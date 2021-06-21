@@ -10,6 +10,7 @@ const service = axios.create({
   timeout: 5000 // request timeout
 })
 service.defaults.headers.post['Content-Type'] = 'application/json'
+service.defaults.headers.post['tenantId'] = 1600018169
 // request interceptor
 service.interceptors.request.use(
   config => {
@@ -21,6 +22,7 @@ service.interceptors.request.use(
       // please modify it according to the actual situation
       config.headers['X-Token'] = getToken()
     }
+   
     return config
   },
   error => {
