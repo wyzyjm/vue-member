@@ -98,11 +98,22 @@
       @confirm="confirmDialog"
     ></AddressForm>
     <!-- 收货人地址弹窗 结束 -->
+
+    <el-button type="primary" @click="addAddress">添加收货地址</el-button>
   </div>
 </template>
 <script>
 import PageTitle from "@/views/components/pageTitle"; // 头部
 import AddressForm from "@/views/components/addressForm"; // 收货人地址弹窗
+
+import {
+  getAddressList,
+  addAddressList,
+  setAddressList,
+  deleteAddressList,
+  eidtAddressList,
+} from "@/api/address"; // 购物车api
+
 export default {
   data() {
     return {
@@ -111,55 +122,7 @@ export default {
 
       // data
       // 收货地址信息列表
-      logisticsInfoList: [
-        {
-          id: 1,
-          consigneeName: "小明是收货人小明是收货人小明是收货人小明是收货人",
-          consigneeCountry: "中国",
-          consigneeProvince: "河南省",
-          consigneeCity: "新乡市",
-          consigneeCounty: "辉县市",
-          consigneeAddr:
-            "百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾",
-          consigneeZipCode: 453600,
-          consigneePhoneHead: "+86",
-          consigneePhone: 18365478219,
-          consigneeTelHead: "0373",
-          consigneeTel: 6769083,
-          isDefault: true,
-        },
-        {
-          id: 2,
-          consigneeName: "小红是收货人",
-          consigneeCountry: "中国",
-          consigneeProvince: "河南省",
-          consigneeCity: "新乡市",
-          consigneeCounty: "辉县市",
-          consigneeAddr:
-            "百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾百泉镇御龙湾",
-          consigneeZipCode: 453600,
-          consigneePhoneHead: "+86",
-          consigneePhone: 18365478219,
-          consigneeTelHead: "0373",
-          consigneeTel: 6769083,
-          isDefault: false,
-        },
-        {
-          id: 3,
-          consigneeName: "小黑是收货人",
-          consigneeCountry: "中国",
-          consigneeProvince: "河南省",
-          consigneeCity: "新乡市",
-          consigneeCounty: "辉县市",
-          consigneeAddr: "百泉镇御龙湾",
-          consigneeZipCode: 453600,
-          consigneePhoneHead: "+86",
-          consigneePhone: 18365478219,
-          consigneeTelHead: "0373",
-          consigneeTel: 6769083,
-          isDefault: false,
-        },
-      ],
+      logisticsInfoList: [],
 
       // 样式
       cardBody: {
@@ -170,32 +133,74 @@ export default {
       current: {}, // 弹窗传值
     };
   },
+  // 组件
   components: {
-    PageTitle,
-    AddressForm,
+    PageTitle, // 头部
+    AddressForm, // 编辑收货地址
+  },
+  created() {
+    this.getList(); // 获取收货地址
   },
   methods: {
     // 获取地址列表
-    getList() {
-      // 发起请求,重新渲染数据
-      // this.logisticsInfoList = 后台返回值
+    async getList() {
+      try {
+        const res = await getAddressList();
+        if (res.status !== 200) return;
+        // console.log(res);
+        this.logisticsInfoList = res.data.addressList;
+      } catch (error) {
+        console.log("获取收货地址失败", error);
+      }
+    },
+    // 新增收货地址
+    async addAddress() {
+      var num = 3;
+      const data = {
+        consigneeCountry: "中国",
+        consigneeAddr: "详细地址",
+        consigneeProvince: "河南省",
+        consigneeCity: "郑州市",
+
+        consigneeCounty: "县",
+        consigneeName: `我是第${num}个收货人`,
+        consigneePhone: "18336908347",
+        consigneePhoneHead: "0086",
+        consigneeTel: "6769038",
+        consigneeTelHead: "8633",
+        consigneeZipCode: "453600",
+        receiverCode: "新增",
+      };
+      try {
+        const { status } = await addAddressList(data);
+        if (status !== 200) return;
+        this.getList(); // 重新获取列表
+      } catch (error) {
+        console.log("新增失败", error);
+      }
     },
     // 设为默认地址
-    setDefault(id) {
+    async setDefault(id) {
       /**
        * 1. 获取当前id
        * 2. 根据id发送请求
        * 3. 请求成功, 赋值
        * 4. 重新渲染收货地址列表
        */
-      console.log("设为默认", id);
-      this.getList(); // 重新获取收货地址列表
+      const params = {
+        tenantId: 1600018169,
+        receiverCode: id,
+      };
+      try {
+        const res = await setAddressList(params); // 设为默认
+        console.log(res);
+        if (!res.data) return;
+        this.getList(); // 重新获取收货地址列表
+      } catch (error) {
+        console.log(error);
+      }
     },
-    // 编辑
-    eidtAddress(item) {
-      this.current = JSON.parse(JSON.stringify(item)); // 赋值
-      this.showDialog("edit");
-    },
+
     // 删除 地址
     async deleteAddress(item) {
       // 是默认 地址, 进行提示,不可删除
@@ -222,11 +227,55 @@ export default {
           }
         );
         if (result !== "confirm") return; // 不是确认,直接停止
-        console.log("删除地址", item.id);
-        this.getList(); // 重新获取收货地址列表
+        const params = {
+          receiverCode: item.id,
+          tenantId: 1600018169,
+        };
+        try {
+          const res = await deleteAddressList(params);
+          // console.log(res);
+          if (res.status !== 200) return;
+          this.getList(); // 重新获取收货地址列表
+        } catch (error) {
+          console.log("删除失败", error);
+        }
       } catch (error) {
         console.log("取消,不删除");
       }
+    },
+
+    // 编辑
+    async eidtAddress(item) {
+      this.current = JSON.parse(JSON.stringify(item)); // 赋值
+      this.showDialog("edit");
+
+      // const copyItem = JSON.parse(JSON.stringify(item))
+      // copyItem.receiverCode = copyItem.id
+      // copyItem.consigneeName ="我是编辑后的名字"
+      // console.log(item);
+      // const copyItem = {
+      //   consigneeProvince: item.consigneeProvince + "修改",
+      //   consigneeAddr: item.consigneeAddr + "修改了一下",
+      //   consigneeCity: item.consigneeCity,
+      //   consigneeCountry: item.consigneeCountry,
+      //   consigneeCounty: item.consigneeCounty,
+      //   consigneeName: "我是编辑后的名字",
+      //   consigneePhone: item.consigneePhone,
+      //   consigneePhoneHead: item.consigneePhoneHead,
+      //   consigneeTel: item.consigneeTel,
+      //   consigneeTelHead: item.consigneeTelHead,
+      //   consigneeZipCode: item.consigneeZipCode,
+      //   receiverCode: item.id,
+      // };
+      // console.log(copyItem);
+      // try {
+      //   const res = await eidtAddressList(copyItem);
+      //   console.log(res);
+      //   if (res.status !== 200) return;
+      //   this.getList();
+      // } catch (error) {
+      //   console.dir("修改失败", error);
+      // }
     },
 
     // 弹窗 显示
@@ -236,7 +285,7 @@ export default {
       _this.dialogStatus = status; // 修改弹窗 类型 create:创建 | edit:编辑
     },
     // 弹窗确认事件
-    confirmDialog(data, addFormData, status) {
+    confirmDialog(data, status) {
       /**
        * 1. 获取子组件传过来的 表单信息, 和 状态
        * 2. 根据状态, 对将表单信息进行处理
