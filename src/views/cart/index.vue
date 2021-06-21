@@ -69,6 +69,8 @@
 									step-strictly
 									size="small"
 									@change="changeQuantity(scope.row)"
+									:min="scope.row.moq"
+									:max ="scope.row.stock"
 								></el-input-number>
 							</template>
 						</el-table-column>
@@ -234,6 +236,7 @@
 						class="submitBtn"
 						type="primary"
 						:disabled="plDisabled"
+						@click="submit()"
 						>去结算</el-button
 					>
 				</div>
@@ -253,7 +256,7 @@
 </template> 
 <script>
 import pageTitle from "../components/pageTitle";
-import {cartData,cartDel,cartUpdate} from "@/api/cart"
+import {cartData,cartDel,cartUpdate,selectSettle} from "@/api/cart"
 export default {
 	data() {
 		return {
@@ -389,7 +392,8 @@ export default {
 			this.cartList=[];
 			this.unvalidList=[]
 			 let res = await cartData({tenantId:this.tenantId})
-			 this.data = res.data 
+			 this.data = res.data ;
+			 this.data.totalPrice = 0;
 			this.data.shoppingCartList.forEach((e) => {
 				if (e.statusTip == 1) {
 					this.cartList.push(e);
@@ -417,10 +421,7 @@ export default {
 				}
 			
 			}).catch((err) => {
-			this.$message({
-				type: 'info',
-				message: '删除失败'
-			});          
+				console,log(err)
 			});
 			
 		},
@@ -501,21 +502,80 @@ export default {
 			this.data.totalPrice = this.data.totalPrice.toFixed(2)
 		},
 
+		
+
 		//修改购物车
 	 async	changeQuantity(currentValue){
 		 let obj = currentValue;
-		 
-		 let json ={
-			buyAmount: obj.quantity,
-			selected: obj.selected,
-			shoppingCartId: Number(obj.shoppingCartCode),
-			skuId: Number(obj.skuId)
-			
-		 }
-		 console.log(json)
-		 	let data = await cartUpdate(json);
+		 let values = this.searchShoppingCartNum()
+		 if(obj.quantity<obj.moq){
+			this.$message({ 
+				type: 'info',
+				message: '最少起订量为'+obj.moq+'！'
+			});
+			return false
+		 }else{
+			 let  shoppingCartCode = obj.shoppingCartCode.replace(/^\"|\"$/g,'')
+			 let  skuId = obj.skuId.replace(/^\"|\"$/g,'')
+			 	let json ={
+				buyAmount: obj.quantity,
+				selected: obj.selected,
+				shoppingCartId:shoppingCartCode,
+				skuId: skuId
+				
+				}
+				let res = await cartUpdate(json);
+				if(res.status == 200){
+					this.data.shoppingCartList.forEach(item =>{
+						if(item.shoppingCartCode == obj.shoppingCartCode){
+							item.subtotal = res.data.subtotal
+						}
+					})
+				}
+			}
+		},
+	//结算
+	async submit(){
+		console.log()
+		if(this.unvalidList.length>0){
+			this.$message({
+				type: 'warning',
+				message: '存在失效商品，不能结算哦!'
+			});
+		}else{
+			let json = {
+				"buyAmount": 0,
+				"cargoId": 0,
+				"goodsId": 0,
+				"shoppingCartId": 0,
+				"unitPrice": 0
+			}
 
+			let arr = [];
+			this.selectProduct.forEach(item =>{
+				json = {
+					"quantity":item.quantity,
+					"skuId": this.delstr(item.skuId),
+					"productId":this.delstr(item.productId),
+					"shoppingCartCode":this.delstr(item.shoppingCartCode) ,
+					"skuPrice": item.skuPrice
+				}
+				arr.push(json)
+			})
+			let res = await selectSettle(arr)
+			if(res.status == 200){
+				this.renderData()
+				this.$router.push({ path: '/settlement'})
+			}
+			
+			console.log(res)
 		}
+	},
+	//去除引号
+	delstr(ss){
+		let str = ss.replace(/^\"|\"$/g,'')
+		return str
+	}
 		
 	},
 	components: {

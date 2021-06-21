@@ -28,3 +28,10 @@ export function cartDel(params) {
   }
 
 
+  export function selectSettle(data) {
+    return request({
+      url:'/fwebapi/order/settle/selectSettle',
+      method: 'post',
+      data,
+    })
+  }
