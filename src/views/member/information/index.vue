@@ -1,121 +1,124 @@
 <template>
   <div class="app-container">
-    <PageTitle :pagetitle='title'>
-			<!-- <slot slot="slot">搜索</slot> -->
-		</PageTitle>
-    <div class="content" v-if="data">
-        <!-- 头像 -->
-        <div class="block user">
-            <el-image
-            :src="data.user.avatar"
-            class="uimges"
-            @click="vicpWarpShow = true"></el-image>
-          <div class="username">
-              <p class="member-order"><SvgIcon name="icon-huiyuan" class="icon"></SvgIcon>{{data.user.memberLevel}}</p>
-              <p>{{data.user.userName}}</p>
+    <PageTitle :pagetitle="title">
+    <!-- <slot slot="slot">搜索</slot> -->
+    </PageTitle>
+    <div v-if="data" class="content">
+      <!-- 头像 -->
+      <div class="block user">
+        <el-image
+          :src="data.user.avatar"
+          class="uimges"
+          @click="vicpWarpShow = true"
+        />
+        <div class="username">
+          <p class="member-order"><SvgIcon name="icon-huiyuan" class="icon" />{{ data.user.memberLevel }}</p>
+          <p>{{ data.user.userName }}</p>
+        </div>
+      </div>
+      <!-- 基础信息 -->
+      <div class="customList">
+        <div class="item">
+          <p>
+            <span>昵称</span>
+            <span>{{ data.user.nickName ? data.user.nickName : '还没有昵称' }}</span>
+          </p>
+          <el-button type="text" @click="modifyShow = true">编辑</el-button>
+        </div>
+        <div class="item">
+          <p>
+            <span>姓名</span>
+            <span>{{ data.user.name ? data.user.name : '还没有姓名' }}</span>
+          </p>
+          <el-button type="text" @click="modifyShow = true">编辑</el-button>
+        </div>
+        <div class="item">
+          <p>
+            <span>手机</span>
+            <span>{{ data.user.phoneHead }}{{ data.user.phone ? data.user.phone : '还没有手机号' }}</span>
+          </p>
+          <div>
+            <el-button type="text" @click="setting">更换手机</el-button>
+            <el-button type="text" @click="modifyShow = true">绑定手机</el-button>
+            <el-button type="text">解绑手机</el-button>
           </div>
         </div>
-        <!-- 基础信息 -->
-        <div class="customList">
-          <div class="item">
-            <p>
-              <span>昵称</span>
-              <span>{{data.user.nickName ? data.user.nickName : '还没有昵称'}}</span>
-            </p>
-              <el-button type="text" @click="modifyShow = true">编辑</el-button>
-          </div>
-          <div class="item">
-            <p>
-              <span>姓名</span>
-              <span>{{data.user.name ? data.user.name : '还没有姓名'}}</span>
-            </p>
-            <el-button type="text" @click="modifyShow = true">编辑</el-button>
-          </div>
-          <div class="item">
-            <p>
-              <span>手机</span>
-              <span>{{data.user.phoneHead}}{{data.user.phone ? data.user.phone : '还没有手机号'}}</span>
-            </p>
-            <div>
-              <el-button type="text" @click="setting">更换手机</el-button>
-              <el-button type="text" @click="modifyShow = true">绑定手机</el-button>
-              <el-button type="text">解绑手机</el-button>
-            </div>
-          </div>
-          <div class="item">
-            <p>
-              <span>邮箱</span>
-              <span>{{data.user.email ? data.user.email : '还没有添加邮箱'}}</span>
-            </p>
-            <div>
-              <el-button type="text" @click="modifyShow = true">更换邮箱</el-button>
-              <el-button type="text" @click="modifyShow = true">绑定邮箱</el-button>
-              <el-button type="text" @click="modifyShow = true">解绑邮箱</el-button>
-            </div>
-          </div>
-          <div class="item">
-            <p>
-              <span>QQ</span>
-              <span>{{data.user.qq ? data.user.qq : '还没有绑定QQ'}}</span>
-            </p>
-            <el-button type="text" @click="modifyShow = true">解绑</el-button>
-          </div>
-          <div class="item">
-            <p>
-              <span>微信</span>
-              <span>{{data.user.weChat ? data.user.weChat : '还没有绑定微信'}}</span>
-            </p>
-            <el-button type="text" @click="modifyShow = true">解绑</el-button>
-          </div>
-          <div class="item">
-            <p>
-              <span>微博</span>
-              <span>{{data.user.weibo ? data.user.weibo : '还没有绑定微博'}}</span>
-            </p>
-            <el-button type="text" @click="modifyShow = true">解绑</el-button>
-          </div>
-          <div class="item">
-            <p>
-              <span>密码</span>
-              <span>{{data.user.pwd}}</span>
-            </p>
-            <el-button type="text" @click="modifyShow = true">重置密码</el-button>
-          </div>
-          <div
-            v-for="(item, index) in data.customList"
-            :key="index"
-            class="item">
-            <p>
-              <span>{{item.attrName}}</span>
-              <span>{{item.description}}</span>
-            </p>
-            <div>
-              <el-button type="text">编辑</el-button>
-            </div>
+        <div class="item">
+          <p>
+            <span>邮箱</span>
+            <span>{{ data.user.email ? data.user.email : '还没有添加邮箱' }}</span>
+          </p>
+          <div>
+            <el-button type="text" @click="modifyShow = true">更换邮箱</el-button>
+            <el-button type="text" @click="modifyShow = true">绑定邮箱</el-button>
+            <el-button type="text" @click="modifyShow = true">解绑邮箱</el-button>
           </div>
         </div>
-        <!-- 修改内容 -->
-        <images-upload 
+        <div class="item">
+          <p>
+            <span>QQ</span>
+            <span>{{ data.user.qq ? data.user.qq : '还没有绑定QQ' }}</span>
+          </p>
+          <el-button type="text" @click="modifyShow = true">解绑</el-button>
+        </div>
+        <div class="item">
+          <p>
+            <span>微信</span>
+            <span>{{ data.user.weChat ? data.user.weChat : '还没有绑定微信' }}</span>
+          </p>
+          <el-button type="text" @click="modifyShow = true">解绑</el-button>
+        </div>
+        <div class="item">
+          <p>
+            <span>微博</span>
+            <span>{{ data.user.weibo ? data.user.weibo : '还没有绑定微博' }}</span>
+          </p>
+          <el-button type="text" @click="modifyShow = true">解绑</el-button>
+        </div>
+        <div class="item">
+          <p>
+            <span>密码</span>
+            <span>{{ data.user.pwd }}</span>
+          </p>
+          <el-button type="text" @click="modifyShow = true">重置密码</el-button>
+        </div>
+        <div
+          v-for="(item, index) in data.customList"
+          :key="index"
+          class="item"
+        >
+          <p>
+            <span>{{ item.attrName }}</span>
+            <span>{{ item.description }}</span>
+          </p>
+          <div>
+            <el-button type="text">编辑</el-button>
+          </div>
+        </div>
+      </div>
+      <!-- 修改内容 -->
+      <images-upload
         v-show="vicpWarpShow"
         @close="close"
-        @crop-upload-success="cropSuccess"/>
-        <modify
+        @crop-upload-success="cropSuccess"
+      />
+      <modify
         v-show="modifyShow"
         @close="close"
-        />
+      />
     </div>
   </div>
 </template>
 
 <script>
-import { getInformation } from '@/api/table'
-import PageTitle from "@/views/components/pageTitle"
+import { memberDetail } from '@/api/table'
+import PageTitle from '@/views/components/pageTitle'
 import SvgIcon from '@/components/SvgIcon'
 import imagesUpload from './components/imagesUpload'
 import modify from './components/modify'
 
 export default {
-  components: { 
+  components: {
     PageTitle,
     SvgIcon,
     imagesUpload,
@@ -123,7 +126,7 @@ export default {
   },
   data() {
     return {
-			title: "我的资料",
+      title: '我的资料',
       vicpWarpShow: false,
       modifyShow: false,
       imagecropperKey: 0,
@@ -132,14 +135,17 @@ export default {
     }
   },
   created() {
-    this.getInformation()
+    this.getMemberDetail()
   },
   methods: {
-    getInformation() {
-      getInformation(this.listQuery).then(response => {
-        console.log(response.data) 
-        this.data = response.data;
-      })
+    async getMemberDetail() {
+      const data = {
+        bizId: '854299120902660096',
+        tenantId: '1600018169',
+        instance: 'qinhui20210610'
+      }
+      // const detailData = await memberDetail(data)
+      console.log(data, memberDetail)
     },
     cropSuccess(resData) {
       this.vicpWarpShow = false

@@ -52,7 +52,7 @@
 							<template slot-scope="scope">
 								<span class="strongMark">
 									{{ data.currencySymbol }}
-									{{ scope.row.price }}
+									{{ scope.row.skuPrice }}
 								</span>
 							</template>
 						</el-table-column>
@@ -68,6 +68,7 @@
 									:step="1"
 									step-strictly
 									size="small"
+									@change="changeQuantity(scope.row)"
 								></el-input-number>
 							</template>
 						</el-table-column>
@@ -80,7 +81,7 @@
 							<template slot-scope="scope">
 								<span class="strongMark">
 									{{ data.currencySymbol }}
-									{{ scope.row.price }}
+									{{ scope.row.subtotal }}
 								</span>
 							</template>
 						</el-table-column>
@@ -151,7 +152,7 @@
 							<template slot-scope="scope">
 								<span class="strongMark">
 									{{ data.currencySymbol }}
-									{{ scope.row.price }}
+									{{ scope.row.skuPrice }}
 								</span>
 							</template>
 						</el-table-column>
@@ -180,7 +181,7 @@
 							<template slot-scope="scope">
 								<span class="strongMark">
 									{{ data.currencySymbol }}
-									{{ scope.row.price }}
+									{{ scope.row.subtotal }}
 								</span>
 							</template>
 						</el-table-column>
@@ -211,10 +212,9 @@
 						:indeterminate="isIndeterminate"
 						>全选</el-checkbox
 					>
-					<el-button type="text" :disabled="plDisabled"
-						>批量删除</el-button
+					<el-button type="text" :disabled="plDisabled" @click="delectMore(selectProduct,1)">批量删除</el-button
 					>
-					<el-button type="text">清除失效商品</el-button>
+					<el-button type="text"  :disabled="plUntileDisabled"  @click="delectMore(unvalidList,0)">清除失效商品</el-button>
 				</div>
 				<div class="tjop">
 					<span class="totalCount"
@@ -253,8 +253,7 @@
 </template> 
 <script>
 import pageTitle from "../components/pageTitle";
-import {cartData} from "@/api/cart"
-import {getList} from "@/api/table"
+import {cartData,cartDel,cartUpdate} from "@/api/cart"
 export default {
 	data() {
 		return {
@@ -264,6 +263,7 @@ export default {
 			selectProduct: [],
 			cartList: [],
 			unvalidList: [],
+			tenantId:1600018169,
 			data: {
 				totalPrice: 5,
 				totalNum: 8,
@@ -306,10 +306,10 @@ export default {
 						moq: 10, //起订量
 						stock: 10000, //库存
 						productUrl: "/product/144. html", //链接
-						statusTip: 1, //货品状态 0:下架 1: 库存不足 2:价格变动 3:正常有货
+						statusTip: 1, //货品状态 0:下架  1:正常有货
 					},
 					{
-						productId: 143,
+						shoppingCartCode: 143,
 						skuId: 260,
 						quantity: 11, //购买数量
 						skuName: "货品已下架货品已下架货品已下架", //货品名称
@@ -328,7 +328,7 @@ export default {
 						statusTip: 0, //货品状态 0:下架 1: 库存不足 2:价格变动 3:正常有货
 					},
 					{
-						productId: 143,
+						shoppingCartCode: 143,
 						skuId: 260,
 						quantity: 11, //购买数量
 						skuName:
@@ -347,6 +347,26 @@ export default {
 						productUrl: "/product/144. html", //链接
 						statusTip: 3, //货品状态 0:下架 1: 库存不足 2:价格变动 3:正常有货
 					},
+					{
+						shoppingCartCode: 145,
+						skuId: 260,
+						quantity: 11, //购买数量
+						skuName:
+							"货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称", //货品名称
+						skuImg:
+							"https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-363c59550aae.jpg", //货品图片
+						skuSpec: [
+							{
+								specName: "规格名称",
+								specValue: "规格值",
+							},
+						],
+						price: 110.0, //货品单价
+						moq: 10, //起订量
+						stock: 10000, //库存
+						productUrl: "/product/144. html", //链接
+						statusTip: 1, //货品状态 0:下架 1: 库存不足 2:价格变动 3:正常有货
+					},
 				],
 			},
 		};
@@ -355,20 +375,23 @@ export default {
 		plDisabled() {
 			return this.selectProduct.length == 0;
 		},
+		plUntileDisabled(){
+			return this.unvalidList.length == 0;
+		}
 	},
 	mounted() {
 		this.renderData();
 	},
 	methods: {
 		//初始化数据
-		 renderData() {
-			 
-			 cartData({tenantId:1600018169}).then(res =>{
-				 console.log(res)
-			 })
-			//let res = await cartLists({tenantId:1600018169})
+		async renderData() {
+			//this.data =[];
+			this.cartList=[];
+			this.unvalidList=[]
+			 let res = await cartData({tenantId:this.tenantId})
+			 this.data = res.data 
 			this.data.shoppingCartList.forEach((e) => {
-				if (e.statusTip == 3) {
+				if (e.statusTip == 1) {
 					this.cartList.push(e);
 				} else {
 					this.unvalidList.push(e);
@@ -376,13 +399,85 @@ export default {
 			});
 		},
 		//删除
-		removeProduct(obj) {},
+		 removeProduct(obj) {
+			this.$confirm('确定删除该商品？', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(async () => {
+				let a_shoppingCartCode = obj.row.shoppingCartCode.replace(/^\"|\"$/g,'')
+				let json = {tenantId:this.tenantId, shoppingCartIds:a_shoppingCartCode}
+				let res = await cartDel(json)
+				if(res.status == 200){
+					this.$message({
+					type: 'success',
+					message: '删除成功!'
+					});
+					this.renderData();
+				}
+			
+			}).catch((err) => {
+			this.$message({
+				type: 'info',
+				message: '删除失败'
+			});          
+			});
+			
+		},
+		//批量删除
+		delectMore(list,titleNum){
+			let title = titleNum == 1 ? '确定删除所有选中商品？':"确定清空所有失效商品？"
+			let arrSelect =  list;
+			if(arrSelect.length == 0) {
+					this.$message({
+					type: 'info',
+					message: '请选择删除的数据'
+				}); 
+			}else{
+				this.$confirm(title, '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+				}).then(async () => {
+					
+					let arr_shoppingCartCode =''
+					arrSelect.forEach(item =>{
+						arr_shoppingCartCode += item.shoppingCartCode + ','
+					})
+					let json = {tenantId:this.tenantId, shoppingCartIds:arr_shoppingCartCode}
+					let res = await cartDel(json)
+					if(res.status == 200){
+						this.$message({
+						type: 'success',
+						message: '删除成功!'
+						});
+						this.renderData();
+					}
+				
+				}).catch((err) => {
+				this.$message({
+					type: 'info',
+					message: '删除失败'
+				});          
+				});
+			}
+			
+			
+		},
 		//表格选择
 		selectProductFun(val) {
-			this.selectProduct = val;
+			let list = val;
+			if(list.length>0){
+				list.forEach(item =>{
+					item.selected = 1
+				})
+			}
+			this.selectProduct = list;
 			this.isIndeterminate =
 				val.length > 0 && val.length < this.cartList.length;
 			this.checkAll = val.length === this.cartList.length;
+			this.totalPrice()
+			
 		},
 		//全选
 		selectAllFun(val) {
@@ -395,6 +490,33 @@ export default {
 			}
 			this.isIndeterminate = false;
 		},
+
+		//选中合计
+		totalPrice(){
+			this.data.totalPrice = 0;
+			this.selectProduct.forEach(item =>{
+				this.data.totalPrice += parseFloat(item.subtotal) 
+			})
+
+			this.data.totalPrice = this.data.totalPrice.toFixed(2)
+		},
+
+		//修改购物车
+	 async	changeQuantity(currentValue){
+		 let obj = currentValue;
+		 
+		 let json ={
+			buyAmount: obj.quantity,
+			selected: obj.selected,
+			shoppingCartId: Number(obj.shoppingCartCode),
+			skuId: Number(obj.skuId)
+			
+		 }
+		 console.log(json)
+		 	let data = await cartUpdate(json);
+
+		}
+		
 	},
 	components: {
 		pageTitle,
