@@ -85,18 +85,20 @@
         <el-form-item label="手机">
           <!-- select选择器+文本框 -->
           <el-col :span="6">
-            <el-select
-              v-model="addrForm.consigneePhoneHead"
-              placeholder="请选择"
-            >
-              <el-option
-                v-for="(item, index) in frontData.conuntryOptions"
-                :key="index"
-                :label="item.tel"
-                :value="item.tel"
+            <el-form-item prop="consigneePhoneHead">
+              <el-select
+                v-model="addrForm.consigneePhoneHead"
+                placeholder="请选择"
               >
-              </el-option>
-            </el-select>
+                <el-option
+                  v-for="(item, index) in frontData.conuntryOptions"
+                  :key="index"
+                  :label="item.tel"
+                  :value="item.tel"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
           </el-col>
           <el-col :span="1" class="txtCenter">-</el-col>
           <el-col :span="17">
@@ -114,15 +116,20 @@
         <el-form-item label="固定电话">
           <!-- 下拉+文本框 -->
           <el-col :span="6">
-            <el-select v-model="addrForm.consigneeTelHead" placeholder="请选择">
-              <el-option
-                v-for="(item, index) in frontData.telCode"
-                :key="index"
-                :label="item.value"
-                :value="item.value"
+            <el-form-item prop="consigneeTelHead">
+              <el-select
+                v-model="addrForm.consigneeTelHead"
+                placeholder="请选择"
               >
-              </el-option>
-            </el-select>
+                <el-option
+                  v-for="(item, index) in frontData.telCode"
+                  :key="index"
+                  :label="item.value"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
           </el-col>
           <el-col :span="1" class="txtCenter">-</el-col>
           <el-col :span="17">
@@ -166,6 +173,7 @@
 </template>
 
 <script>
+import { addAddressList } from "@/utils/request";
 export default {
   name: "AddressForm",
   props: {
@@ -234,10 +242,14 @@ export default {
         consigneeAddr: [
           { required: true, message: "请输入详细地址", trigger: "blur" },
         ],
+        // 手机号头部
+        consigneePhoneHead: [{ required: false, trigger: "change" }],
         // 手机号
         consigneePhone: [
           { required: false, validator: checkPhone, trigger: "blur" },
         ],
+        // 电话号头部
+        consigneeTelHead: [{ required: false, trigger: "change" }],
         // 电话号
         consigneeTel: [
           { required: false, validator: checkTel, trigger: "blur" },
@@ -1496,21 +1508,38 @@ export default {
        * 5. 关闭弹窗
        * 6. 派发给父组件一个事件
        */
-      try {
-        const result = await this.$refs[formName].validate();
-        if (!result) return;
-        // 发送请求
-        // const res = await this.$http('url',this.addrForm)
-        this.dialogFormVisible = false; // 关闭弹窗
-        this.$emit("confirm", this.addrForm, this.dialogStatus); // 传出去表单对象 + 哪种表单
-      } catch (error) {
-        console.log(error);
-      }
+      // try {
+      //   const result = await this.$refs[formName].validate();
+      //   if (!result) return;
+      //   // 发送请求
+      //   // const res = await this.$http('url',this.addrForm)
+      //   this.dialogFormVisible = false; // 关闭弹窗
+      //   this.$emit("confirm", this.addrForm, this.dialogStatus); // 传出去表单对象 + 哪种表单
+      // } catch (error) {
+      //   console.log(error);
+      // }
+      const data = {
+        consigneeCountry: "中国",
+        consigneeAddr: "详细地址",
+        consigneeProvince: "河南省",
+        consigneeCity: "郑州市",
+
+        consigneeCounty: "县",
+        consigneeName: "我是收货人",
+        consigneePhone: "18336908347",
+        consigneePhoneHead: "0086",
+        consigneeTel: "6769038",
+        consigneeTelHead: "8633",
+        consigneeZipCode: "453600",
+        receiverTitle: "新增",
+      };
+      const result = await addAddressList(data);
+      console.log(result);
+   
     },
     // 弹窗关闭
     dialogClose() {
       this.$refs.addrFormRef.resetFields(); // 重置表单
-      // console.log("重置表单");
     },
     // 检验只能输入数字
     checkInputValue(typeName) {

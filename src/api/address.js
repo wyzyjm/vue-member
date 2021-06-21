@@ -1,15 +1,18 @@
 import request from '@/utils/request'
 
-// 获取 收货地址列表
-export function getAddressList(params) {
+const params = {
+    tenantId: 1600018169,
+}
+// 获取 收货地址列表 
+const getAddressList = () => {
     return request({
-        url: '/api/order/address/list',
+        url: '/fwebapi/order/address/list',
         method: 'POST',
         params
     })
 }
 
-// 新增
+// 新增 国家地区传参
 /**
  {
   "consigneeAddr": "",
@@ -26,7 +29,7 @@ export function getAddressList(params) {
   "receiverTitle": ""
 }
  */
-export function addAddressList(data, params) {
+const addAddressList = (data) => {
     return request({
         url: '/fwebapi/order/address/add',
         method: 'POST',
@@ -34,19 +37,19 @@ export function addAddressList(data, params) {
         params
     })
 }
-// 设为默认
-export function setAddressList(params) {
+// 设为默认 传参
+const setAddressList = (params) => {
     return request({
-        url: '/fwebapi/order/address/list',
-        method: 'POST',
+        url: '/fwebapi/order/address/default',
+        method: 'GET',
         params
     })
 }
 // 删除
-export function deleteAddressList(params) {
+const deleteAddressList = (params) => {
     return request({
         url: '/fwebapi/order/address/delete',
-        method: 'POST',
+        method: 'GET',
         params
     })
 }
@@ -67,11 +70,20 @@ export function deleteAddressList(params) {
   "receiverTitle": "string"
 }
  */
-export function eidtAddressList(data, params) {
+const eidtAddressList = (data, params) => {
     return request({
-        url: '/fwebapi/order/address/update',
+        url: '​/fwebapi​/order​/address​/update',
         method: 'POST',
         data,
         params
     })
+}
+
+
+export {
+    getAddressList, // 列表
+    addAddressList, // 新增
+    setAddressList, // 设为默认
+    deleteAddressList, // 删除
+    eidtAddressList // 修改
 }
