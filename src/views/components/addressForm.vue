@@ -171,7 +171,7 @@
 <script>
 import countryData from "@/views/components/resource/locList_zh_CN"; // 国家
 import { countries } from "@/views/components/resource/phoneCodeCountries"; // 手机区号
-import { addAddressList, eidtAddressList } from "@/utils/request";
+import { addAddressList, eidtAddressList } from "@/api/address.js";
 export default {
   name: "AddressForm",
   props: {
@@ -214,7 +214,7 @@ export default {
     return {
       // 页面参数
       dialogStatus: "create", // 哪种弹窗 create:创建 edit:编辑
-      dialogFormVisible: true, // 是否显示弹窗
+      dialogFormVisible: false, // 是否显示弹窗
 
       // 收货地址表单
       addrForm: {
@@ -228,9 +228,6 @@ export default {
         consigneeProvince: "", // 省/州/地区
         consigneeCity: "", // 地区
         consigneeZipCode: "", // 邮政编码
-
-        consigneeCounty: "",
-        receiverCode: "",
       },
       // 收货地址表单 校验规则
       addrFormRules: {
@@ -281,35 +278,25 @@ export default {
       },
       // 省市区数据
       frontData: {
-        // 国家
         conuntryOptions: countryData.Location.CountryRegion, // 国家
-        // 省
-        province: [],
-        // 市
-        city: [],
-        // 手机区号
-        phoneCode: countries,
+        province: [], // 省
+        city: [], // 市
+        phoneCode: countries, // 手机区号
       },
     };
   },
-  created() {
-    // console.log(countries);
-  },
   // 方法
   methods: {
-    /**
-     * 弹窗打开前
-     * 1. 是否有接收到值, 且是否为 编辑
-     * 2. 都为true, 则给表单赋值
-     */
+    // 弹窗打开前
     handleOpen() {
-      // console.log(this.addrForm);
       if (this.setAddrForm && this.dialogStatus === "edit") {
-        this.addrForm = JSON.parse(JSON.stringify(this.setAddrForm));
+        this.addrForm = JSON.parse(JSON.stringify(this.setAddrForm)); // 表单赋值
+        this.countryChange(this.addrForm.consigneeCountry); // 设置国家
+        this.provinceChange(this.addrForm.consigneeProvince); // 设置市
       }
     },
     // 确定
-    async saveAddrForm() {
+    saveAddrForm() {
       /**
        * 1. 表单预校验
        * 2. 校验通过,
@@ -318,54 +305,45 @@ export default {
        * 5. 关闭弹窗
        * 6. 派发给父组件一个事件
        */
-      this.$refs.addrFormRef.validate((valid) => {
+      this.$refs.addrFormRef.validate(async (valid) => {
         if (!valid) return;
-        const copyData = JSON.parse(JSON.stringify(this.addrForm));
+        const copyData = JSON.parse(JSON.stringify(this.addrForm)); // 拷贝
         const data = {
           consigneeCountry: copyData.consigneeCountry, // 国家
-          consigneeAddr: copyData.consigneeCountry, // 详细地址
-          consigneeProvince: copyData.consigneeCountry,
-          consigneeCity: copyData.consigneeCountry,
+          consigneeProvince: copyData.consigneeProvince, // 省
+          consigneeCity: copyData.consigneeCity, // 市
+          consigneeAddr: copyData.consigneeAddr, // 详细地址
 
-          consigneeCounty: copyData.consigneeCountry,
-          consigneeName: copyData.consigneeCountry,
-          consigneePhone: copyData.consigneeCountry,
-          consigneePhoneHead:copyData.consigneeCountry,
-          consigneeTel: copyData.consigneeCountry,
-          consigneeTelHead: copyData.consigneeCountry,
-          consigneeZipCode: copyData.consigneeCountry,
-          receiverCode: "新增",
+          // consigneeCounty: copyData.consigneeCounty
+          //   ? copyData.consigneeCounty
+          //   : "", // 县
+          consigneeCounty: "", // 县
+
+          consigneeName: copyData.consigneeName, // 收货人
+          consigneePhoneHead: copyData.consigneePhoneHead, // 手机头部
+          consigneePhone: copyData.consigneePhone, // 手机号
+          consigneeTelHead: copyData.consigneeTelHead, // 电话头部
+          consigneeTel: copyData.consigneeTel, // 电话号
+          consigneeZipCode: copyData.consigneeZipCode,
+          receiverCode: copyData.id ? copyData.id : "create", // id
         };
-
-        if (this.dialogStatus === "create") {
-          // 添加
-          console.log("添加", this.addrForm);
-          try {
-            // const { status } = await addAddressList(data);
-            // if (status !== 200) return;
-            // this.dialogFormVisible = false; // 关闭弹窗
-            // this.$emit("confirm", this.dialogStatus); // 派发父组件事件
-          } catch (error) {
-            console.log("添加失败", error);
-          }
-        } else {
-          // 修改
-          console.log("编辑", this.addrForm);
-          try {
-            // const { status } = await eidtAddressList(copyItem);
-            // if (status !== 200) return;
-            // this.dialogFormVisible = false; // 关闭弹窗
-            // this.$emit("confirm", this.dialogStatus); // 派发父组件事件
-          } catch (error) {
-            console.log("修改失败", error);
-          }
+        try {
+          // 根据状态执行 不同请求
+          const { status } =
+            this.dialogStatus === "create"
+              ? await addAddressList(data)
+              : await eidtAddressList(data);
+          if (status !== 200) return;
+          this.dialogFormVisible = false; // 关闭弹窗
+          this.$emit("confirm"); // 派发父组件事件
+        } catch (error) {
+          console.log("失败", error);
         }
       });
     },
     // 弹窗关闭
     dialogClose() {
       this.$refs.addrFormRef.resetFields(); // 重置表单
-      console.log(this.addrForm); // 弹窗关闭后,表单的值
     },
     // 检验只能输入数字
     checkInputValue(typeName) {
@@ -375,8 +353,10 @@ export default {
     countryChange(val) {
       this.frontData.province = [];
       this.frontData.city = [];
-      this.$refs.provinceRef.resetField(); // 省重置
-      this.$refs.cityRef.resetField(); // 市重置
+      if (this.$refs.provinceRef) {
+        this.$refs.provinceRef.resetField(); // 省重置
+        this.$refs.cityRef.resetField(); // 市重置
+      }
 
       countryData.Location.CountryRegion.map((item) => {
         if (item.Name !== val) return;
@@ -391,7 +371,9 @@ export default {
     // 省下拉
     provinceChange(val) {
       if (!this.frontData.province) return;
-      this.$refs.cityRef.resetField(); // 市重置
+      if (this.$refs.cityRef) {
+        this.$refs.cityRef.resetField(); // 市重置
+      }
       this.frontData.province.map((item) => {
         if (item.Name === val) {
           this.frontData.city = item.City ? item.City : [];

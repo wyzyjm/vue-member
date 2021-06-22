@@ -88,9 +88,9 @@
 
     <!-- 收货人地址弹窗 开始 -->
     <!-- 
-      定义ref 向自组件传值 : dialogFormVisible:弹窗显示与隐藏  dialogStatus:弹窗类型 create:新增  edit: 编辑
-      confirm事件 : 收货地址关闭触发的事件, 会把 收货信息传回来
-      编辑收货地址: 直接修改自组建值
+      定义ref 向自组件传值 : dialogFormVisible:弹窗显示与隐藏  dialogStatus:弹窗类型 (create:新增  edit: 编辑)
+
+      confirm事件 : 收货地址关闭触发的事件
      -->
     <AddressForm
       ref="addressDialog"
@@ -99,7 +99,7 @@
     ></AddressForm>
     <!-- 收货人地址弹窗 结束 -->
 
-    <el-button type="primary" @click="addAddress">添加收货地址</el-button>
+    <!-- <el-button type="primary" @click="addAddress">添加收货地址</el-button> -->
   </div>
 </template>
 <script>
@@ -147,38 +147,38 @@ export default {
       try {
         const res = await getAddressList();
         if (res.status !== 200) return;
-        // console.log(res);
         this.logisticsInfoList = res.data.addressList;
       } catch (error) {
         console.log("获取收货地址失败", error);
       }
     },
     // 新增收货地址
-    async addAddress() {
-      var num = 3;
-      const data = {
-        consigneeCountry: "中国",
-        consigneeAddr: "详细地址",
-        consigneeProvince: "河南省",
-        consigneeCity: "郑州市",
+    // async addAddress() {
+    //   var num = 3;
+    //   const data = {
+    //     consigneeCountry: "中国",
+    //     consigneeAddr: "详细地址",
+    //     consigneeProvince: "河南省",
+    //     consigneeCity: "郑州市",
 
-        consigneeCounty: "县",
-        consigneeName: `我是第${num}个收货人`,
-        consigneePhone: "18336908347",
-        consigneePhoneHead: "0086",
-        consigneeTel: "6769038",
-        consigneeTelHead: "8633",
-        consigneeZipCode: "453600",
-        receiverCode: "新增",
-      };
-      try {
-        const { status } = await addAddressList(data);
-        if (status !== 200) return;
-        this.getList(); // 重新获取列表
-      } catch (error) {
-        console.log("新增失败", error);
-      }
-    },
+    //     consigneeCounty: "县",
+    //     consigneeName: `我是第${num}个收货人`,
+    //     consigneePhone: "18336908347",
+    //     consigneePhoneHead: "0086",
+    //     consigneeTel: "6769038",
+    //     consigneeTelHead: "8633",
+    //     consigneeZipCode: "453600",
+    //     receiverCode: "新增",
+    //   };
+    //   try {
+    //     const { status } = await addAddressList(data);
+    //     if (status !== 200) return;
+    //     this.getList(); // 重新获取列表
+    //   } catch (error) {
+    //     console.log("新增失败", error);
+    //   }
+    // },
+
     // 设为默认地址
     async setDefault(id) {
       /**
@@ -193,7 +193,7 @@ export default {
       };
       try {
         const res = await setAddressList(params); // 设为默认
-        console.log(res);
+        // console.log(res);
         if (!res.data) return;
         this.getList(); // 重新获取收货地址列表
       } catch (error) {
@@ -248,56 +248,23 @@ export default {
     async eidtAddress(item) {
       this.current = JSON.parse(JSON.stringify(item)); // 赋值
       this.showDialog("edit");
-
-      // const copyItem = JSON.parse(JSON.stringify(item))
-      // copyItem.receiverCode = copyItem.id
-      // copyItem.consigneeName ="我是编辑后的名字"
-      // console.log(item);
-      // const copyItem = {
-      //   consigneeProvince: item.consigneeProvince + "修改",
-      //   consigneeAddr: item.consigneeAddr + "修改了一下",
-      //   consigneeCity: item.consigneeCity,
-      //   consigneeCountry: item.consigneeCountry,
-      //   consigneeCounty: item.consigneeCounty,
-      //   consigneeName: "我是编辑后的名字",
-      //   consigneePhone: item.consigneePhone,
-      //   consigneePhoneHead: item.consigneePhoneHead,
-      //   consigneeTel: item.consigneeTel,
-      //   consigneeTelHead: item.consigneeTelHead,
-      //   consigneeZipCode: item.consigneeZipCode,
-      //   receiverCode: item.id,
-      // };
-      // console.log(copyItem);
-      // try {
-      //   const res = await eidtAddressList(copyItem);
-      //   console.log(res);
-      //   if (res.status !== 200) return;
-      //   this.getList();
-      // } catch (error) {
-      //   console.dir("修改失败", error);
-      // }
     },
 
     // 弹窗 显示
     showDialog(status) {
+      if (status === "create" && this.logisticsInfoList.length === 10)
+        return this.$message({
+          message: "抱歉，地址信息最多可创建10条，请删除一条在创建吧!",
+          type: "warning",
+        });
       const _this = this.$refs["addressDialog"]; // 获取当前弹窗组件实例
       _this.dialogFormVisible = true; // 修改弹窗 显示状态
       _this.dialogStatus = status; // 修改弹窗 类型 create:创建 | edit:编辑
     },
     // 弹窗确认事件
-    confirmDialog(data, status) {
-      /**
-       * 1. 获取子组件传过来的 表单信息, 和 状态
-       * 2. 根据状态, 对将表单信息进行处理
-       */
-      console.log(data);
-      this.current = {};
-      if (status === "create") {
-        console.log("这是创建收货地址");
-      } else {
-        console.log("这是编辑收货地址");
-      }
-      this.getList();
+    confirmDialog() {
+      this.current = {}; // 清空当前值
+      this.getList(); // 重新获取收货地址列表
     },
   },
 };
