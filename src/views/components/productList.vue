@@ -48,7 +48,7 @@
         label="小计"
         width="180">
         <template slot-scope="{row}">
-          <span class="col-danger">{{currencySymbol}}{{ row.aggregateAmount }}</span>
+          <span class="col-danger">{{currencySymbol}}{{ row.subtotal }}</span>
         </template>
       </el-table-column>
     </el-table>
