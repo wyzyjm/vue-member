@@ -588,6 +588,12 @@ export default {
 				message: '存在价格变动的货品！'
 				});
 				break;
+				case "10005":
+				this.$message({ 
+				type: 'info',
+				message: '币种有变动'
+				});
+				break;
 			}
 			if(res.status == 200){
 				this.renderData();
