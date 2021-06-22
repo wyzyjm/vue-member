@@ -595,7 +595,7 @@ export default {
 				arr.forEach( item =>{
 					dataIDs += item.shoppingCartCode + ','
 				})
-				this.$router.push({ path: '/settlement',params:{data:dataIDs}})
+				this.$router.push({ path: '/settlement',query:{shoppingCartIds:dataIDs}})
 			}
 			
 			console.log(rthis.$router)
