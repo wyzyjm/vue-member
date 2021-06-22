@@ -4,16 +4,16 @@
       <el-form ref="form" :rules="rules" :model="form" label-width="120px">
         <el-form-item label="发票抬头">
           <el-radio-group v-model="form.type" @change="changeType">
-            <el-radio :label="0">个人</el-radio>
-            <el-radio :label="1">单位</el-radio>
+            <el-radio :label="1">个人</el-radio>
+            <el-radio :label="2">单位</el-radio>
           </el-radio-group>
         </el-form-item>
-        <div v-show="form.type === 0">
+        <div v-show="form.type === 1">
           <el-form-item label="个人名称" prop="name">
             <el-input v-model="form.name" style="width: 310px"></el-input>
           </el-form-item>
         </div>
-        <div v-show="form.type !== 0">
+        <div v-show="form.type !== 1">
           <el-form-item label="单位名称" prop="companyName">
             <el-input
               v-model="form.companyName"
@@ -29,18 +29,22 @@
         </div>
         <el-form-item label="发票内容">
           <el-radio-group v-model="form.catalog">
-            <el-radio :label="0">商品明细</el-radio>
+            <el-radio label="商品明细">商品明细</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="收票人手机" prop="tel">
-          <el-select
-            class="no-error"
-            v-model="form.regionNo"
-            placeholder=""
-            style="width: 70px"
-          >
-            <el-option label="+86" value="86"></el-option>
+          <!-- 手机区号+手机号 -->
+          <el-select v-model="form.regionNo" placeholder="请选择" filterable style="width:100px">
+            <el-option
+              v-for="(item, index) in frontData.phoneCode"
+              :key="index"
+              :label="item.dialCode"
+              :value="`${item.dialCode},${item.iso2}`"
+            >
+              <span> {{ item.dialCode }} {{ item.name }}</span>
+            </el-option>
           </el-select>
+
           <el-input
             v-model="form.tel"
             style="width: 200px; margin-left: 10px"
@@ -52,14 +56,26 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submit">确 定</el-button>
+        <el-button type="primary" @click="submit" :loading="loading"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
   </div>
 </template>
 <script>
 import { telValidate, emailValidate } from "@/utils/index.js";
+import { addUpdateInvoice, getSettle, getSettleById } from "@/api/settlement";
+
+import { countries } from "@/views/components/resource/phoneCodeCountries"; // 手机区号
 export default {
+  props: {
+    saveLibray: {
+      type: Boolean,
+      default: true,
+    },
+  },
+
   data() {
     // 手机号验证
     const telFormValidate = (rule, value, callback) => {
@@ -74,12 +90,13 @@ export default {
     return {
       dialogVisible: false,
       form: {
-        type: 0,
-        name: "hello",
-        catalog: 0,
+        invoiceId: "",
+        type: 1,
+        name: "",
+        catalog: "商品明细",
         tel: "",
         mail: "",
-        regionNo:"86",
+        regionNo: "",
         companyName: "",
         companyNumber: "",
       },
@@ -96,6 +113,12 @@ export default {
         ],
         tel: [{ validator: telFormValidate, trigger: "change" }],
       },
+      loading: false,
+      // 省市区数据
+      frontData: {
+        // 手机区号
+        phoneCode: countries,
+      },
     };
   },
   methods: {
@@ -104,7 +127,8 @@ export default {
     },
     submit() {
       let checked = true;
-      if (this.form.type === 0) {
+      this.loading = true;
+      if (this.form.type === 1) {
         if (this.form.name == "") {
           this.$refs.form.validateField("name");
           checked = false;
@@ -129,17 +153,68 @@ export default {
         checked = false;
       }
       if (checked) {
-        if (this.form.type === 0) {
-          this.$parent.receipt = this.form.name;
-        } else {
-          this.$parent.receipt = this.form.companyName;
+        let params = {};
+        if (this.form.invoiceId != "") {
+          params.invoiceId = this.form.invoiceId; //发票id
         }
-        this.dialogVisible = false;
-        console.log("success");
+        params.email = this.form.mail; //邮箱
+        params.invoiceContent = this.form.catalog; //发票内容
+        params.invoiceTitle =
+          this.form.type === 1 ? this.form.name : this.form.companyName; //发票抬头
+        params.invoiceType = this.form.type; //发票类型
+        params.phone = this.form.phone; //手机
+        params.taxpayerId = this.form.companyNumber; //纳税人识别号
+        addUpdateInvoice(params).then((res) => {
+          if (res.status === 200) {
+            this.loading = false;
+            this.dialogVisible = false;
+            this.form.invoiceId = res.data;
+            this.$emit("formData", this.form);
+          } else {
+            this.$message.error(res.msg);
+          }
+        });
+      } else {
+        this.loading = false;
       }
     },
+    backContent(data) {
+      this.form.type = data.invoiceType;
+      if (data.invoiceType === 1) {
+        this.form.name = data.invoiceTitle;
+      } else {
+        this.form.companyName = data.invoiceTitle;
+        this.form.companyNumber = data.taxpayerId;
+      }
+      this.form.catalog = data.invoiceContent;
+      this.form.phone = data.phone;
+      this.form.mail = data.email;
+      this.form.regionNo = data.phonePerfix;
+    },
   },
-  mounted() {},
+  mounted() {
+    if (this.form.invoiceId === "") {
+      getSettle().then((res) => {
+        if (res.status === 200) {
+          if (res.data.length > 0) {
+            let data = res.data[0];
+            this.backContent(data);
+          }
+        }
+      });
+    } else {
+      let params = {};
+      params.id = this.form.invoiceId;
+      getSettleById(params).then((res) => {
+        if (res.status === 200) {
+          if (res.data != null) {
+            let data = res.data;
+            this.backContent(data);
+          }
+        }
+      });
+    }
+  },
 };
 </script>
 <style scoped>
