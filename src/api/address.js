@@ -22,7 +22,7 @@ const getAddressList = () => {
   "consigneeTel": "",
   "consigneeTelHead": "",
   "consigneeZipCode": "",
-  "receiverTitle": ""
+  "receiverCode": "" // 可以没有
 }
  */
 const addAddressList = (data) => {
@@ -32,7 +32,14 @@ const addAddressList = (data) => {
         data
     })
 }
+
 // 设为默认 传参
+/**
+ *    params = {
+        tenantId: 1600018169,
+        receiverCode: id ,
+      };  现在必须这么传
+ */
 const setAddressList = (params) => {
     return request({
         url: '/fwebapi/order/address/default',
@@ -40,7 +47,14 @@ const setAddressList = (params) => {
         params
     })
 }
+
 // 删除
+/**
+const params = {
+    receiverCode: item.id,
+    tenantId: 1600018169,
+}
+ */
 const deleteAddressList = (params) => {
     return request({
         url: '/fwebapi/order/address/delete',
@@ -48,10 +62,11 @@ const deleteAddressList = (params) => {
         params
     })
 }
-// 修改
+
+// 编辑
 /**
     consigneeAddr: "详细地址修改了一下"
-    consigneeCity: "郑州市"
+    consigneeCity: "郑州市"             // 可以不传 ""
     consigneeCountry: "中国"
     consigneeCounty: "县"
     consigneeName: "我是编辑后的名字"
@@ -61,7 +76,7 @@ const deleteAddressList = (params) => {
     consigneeTel: "6769038"
     consigneeTelHead: "8633"
     consigneeZipCode: "453600"
-    receiverCode: "855547036190957568"
+    receiverCode: "855547036190957568" // 收货地址id
  */
 const eidtAddressList = (data) => {
     return request({
@@ -71,11 +86,10 @@ const eidtAddressList = (data) => {
     })
 }
 
-
 export {
     getAddressList, // 列表
     addAddressList, // 新增
     setAddressList, // 设为默认
     deleteAddressList, // 删除
-    eidtAddressList // 修改
+    eidtAddressList // 编辑
 }
