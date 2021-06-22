@@ -563,12 +563,42 @@ export default {
 				arr.push(json)
 			})
 			let res = await selectSettle(arr)
+			switch (res.code){
+				case "10001":
+				this.$message({ 
+				type: 'info',
+				message: '存在失效货品！'
+				});
+				break;
+				case "10002":
+				this.$message({ 
+				type: 'info',
+				message: '存在未达到起订量的货品！'
+				});
+				break;
+				case "10003":
+				this.$message({ 
+				type: 'info',
+				message: '存在库存不足的货品！'
+				});
+				break;
+				case "10004":
+				this.$message({ 
+				type: 'info',
+				message: '存在价格变动的货品！'
+				});
+				break;
+			}
 			if(res.status == 200){
-				this.renderData()
-				this.$router.push({ path: '/settlement'})
+				this.renderData();
+				let dataIDs ='';
+				arr.forEach( item =>{
+					dataIDs += item.shoppingCartCode + ','
+				})
+				this.$router.push({ path: '/settlement',params:{data:dataIDs}})
 			}
 			
-			console.log(res)
+			console.log(rthis.$router)
 		}
 	},
 	//去除引号
