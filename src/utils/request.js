@@ -16,7 +16,10 @@ service.defaults.headers.post['instance'] = "qinhui20210610"
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-
+    // 如果 是 收藏请求 更换baseURL
+    if(config.url.indexOf('collection')  !== -1){
+      config.baseURL = "http://10.12.68.205:8096"
+    }
     if (store.getters.token) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
