@@ -291,10 +291,24 @@ export default {
     handleOpen() {
       if (this.setAddrForm && this.dialogStatus === "edit") {
         this.addrForm = JSON.parse(JSON.stringify(this.setAddrForm)); // 表单赋值
-        this.countryChange(this.addrForm.consigneeCountry); // 设置国家
-        this.provinceChange(this.addrForm.consigneeProvince); // 设置市
+      } else {
+        this.addrForm = {
+          consigneeCountry: "", // 国家
+          consigneeName: "", // 收货人名称
+          consigneePhoneHead: "", // 手机区号
+          consigneePhone: "", // 手机号
+          consigneeTelHead: "", // 电话区号
+          consigneeTel: "", // 电话号
+          consigneeAddr: "", // 详细地址
+          consigneeProvince: "", // 省/州/地区
+          consigneeCity: "", // 地区
+          consigneeZipCode: "", // 邮政编码};
+        };
       }
+      this.countryChange(this.addrForm.consigneeCountry); // 设置国家
+      this.provinceChange(this.addrForm.consigneeProvince); // 设置市
     },
+
     // 确定
     saveAddrForm() {
       /**
@@ -314,10 +328,9 @@ export default {
           consigneeCity: copyData.consigneeCity, // 市
           consigneeAddr: copyData.consigneeAddr, // 详细地址
 
-          // consigneeCounty: copyData.consigneeCounty
-          //   ? copyData.consigneeCounty
-          //   : "", // 县
-          consigneeCounty: "", // 县
+          consigneeCounty: copyData.consigneeCounty
+            ? copyData.consigneeCounty
+            : "", // 县
 
           consigneeName: copyData.consigneeName, // 收货人
           consigneePhoneHead: copyData.consigneePhoneHead, // 手机头部
@@ -325,7 +338,7 @@ export default {
           consigneeTelHead: copyData.consigneeTelHead, // 电话头部
           consigneeTel: copyData.consigneeTel, // 电话号
           consigneeZipCode: copyData.consigneeZipCode,
-          receiverCode: copyData.id ? copyData.id : "create", // id
+          receiverCode: copyData.id ? copyData.id : "", // id
         };
         try {
           // 根据状态执行 不同请求
