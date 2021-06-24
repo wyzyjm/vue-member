@@ -530,7 +530,7 @@ export default {
 			this.$message({ 
 				type: 'info',
 				message: '最少起订量为'+obj.moq+'！'
-			});
+			}); 
 			timer = setTimeout(() =>{
 				this.$set(this.cartList[item.$index],'quantity',oldValue)
 				
