@@ -15,6 +15,7 @@
 							width="40"
 							class-name="checkboxTd"
 							align="center"
+							:selectable='selectInit'
 						></el-table-column>
 						<el-table-column label="商品信息">
 							<template slot-scope="scope">
@@ -66,12 +67,18 @@
 								<el-input-number
 									v-model="scope.row.quantity"
 									:step="1"
-									step-strictly
 									size="small"
-									@change="changeQuantity(scope.row)"
-									:min="scope.row.moq"
-									:max ="scope.row.stock"
+									 @change="((val,oldVal)=>{changeQuantity(val,oldVal, scope)})"
+									:class="{'is-disabledmin':scope.row.moq > scope.row.quantity ,'is-disabledmax': scope.row.stock<scope.row.quantity}"
+									
 								></el-input-number>
+
+								<span class="span-danger" v-if="scope.row.moq > scope.row.quantity">
+									最少起订量为{{scope.row.moq}}
+								</span>
+								<span class="span-danger" v-if="scope.row.stock<scope.row.quantity">
+									库存不足
+								</span>
 							</template>
 						</el-table-column>
 						<el-table-column
@@ -170,7 +177,7 @@
 									:step="1"
 									step-strictly
 									size="small"
-									disabled
+									
 								></el-input-number>
 							</template>
 						</el-table-column>
@@ -474,9 +481,17 @@ export default {
 				})
 			}
 			this.selectProduct = list;
+			//出去不可点击的
+			let cartListLength = 0;
+			this.cartList.forEach((item) =>{
+				if(!item['disabled']){
+					cartListLength ++
+				}
+			})
 			this.isIndeterminate =
-				val.length > 0 && val.length < this.cartList.length;
-			this.checkAll = val.length === this.cartList.length;
+				val.length > 0 && val.length < cartListLength;
+			this.checkAll = val.length === cartListLength;
+			
 			this.totalPrice()
 			
 		},
@@ -484,7 +499,10 @@ export default {
 		selectAllFun(val) {
 			if (val) {
 				this.cartList.forEach((e) => {
-					this.$refs.cartList.toggleRowSelection(e, "selected");
+					if(!e['disabled']){
+						this.$refs.cartList.toggleRowSelection(e, "selected");
+					}
+					
 				});
 			} else {
 				this.$refs.cartList.clearSelection();
@@ -505,16 +523,35 @@ export default {
 		
 
 		//修改购物车
-	 async	changeQuantity(currentValue){
-		 let obj = currentValue;
-		 let values = this.searchShoppingCartNum()
+	 async	changeQuantity(currentValue,oldValue,item){
+		 let obj = item.row;
+		 let timer =null;
 		 if(obj.quantity<obj.moq){
 			this.$message({ 
 				type: 'info',
 				message: '最少起订量为'+obj.moq+'！'
-			});
+			}); 
+			timer = setTimeout(() =>{
+				this.$set(this.cartList[item.$index],'quantity',oldValue)
+				
+			},0)
+			
 			return false
+		 }else if(obj.stock<obj.quantity){
+			 	this.$message({ 
+					type: 'info',
+					message: '库存不足！'
+				
+				});
+				timer = setTimeout(() =>{
+				this.$set(this.cartList[item.$index],'quantity',oldValue)
+				
+				},0)
+				
 		 }else{
+			 if(timer){
+				 clearTimeout(timer)
+			 }
 			 let  shoppingCartCode = obj.shoppingCartCode.replace(/^\"|\"$/g,'')
 			 let  skuId = obj.skuId.replace(/^\"|\"$/g,'')
 			 	let json ={
@@ -531,9 +568,22 @@ export default {
 							item.subtotal = res.data.subtotal
 						}
 					})
+					this.totalPrice()
 				}
 			}
 		},
+    		/**
+             *  判断是否可回收
+             */
+            selectInit(row,index) {
+                if (row.moq > row.quantity || row.quantity > row.stock) {
+					this.cartList[index].disabled = 1
+                    return false; //不可勾选
+                }else {
+                    return true//可勾选
+                }
+            },
+
 	//结算
 	async submit(){
 		console.log()
@@ -548,7 +598,8 @@ export default {
 				"cargoId": 0,
 				"goodsId": 0,
 				"shoppingCartId": 0,
-				"unitPrice": 0
+				"unitPrice": 0,
+				"currencySymbol":"￥"
 			}
 
 			let arr = [];
@@ -558,7 +609,8 @@ export default {
 					"skuId": this.delstr(item.skuId),
 					"productId":this.delstr(item.productId),
 					"shoppingCartCode":this.delstr(item.shoppingCartCode) ,
-					"skuPrice": item.skuPrice
+					"skuPrice": item.skuPrice,
+					"currencySymbol":item.currency
 				}
 				arr.push(json)
 			})
@@ -586,6 +638,12 @@ export default {
 				this.$message({ 
 				type: 'info',
 				message: '存在价格变动的货品！'
+				});
+				break;
+				case "10005":
+				this.$message({ 
+				type: 'info',
+				message: '币种有变动'
 				});
 				break;
 			}
@@ -625,6 +683,11 @@ export default {
 }
 .productTable .el-table__header-wrapper th {
 	background: #f0f0f0;
+}
+.is-disabledmin .el-input-number__decrease,.is-disabledmax .el-input-number__increase{
+	border-color: #E4E7ED;
+    color: #E4E7ED;
+	cursor: no-drop;
 }
 </style>
 <style scoped>
@@ -721,6 +784,11 @@ export default {
 	position: absolute;
 	left: 0;
 	top: 0;
+}
+
+.span-danger{
+	color: #f56c6c;
+	font-size: 12px;
 }
 </style>
 

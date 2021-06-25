@@ -18,7 +18,7 @@
           >
             <!-- 内容区 开始 -->
             <!-- 无内容提示 -->
-            <div class="no-content-tip" v-if="collectList.length === 0">
+            <div class="no-content-tip" v-if="total === 0">
               您还没有收藏过任何内容哦！
             </div>
             <!-- 有内容 -->
@@ -136,16 +136,24 @@
       <!-- 分页 结束 -->
     </div>
     <!-- 主体区 结束 -->
+
+    <!-- <el-button type="primary" @click="addCollectionFn">添加收藏</el-button> -->
   </div>
 </template>
 <script>
 import PageTitle from "@/views/components/pageTitle"; // 头部组件
+
+import {
+  getCollectionList,
+  addCollectionContent,
+  deleteCollectionContent,
+} from "@/api/collection";
 export default {
   data() {
     return {
       // 页面参数
       isBatch: false, // 是否批量
-      activeName: "0", // 高亮哪一个
+      activeName: "product", // 高亮哪一个
       selectList: [], // 所选内容id
       allChecked: false, // 是否全选
       // data
@@ -172,110 +180,62 @@ export default {
           id: 23245,
           userId: 34567,
           collectName: "产品收藏",
-          collectType: "0",
+          collectType: "product",
         },
-        {
-          id: 34543543,
-          userId: 34567,
-          collectName: "课程收藏",
-          collectType: "1",
-        },
-        {
-          id: 2354565464245,
-          userId: 34567,
-          collectName: "资讯收藏",
-          collectType: "2",
-        },
+        // {
+        //   id: 34543543,
+        //   userId: 34567,
+        //   collectName: "课程收藏",
+        //   collectType: "1",
+        // },
+        // {
+        //   id: 2354565464245,
+        //   userId: 34567,
+        //   collectName: "资讯收藏",
+        //   collectType: "2",
+        // },
       ];
       // 2. 请求第一栏 内容
-      this.getCollectList();
+      this.getCollectList(1, this.pageSize);
     },
     // 获取 内容列表
-    getCollectList() {
-      this.total = 100;
-      this.currentPage = 1;
-      this.pageSize = 10;
-      this.collectList = [
-        {
-          id: 3456,
-          title:
-            "A21男装 纯棉学生工装休闲裤运动风九分裤潮男裤子 R403116038 黑色 185/84A/XXL",
-          imgUrl: "",
-          href: "http://www.baidu.com",
-          price: 100.0,
-          retailPrice: 120.0,
-          currencySymbol: "¥",
-          status: 0,
+    async getCollectList(currentPage, pageSize) {
+      const data = {
+        currentPage: currentPage,
+        pageSize: pageSize,
+        memberBizId: "854299120902660096",
+        collectionType: "product",
+        orderByMap: {
+          updateDate: "asc",
         },
-        {
-          id: 34563,
-          title:
-            "A21男装 纯棉学生工装休闲裤运动风九分裤潮男裤子 R403116038 黑色 185/84A/XXL",
-          imgUrl: "",
-          href: "http://www.baidu.com",
-          price: 100.0,
-          retailPrice: 120.0,
-          currencySymbol: "¥",
-          status: 1,
-        },
-        {
-          id: 3456233,
-          title:
-            "A21男装 纯棉学生工装休闲裤运动风九分裤潮男裤子 R403116038 黑色 185/84A/XXL",
-          imgUrl: "",
-          href: "http://www.baidu.com",
-          price: 100.0,
-          retailPrice: 120.0,
-          currencySymbol: "¥",
-          status: 2,
-        },
-        {
-          id: 34434563,
-          title:
-            "A21男装 纯棉学生工装休闲裤运动风九分裤潮男裤子 R403116038 黑色 185/84A/XXL",
-          imgUrl: "",
-          href: "http://www.baidu.com",
-          price: 100.0,
-          retailPrice: 120.0,
-          currencySymbol: "¥",
-          status: 3,
-        },
-        {
-          id: 3454563,
-          title:
-            "A21男装 纯棉学生工装休闲裤运动风九分裤潮男裤子 R403116038 黑色 185/84A/XXL",
-          imgUrl: "",
-          href: "http://www.baidu.com",
-          price: 100.0,
-          retailPrice: 120.0,
-          currencySymbol: "¥",
-          status: 0,
-        },
-        {
-          id: 34242454,
-          title:
-            "A21男装 纯棉学生工装休闲裤运动风九分裤潮男裤子 R403116038 黑色 185/84A/XXL",
-          imgUrl: "",
-          href: "http://www.baidu.com",
-          price: 100.0,
-          retailPrice: 120.0,
-          currencySymbol: "¥",
-          status: 0,
-        },
-        {
-          id: 34545663745563,
-          title:
-            "A21男装 纯棉学生工装休闲裤运动风九分裤潮男裤子 R403116038 黑色 185/84A/XXL",
-          imgUrl: "",
-          href: "http://www.baidu.com",
-          price: 100.0,
-          retailPrice: 120.0,
-          currencySymbol: "¥",
-          status: 0,
-        },
-      ];
+      };
+      try {
+        const { data: res } = await getCollectionList(data);
+        console.log(res);
+        if (res.list.length === 0) return;
+        this.collectList = res.list; // 设置列表
+        this.total = res.page.totalCount; // 收藏总数
+        this.currentPage = res.page.currentPage; // 当前页码
+        this.pageSize = res.page.pageSize; // 每页条数
+      } catch (error) {
+        console.log("请求失败", error);
+      }
     },
-
+    // 取消收藏
+    async removeCollection(arrId) {
+      const data = {
+        memberBizId: "854299120902660096", // 会员业务ID
+        bizIds: arrId,
+      };
+      try {
+        const { status } = await deleteCollectionContent(data);
+        // console.log(res);
+        if (status !== 200) return;
+        this.getCollectList(this.currentPage, this.pageSize);
+      } catch (error) {
+        console.log(error);
+      }
+    },
     // 监听tab栏切换
     tabClick(tab, event) {
       console.log(tab, event);
@@ -283,18 +243,15 @@ export default {
 
     // 监听页码 变化
     handleCurrentChange(val) {
-      /**
-       * 1. 根据点击 获取的当前页值, 发送请求
-       * 2. 请求成功, 修改当前页值
-       * 3. 重新获取内容列表
-       */
-      console.log(`当前页:${val}`);
+      this.getCollectList(val, this.pageSize);
     },
 
     // 单独取消
     aloneCancelCollect(id) {
-      console.log("单独取消收藏", id); // 拿到所点击内容id
       // 根据id发送 删除请求
+      const arrId = [id];
+      console.log(arrId);
+      this.removeCollection(arrId);
     },
 
     // 批量操作
@@ -329,10 +286,7 @@ export default {
           type: "warning",
         });
         if (result !== "confirm") return; // 不是确认直接返回,一般都是confirm
-        console.log(this.selectList); // 获取选中内容id
-
-        // 根据id 发送删除请求
-
+        this.removeCollection(this.selectList); // 批量删除
         this.removeStatu(); // 移除批量操作 所有状态
         this.getCollectList(); // 重新获取内容列表
       } catch (error) {
@@ -372,6 +326,22 @@ export default {
       this.allChecked = false; // 取消全选状态
       this.isBatch = false; // 取消批量
     },
+
+    // 添加收藏
+    // async addCollectionFn() {
+    //   const data = {
+    //     memberBizId: "854299120902660096",
+    //     collectionType: "product",
+    //     collectionDataId: "854402193578582016",
+    //   };
+    //   try {
+    //     const res = await addCollectionContent(data);
+    //     console.log(res);
+    //     this.getCollectList();
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // },
   },
 };
 </script>
