@@ -11,6 +11,7 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
+import md5 from 'js-md5'
 
 import '../static/js/environment.js'
 // import '@/resource'
@@ -27,6 +28,7 @@ import '@/permission' // permission control
 // Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 Vue.use(ElementUI)
+Vue.prototype.$md5 = md5
 
 Vue.config.productionTip = false
 

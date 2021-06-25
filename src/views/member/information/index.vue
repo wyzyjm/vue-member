@@ -3,109 +3,99 @@
     <PageTitle :pagetitle="title">
     <!-- <slot slot="slot">搜索</slot> -->
     </PageTitle>
-    <div v-if="data" class="content">
-      <!-- 头像 -->
-      <div class="block user">
-        <el-image
-          :src="data.user.avatar"
-          class="uimges"
-          @click="vicpWarpShow = true"
+    <div v-if="isShow">
+      <div v-if="data" class="content">
+        <!-- 头像 -->
+        <div class="block user">
+          <el-image
+            :src="data.user.avatar"
+            class="uimges"
+            @click="vicpWarpShow = true"
+          />
+          <div class="username">
+            <p class="member-order"><SvgIcon name="icon-huiyuan" class="icon" />{{ data.user.memberLevel }}</p>
+            <p>{{ data.user.userName }}</p>
+          </div>
+        </div>
+        <!-- 基础信息 -->
+        <div class="customList">
+          <div class="item">
+            <p>
+              <span>昵称</span>
+              <span>{{ data.user.nickName ? data.user.nickName : '还没有昵称' }}</span>
+            </p>
+            <el-button type="text" @click="modify('nickName')">编辑</el-button>
+          </div>
+          <div class="item">
+            <p>
+              <span>姓名</span>
+              <span>{{ data.user.name ? data.user.name : '还没有姓名' }}</span>
+            </p>
+            <el-button type="text" @click="modify('name')">编辑</el-button>
+          </div>
+          <div class="item">
+            <p>
+              <span>手机</span>
+              <span>{{ data.user.phoneHead.substring(0,data.user.phoneHead.lastIndexOf(",")) }} {{ data.user.phone ? data.user.phone : '还没有手机号' }}</span>
+            </p>
+            <div>
+              <el-button v-if="!data.user.phone" type="text" @click="updatePhone(0)">绑定手机</el-button>
+              <el-button v-if="data.user.phone" type="text" @click="updatePhone(1)">更换手机</el-button>
+              <el-button v-if="data.user.phone" type="text" @click="updatePhone(2)">解绑手机</el-button>
+            </div>
+          </div>
+          <div class="item">
+            <p>
+              <span>邮箱</span>
+              <span>{{ data.user.email ? data.user.email : '还没有添加邮箱' }}</span>
+            </p>
+            <div>
+              <el-button v-if="!data.user.email" type="text" @click="updateEmail(0)">绑定邮箱</el-button>
+              <div v-else>
+                <el-button type="text" @click="updateEmail(1)">更换邮箱</el-button>
+                <el-button type="text" @click="updateEmail(2)">解绑邮箱</el-button>
+              </div>
+            </div>
+          </div>
+          <div class="item">
+            <p>
+              <span>密码</span>
+              <span>{{ data.user.pwd ? '******' : '' }}</span>
+            </p>
+            <el-button type="text" @click="updatePwd(data.user.pwd)">重设密码</el-button>
+          </div>
+          <div
+            v-for="(item, index) in data.customList"
+            :key="index"
+            class="item"
+          >
+            <p>
+              <span>{{ item.attrName }}</span>
+              <span>{{ item.description }}</span>
+            </p>
+            <div>
+              <el-button type="text" @click="selfDefiningTerm(item)">编辑</el-button>
+            </div>
+          </div>
+        </div>
+        <!-- 修改内容 -->
+        <images-upload
+          v-show="vicpWarpShow"
+          @close="close"
+          @crop-upload-success="cropSuccess"
         />
-        <div class="username">
-          <p class="member-order"><SvgIcon name="icon-huiyuan" class="icon" />{{ data.user.memberLevel }}</p>
-          <p>{{ data.user.userName }}</p>
-        </div>
+        <modify
+          v-show="modifyShow"
+          :selfDefining="selfDefining"
+          :modifyType="modifyType"
+          @close="close"
+        />
       </div>
-      <!-- 基础信息 -->
-      <div class="customList">
-        <div class="item">
-          <p>
-            <span>昵称</span>
-            <span>{{ data.user.nickName ? data.user.nickName : '还没有昵称' }}</span>
-          </p>
-          <el-button type="text" @click="modifyShow = true">编辑</el-button>
-        </div>
-        <div class="item">
-          <p>
-            <span>姓名</span>
-            <span>{{ data.user.name ? data.user.name : '还没有姓名' }}</span>
-          </p>
-          <el-button type="text" @click="modifyShow = true">编辑</el-button>
-        </div>
-        <div class="item">
-          <p>
-            <span>手机</span>
-            <span>{{ data.user.phoneHead }}{{ data.user.phone ? data.user.phone : '还没有手机号' }}</span>
-          </p>
-          <div>
-            <el-button type="text" @click="setting">更换手机</el-button>
-            <el-button type="text" @click="modifyShow = true">绑定手机</el-button>
-            <el-button type="text">解绑手机</el-button>
-          </div>
-        </div>
-        <div class="item">
-          <p>
-            <span>邮箱</span>
-            <span>{{ data.user.email ? data.user.email : '还没有添加邮箱' }}</span>
-          </p>
-          <div>
-            <el-button type="text" @click="modifyShow = true">更换邮箱</el-button>
-            <el-button type="text" @click="modifyShow = true">绑定邮箱</el-button>
-            <el-button type="text" @click="modifyShow = true">解绑邮箱</el-button>
-          </div>
-        </div>
-        <div class="item">
-          <p>
-            <span>QQ</span>
-            <span>{{ data.user.qq ? data.user.qq : '还没有绑定QQ' }}</span>
-          </p>
-          <el-button type="text" @click="modifyShow = true">解绑</el-button>
-        </div>
-        <div class="item">
-          <p>
-            <span>微信</span>
-            <span>{{ data.user.weChat ? data.user.weChat : '还没有绑定微信' }}</span>
-          </p>
-          <el-button type="text" @click="modifyShow = true">解绑</el-button>
-        </div>
-        <div class="item">
-          <p>
-            <span>微博</span>
-            <span>{{ data.user.weibo ? data.user.weibo : '还没有绑定微博' }}</span>
-          </p>
-          <el-button type="text" @click="modifyShow = true">解绑</el-button>
-        </div>
-        <div class="item">
-          <p>
-            <span>密码</span>
-            <span>{{ data.user.pwd }}</span>
-          </p>
-          <el-button type="text" @click="modifyShow = true">重置密码</el-button>
-        </div>
-        <div
-          v-for="(item, index) in data.customList"
-          :key="index"
-          class="item"
-        >
-          <p>
-            <span>{{ item.attrName }}</span>
-            <span>{{ item.description }}</span>
-          </p>
-          <div>
-            <el-button type="text">编辑</el-button>
-          </div>
-        </div>
-      </div>
-      <!-- 修改内容 -->
-      <images-upload
-        v-show="vicpWarpShow"
-        @close="close"
-        @crop-upload-success="cropSuccess"
-      />
-      <modify
-        v-show="modifyShow"
-        @close="close"
-      />
+    </div>
+    <div v-else>
+      <SettingEmail v-show="showModule === 0" :setdata="dataList" />
+      <SettingPwd v-show="showModule === 1" :setdata="dataList" />
+      <SettingPhone v-show="showModule === 2" :setdata="dataList" />
     </div>
   </div>
 </template>
@@ -116,22 +106,35 @@ import PageTitle from '@/views/components/pageTitle'
 import SvgIcon from '@/components/SvgIcon'
 import imagesUpload from './components/imagesUpload'
 import modify from './components/modify'
+import SettingEmail from './components/settingEmail'
+import SettingPwd from './components/settingPwd'
+import SettingPhone from './components/settingPhone'
 
 export default {
   components: {
     PageTitle,
     SvgIcon,
     imagesUpload,
-    modify
+    modify,
+    SettingEmail,
+    SettingPwd,
+    SettingPhone
   },
   data() {
     return {
+      bizId: '',
       title: '我的资料',
       vicpWarpShow: false,
       modifyShow: false,
+      modifyType: '',
+      selfDefining: {},
       imagecropperKey: 0,
       image: 'https://wpimg.wallstcn.com/577965b9-bb9e-4e02-9f0c-095b41417191',
-      data: null
+      data: null,
+      dataList: {},
+      isShow: true,
+      loading: true,
+      showModule: 0
     }
   },
   created() {
@@ -144,20 +147,66 @@ export default {
         tenantId: '1600018169',
         instance: 'qinhui20210610'
       }
-      // const detailData = await memberDetail(data)
-      console.log(data, memberDetail)
+      const detailData = await memberDetail(data)
+      this.data = detailData.data
+      this.bizId = this.data.user.memberId
+      console.log(detailData)
     },
     cropSuccess(resData) {
       this.vicpWarpShow = false
       this.imagecropperKey = this.imagecropperKey + 1
       this.image = resData.files.avatar
     },
+    modify(itemType) {
+      this.modifyShow = true
+      this.modifyType = itemType
+    },
+    // 自定义项
+    selfDefiningTerm(item) {
+      if (item.attrType === 'image') {
+        this.$message('开发中!')
+        return
+      }
+      this.modifyShow = true
+      this.modifyType = item.attrDetailType
+      this.selfDefining = item
+    },
     close() {
       this.vicpWarpShow = false
       this.modifyShow = false
     },
-    setting() {
-      this.$router.push('/informationSetting')
+    // 设置手机
+    updatePhone(type) {
+      this.dataList = {
+        bizId: this.bizId,
+        type: 'mobile',
+        phoneType: type,
+        phone: this.data.user.phone,
+        phoneHead: this.data.user.phoneHead
+      }
+      this.isShow = false
+      this.showModule = 2
+    },
+    // 重置密码
+    updatePwd(pwd) {
+      this.dataList = {
+        bizId: this.bizId,
+        type: 'pwd',
+        oldPassword: pwd
+      }
+      this.isShow = false
+      this.showModule = 1
+    },
+    // 设置邮箱
+    updateEmail(type) {
+      this.dataList = {
+        bizId: this.bizId,
+        type: 'email',
+        emailType: type,
+        email: this.data.user.email
+      }
+      this.isShow = false
+      this.showModule = 0
     }
   }
 }
@@ -218,5 +267,8 @@ export default {
     display: inline-block;
     text-align: right;
   }
+}
+.images-upload[data-v-44c3f0b4]{
+  z-index: 10;
 }
 </style>
