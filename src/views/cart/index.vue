@@ -526,24 +526,26 @@ export default {
 	 async	changeQuantity(currentValue,oldValue,item){
 		 let obj = item.row;
 		 let timer =null;
-		 if(obj.quantity<obj.moq){
-			this.$message({ 
+		 if(obj.quantity<obj.moq && currentValue < oldValue){
+			 
+			timer = setTimeout(() =>{
+				this.$message({ 
 				type: 'info',
 				message: '最少起订量为'+obj.moq+'！'
-			}); 
-			timer = setTimeout(() =>{
+				});
 				this.$set(this.cartList[item.$index],'quantity',oldValue)
 				
 			},0)
 			
 			return false
-		 }else if(obj.stock<obj.quantity){
-			 	this.$message({ 
+		 }else if(obj.stock < obj.quantity && currentValue > oldValue){
+			 	
+				timer = setTimeout(() =>{
+					this.$message({ 
 					type: 'info',
 					message: '库存不足！'
 				
 				});
-				timer = setTimeout(() =>{
 				this.$set(this.cartList[item.$index],'quantity',oldValue)
 				
 				},0)
@@ -569,9 +571,11 @@ export default {
 						}
 					})
 					this.totalPrice()
+					console.log(this.cartList[item.$index].quantity)
 				}
 			}
 		},
+		
     		/**
              *  判断是否可回收
              */
