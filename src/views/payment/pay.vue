@@ -8,52 +8,52 @@
     </p>
 
     <el-card class="box-card text-normal" style="clear: both">
-      
-      <corderinfo :orderInfo="orderInfo" :orderDetail="orderDetail"></corderinfo>
+      <corderinfo
+        :orderInfo="orderInfo"
+        :orderDetail="orderDetail"
+      ></corderinfo>
       <el-card style="margin-top: 20px">
-        <div v-if="orderInfo.payType === 0">
-          <p><strong>在线支付</strong></p>
-
+        <div >
+          <p v-if="orderInfo.payType === 0"><strong>在线支付</strong></p>
+          <p v-if="orderInfo.payType === 1"><strong>线下支付</strong></p>
           <div class="online">
-            <!-- <div
+            <div
               v-for="item in payList"
               :key="item.id"
               class="item"
-              @click="openPay(item.id)"
-            > -->
-            <div
-              class="item"
-              @click="openPay"
+              @click="openPay(item.payCode)"
             >
-              <img style="width: 100px" src="../../assets/images/vchat.png" />
-              <!-- <img style="width: 100px" :src="item.payImg" /> -->
+              <template v-if="item.payCode==='Wechat'">
+                <img style="width: 100px" src="../../assets/images/vchat.png" />
+              </template>
               
+
+              <template v-if="item.payCode==='Paypal'">
+                <img style="width: 100px" src="../../assets/images/paypal.png" />
+              </template>
+              <template v-if="item.payCode==='Alipay'">
+                <img style="width: 100px" src="../../assets/images/alipay.png" />
+              </template>
+
+              <template v-if="item.payCode==='WesternUnion'">
+                <img style="width: 100px" src="../../assets/images/WesternUnion.png" />
+              </template>
+
+              <template v-if="item.payCode==='MoneyGram'">
+                <img style="width: 100px" src="../../assets/images/money.png" />
+              </template>
+
+              <template v-if="item.payCode==='BankTransfer'">
+                <img style="width: 100px" src="../../assets/images/bank.png" />
+              </template>
+
             </div>
-            <div class="item">
-              <img style="width: 100px" src="../../assets/images/alipay.png" />
-            </div>
-            <div class="item">
-              <img style="width: 100px" src="../../assets/images/paypal.png" />
+            
             </div>
           </div>
-        </div>
-        <template v-if="orderInfo.payType===1">
-        <p><strong>线下支付</strong></p>
-        <div class="offline">
-          <div class="item">
-            <img style="width: 100px" src="../../assets/images/bank.png" />
-          </div>
-          <div class="item">
-            <img style="width: 100px" src="../../assets/images/money.png" />
-          </div>
-          <div class="item">
-            <img
-              style="width: 100px"
-              src="../../assets/images/WesternUnion.png"
-            />
-          </div>
-        </div>
-        </template>
+         
+        
+        
       </el-card>
     </el-card>
     <el-dialog title="" :visible.sync="dialogVisible" width="530px">
@@ -64,6 +64,7 @@
           <br />2、如果您已完成，请点击“已完成付款”
         </p>
         <p>
+          <!-- todo -->
           <el-button
             type="primary"
             style="margin-right: 30px"
@@ -79,7 +80,8 @@
   </div>
 </template>
 <script>
-import corderinfo from './components/orderinfo.vue'
+import corderinfo from "./components/orderinfo.vue";
+import { orderPayInit } from "@/api/pay";
 export default {
   data() {
     return {
@@ -90,66 +92,33 @@ export default {
       orderInfo: {},
       orderDetail: {},
       payList: {},
+      // selectPayCode:""
     };
   },
-  components:{
-    corderinfo
+  components: {
+    corderinfo,
   },
   mounted() {
-    //data
-    let data2 = {
-      orderId: 88,
-      userId: 99,
-      userName: "小明",
-      orderNo: "202105111523178740",
-      amount: 2420.0,
-      currencySymbol: "￥",
-      createTime: 23454567879,
-      failureTime: 3600,
-      payType: 0,
-      payList: [
-        {
-          id: 1,
-          payName: "微信支付",
-          payImg: "../../../src/assets/images/vchat.png",
-        },
-        {
-          id: 2,
-          payName: "支付宝",
-          payImg: "../../assets/images/alipay.png",
-        },
-        {
-          id: 3,
-          payName: "paypal",
-          payImg: "../../assets/images/paypal.png",
-        },
-      ],
-      orderDetail: {
-        id: 123,
-        consigneeName: "收货人名称",
-        consigneeProvince: "省",
-        consigneeCity: "市",
-        consigneeCounty: "区",
-        consigneeAddr: "详细地址值",
-        consigneePhoneHead: "0086",
-        consigneePhone: 18636908524,
-        productName: ["商品名称", "手机", "电脑", "电动车"],
-      },
-    };
-    // for(let i in data){
-    //  this.$set(this.orderInfo,i,data[i])
-    // }
-    this.orderInfo = data2
-    this.orderDetail = data2.orderDetail;
-    this.payList = data2.payList;
-    console.log(this.orderInfo);
+    //订单详情数据
+    let param = {};
+    param.orderId = this.$route.query.orderId;
+    orderPayInit(param).then((res) => {
+      if (res.status === 200) {
+        this.orderInfo = res.data;
+        this.orderDetail = res.data.orderDetail;
+        this.payList = res.data.payList;
+      } else {
+        this.$message.error(res.msg);
+      }
+    });
+   
   },
   methods: {
-    openPay() {
+    openPay(code) {
       this.dialogVisible = true;
-      this.$router.push({path:'/payment/poppay',query:{}})
+      let href = this.$router.resolve({ path: "/payment/poppay", query: {payCode:code,orderId:this.orderInfo.orderId} });
+      window.open(href.href,'_blank')
     },
-   
   },
 };
 </script>
@@ -182,6 +151,5 @@ export default {
 .title {
   float: right;
 }
-
 </style>
 

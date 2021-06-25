@@ -49,6 +49,16 @@ export function getSettleById(params) {
     params
   })
 }
+//通过发票id查询发票
+export function skuItem(params) {
+  return request({
+    url: '/fwebapi/order/shoppingCart/skuItem',
+    method: 'get',
+    params
+  })
+}
+
+
 
 
 

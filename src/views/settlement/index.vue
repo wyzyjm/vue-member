@@ -11,7 +11,7 @@
       </div>
     </div>
     <p class="order-subtitle">填写并核对订单信息</p>
-    
+
     <div class="order-details">
       <p><strong>收货人信息</strong></p>
       <el-button
@@ -53,8 +53,15 @@
                 @click.stop="setDefault(item.id)"
                 >设为默认</el-button
               >
-              <el-button type="text" size="mini" @click.stop="eidtAddress(item)">编辑</el-button>
-              <el-button type="text" size="mini" @click.stop="deleteAddress(item)">删除</el-button>
+              <el-button type="text" size="mini" @click.stop="eidtAddress(item)"
+                >编辑</el-button
+              >
+              <el-button
+                type="text"
+                size="mini"
+                @click.stop="deleteAddress(item)"
+                >删除</el-button
+              >
             </div>
           </div>
         </div>
@@ -109,7 +116,6 @@
       <p><strong>发票信息</strong></p>
       <div>
         电子发票
-        {{ receiptInfo }}
         <template v-if="receiptInfo.invoiceId == ''">
           <el-button type="text" @click="openReceipt('new')">开发票</el-button>
         </template>
@@ -166,15 +172,40 @@
       >
     </div>
     <receipt ref="getReceipt" @formData="getReceiptData"></receipt>
-    <address-form ref="address" :setAddrForm="editFormItem" @confirm="getConfirm"></address-form>
+    <address-form
+      ref="address"
+      :setAddrForm="editFormItem"
+      @confirm="getConfirm"
+    ></address-form>
 
     <el-dialog title="提示" :visible.sync="messageVisible" width="30%">
-      <span>这是一段信息</span>
+      <span>{{ msgContent }}</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="messageVisible = false">取 消</el-button>
-        <el-button type="primary" @click="messageVisible = false"
-          >返回购物车</el-button
-        >
+        <!-- 价格有变动时候 -->
+        <template v-if="msgCode === '10004'">
+          <el-button type="default" @click="$router.push('/cart')"
+            >返回购物车</el-button
+          >
+          <!-- todo query?? -->
+          <el-button type="primary" @click="$router.push('/payment/pay')"
+            >继续结算</el-button
+          >
+        </template>
+        <!-- //运费有变动时候 -->
+        <template v-else-if="msgCode === '10006'">
+          <el-button type="default" @click="$router.push('/cart')"
+            >返回购物车</el-button
+          >
+          <!-- todo query?? -->
+          <el-button type="primary" @click="calculateFare('pop')"
+            >刷新运费价格</el-button
+          >
+        </template>
+        <template v-else>
+          <el-button type="primary" @click="$router.push('/cart')"
+            >返回购物车</el-button
+          >
+        </template>
       </span>
     </el-dialog>
   </div>
@@ -185,16 +216,20 @@ import receipt from "@/views/components/receipt";
 
 import productList from "@/views/components/productList";
 import addressForm from "@/views/components/addressForm";
-import { payModeInitInfo, calculateFare, addOrder } from "@/api/settlement";
+import {
+  payModeInitInfo,
+  calculateFare,
+  addOrder,
+  skuItem,
+} from "@/api/settlement";
 import {
   getAddressList,
   addAddressList,
   setAddressList,
   deleteAddressList,
   eidtAddressList,
-} from "@/api/address"; // 购物车api
+} from "@/api/address"; // 收货地址api
 
-// import { getdata1 } from "@/api/settlement";
 export default {
   data() {
     return {
@@ -213,8 +248,6 @@ export default {
         },
       ],
       stepActive: 1,
-      test: "",
-      radio: 3,
       showAInfo: false,
       remark: "",
       receiptInfo: {
@@ -227,25 +260,7 @@ export default {
         taxpayerId: "",
         phonePrefix: "",
       },
-      productlist: [
-        {
-          productId: 144,
-          skuId: 271,
-          skuName: "货品名称",
-          skuImg:
-            "/repository/image / 1 f6fa47f - d790 - 4907 - 95 cc - 1 c06f290f71b.jpg",
-          skuPrice: 22222210.0,
-          quantity: 11,
-          aggregateAmount: 1210.0,
-          skuSpec: [
-            {
-              specName: "内存",
-              specValue: "8+256g",
-            },
-          ],
-          productUrl: "/product/144. html",
-        },
-      ],
+      productlist: [],
       distributionVal: "",
       distributionList: [],
       payVal: "",
@@ -253,15 +268,15 @@ export default {
       logisticsInfoList: [],
       freight: 0,
       realPayment: 0,
-      totalNum: 10,
-      totalPrice: 1233.0,
+      totalNum: 0,
+      totalPrice: 0,
       currency: "¥",
       orderLoading: false,
       orderDisabled: false,
       addressInfo: {},
       messageVisible: false,
       addressActive: 0,
-      editFormItem:{
+      editFormItem: {
         consigneeCountry: "", // 国家
         consigneeName: "", // 收货人名称
         consigneePhoneHead: "", // 手机区号
@@ -272,10 +287,12 @@ export default {
         consigneeProvince: "", // 省/州/地区
         consigneeCity: "", // 地区
         consigneeZipCode: "", // 邮政编码
-
         consigneeCounty: "",
         receiverCode: "",
-      }
+      },
+      msgContent: "",
+      msgCode: "",
+      orderId: "",
     };
   },
   components: {
@@ -287,26 +304,10 @@ export default {
   mounted() {
     //获取收货地址list
     this.getList();
-    //获取支付方式列表
-    payModeInitInfo().then((res) => {
-      if (res.status === 200) {
-        let data = res.data;
-
-        if (data.hasOwnProperty("distributionList")) {
-          this.distributionList = data.distributionList;
-        }
-        if (data.hasOwnProperty("payList")) {
-          this.payList = data.payList;
-        }
-        if (this.distributionList.length > 0) {
-          this.distributionVal = this.distributionList[0].id;
-        }
-
-        if (this.payList.length > 0) {
-          this.payVal = this.payList[0].type;
-        }
-      }
-    });
+    //获取支付方式，配送方式
+    this.getPayMode();
+    //商品清单
+    this.getProductList();
   },
   methods: {
     // 获取地址列表
@@ -324,6 +325,7 @@ export default {
             this.logisticsInfoList[i].active = false;
           }
         }
+        this.addressInfo = this.logisticsInfoList[0];
       } catch (error) {
         console.log("获取收货地址失败", error);
       }
@@ -391,7 +393,7 @@ export default {
         console.log("取消,不删除");
       }
     },
-// 弹窗 显示
+    // 弹窗 显示
     showDialog(status) {
       const _this = this.$refs["address"]; // 获取当前弹窗组件实例
       _this.dialogFormVisible = true; // 修改弹窗 显示状态
@@ -402,10 +404,9 @@ export default {
       this.current = JSON.parse(JSON.stringify(item)); // 赋值
       this.showDialog("edit");
       this.editFormItem = item;
-      
     },
     //修改后重新刷新列表
-    getConfirm(){
+    getConfirm() {
       this.getList();
     },
     // 收货地址弹窗
@@ -420,6 +421,28 @@ export default {
       } else {
         this.showAInfo = true;
       }
+    },
+    getPayMode() {
+      //获取支付方式列表
+      payModeInitInfo().then((res) => {
+        if (res.status === 200) {
+          let data = res.data;
+
+          if (data.hasOwnProperty("distributionList")) {
+            this.distributionList = data.distributionList;
+          }
+          if (data.hasOwnProperty("payList")) {
+            this.payList = data.payList;
+          }
+          if (this.distributionList.length > 0) {
+            this.distributionVal = this.distributionList[0].id;
+          }
+
+          if (this.payList.length > 0) {
+            this.payVal = this.payList[0].type;
+          }
+        }
+      });
     },
     getReceiptData(data) {
       this.receiptInfo.invoiceId = data.invoiceId;
@@ -460,19 +483,45 @@ export default {
       }
       this.addressActive = index;
       this.addressInfo = this.logisticsInfoList[index];
+      console.log(this.logisticsInfoList[index]);
       this.logisticsInfoList[index].active = true;
       let activeItem = JSON.stringify(this.logisticsInfoList[index]);
       this.logisticsInfoList.splice(index, 1);
       this.logisticsInfoList.unshift(JSON.parse(activeItem));
+      this.calculateFare();
     },
-    calculateFare() {
+    getProductList() {
+      let params = {};
+      params.shoppingCartIds = this.$route.query.shoppingCartIds;
+      skuItem(params).then((res) => {
+        if (res.status === 200) {
+          this.productlist = res.data.shoppingCartList;
+          this.currency = res.data.currencySymbol;
+          this.totalNum = res.data.totalNum;
+          this.totalPrice = res.data.totalPrice;
+          this.calculateFare();
+        }
+      });
+    },
+    calculateFare(type) {
       //计算运费
       let params = {};
-      params.productSkuSelected = "demo";
-      params.receiveCode = "demo";
+      let productSkuSelected = [];
+      for (let i = 0; i < this.productlist.length; i++) {
+        productSkuSelected.push({
+          buyAmount: this.productlist[i].quantity,
+          skuId: this.productlist[i].skuId,
+        });
+      }
+      params.productSkuSelected = productSkuSelected;
+      params.receiveCode = this.addressInfo.id;
       calculateFare(params).then((res) => {
         if (res.status === 200) {
           this.freight = res.data.freight;
+          this.realPayment = res.data.realPayment;
+          if (type == "pop") {
+            this.messageVisible = false;
+          }
         } else {
           this.$message.error(res.msg);
         }
@@ -485,34 +534,53 @@ export default {
         let params = {};
         params.currencySymbol = this.currency;
         params.distributionId = this.distributionVal;
-        params.electronicInvoiceId = "demo";
+        params.electronicInvoiceId = this.receiptInfo.invoiceId;
         params.payModeId = this.payVal;
-        params.receiverAddressId = "demo";
+        params.receiverAddressId = this.addressInfo.id;
         params.remark = this.remark;
-        params.shoppingCartList = "demo";
-        // {
-        //   "currencySymbol": "string",
-        //   "distributionId": 0,
-        //   "electronicInvoiceId": 0,
-        //   "payModeId": 0,
-        //   "receiverAddressId": 0,
-        //   "remark": "string",
-        //   "shoppingCartList": [
-        //     {
-        //       "buyAmount": 0,
-        //       "cargoId": 0,
-        //       "goodsId": 0,
-        //       "shoppingCartId": 0,
-        //       "unitPrice": 0
-        //     }
-        //   ]
-        // }
+        params.freight = this.freight;
+        let shoppingCartList = [];
+        for (let i = 0; i < this.productlist.length; i++) {
+          shoppingCartList.push({
+            productId: this.productlist[i].productId,
+            quantity: this.productlist[i].quantity,
+            shoppingCartCode: this.productlist[i].shoppingCartCode,
+            skuId: this.productlist[i].skuId,
+            skuPrice: this.productlist[i].skuPrice,
+          });
+        }
+        params.shoppingCartList = shoppingCartList;
+
         addOrder(params).then((res) => {
           if (res.status === 200) {
-            this.$router.push({
-              path: "/payment/pay",
-              query: { payVal: this.payVal },
-            });
+            if (
+              res.data.code === "10005" ||
+              res.data.code === "10001" ||
+              res.data.code === "10002" ||
+              res.data.code === "10003" ||
+              res.data.code === "10004"
+            ) {
+              this.msgCode = res.data.code;
+              this.msgContent = res.data.msg;
+              this.messageVisible = true;
+              this.orderLoading = false;
+              this.orderDisabled = false;
+              return;
+            }
+            if (res.data.code === "200") {
+              this.orderId = res.data.data;
+              if (this.payVal == 2) {
+                this.$router.push({
+                  path: "/payment/result",
+                  query: { orderId: this.orderId },
+                });
+              } else {
+                this.$router.push({
+                  path: "/payment/pay",
+                  query: { payVal: this.payVal, orderId: this.orderId },
+                });
+              }
+            }
           } else {
             this.$message.error(res.data.msg);
           }
@@ -593,6 +661,7 @@ export default {
 .order-title {
   border: 1px solid #ddd;
   padding: 10px;
+  margin-top: 30px;
 }
 .order-title .order-subtitle {
   display: inline-block;
