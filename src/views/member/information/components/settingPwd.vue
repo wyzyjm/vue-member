@@ -6,7 +6,7 @@
     />
     <div v-show="submitedSuccess" class="step-icon">
       <svg-icon name="icon-anquanzhuye" class="icon" />
-      <p v-if="propData.type === 'pwd'">请将密码设置为8-20位，并且由字母，数字和符号两种以上组合</p>
+      <p>请将密码设置为8-20位，并且由字母，数字和符号两种以上组合</p>
     </div>
     <div v-show="!submitedSuccess" class="step-icon">
       <svg-icon name="icon-caozuochenggong" class="icon" />
@@ -19,8 +19,8 @@
     <div v-show="submitedSuccess" class="form-list">
       <!-- 修改密码 -->
       <el-form ref="ruleForm" :model="ruleForm" status-icon :rules="rules" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="旧密码" prop="age">
-          <el-input v-model.number="ruleForm.age" placeholder="请输入旧密码" />
+        <el-form-item label="旧密码" prop="oldPwd">
+          <el-input v-model.number="ruleForm.oldPwd" placeholder="请输入旧密码" />
         </el-form-item>
         <el-form-item label="新密码" prop="pass">
           <el-input v-model="ruleForm.pass" type="password" autocomplete="off" placeholder="请输入新密码" />
@@ -53,7 +53,7 @@ export default {
     }
   },
   data() {
-    var checkAge = (rule, value, callback) => {
+    var checkOldpwd = (rule, value, callback) => {
       if (!value) {
         return callback(new Error('旧密码不能为空'))
       }
@@ -100,7 +100,7 @@ export default {
       ruleForm: {
         pass: '',
         checkPass: '',
-        age: ''
+        oldPwd: ''
       },
       rules: {
         pass: [
@@ -109,8 +109,8 @@ export default {
         checkPass: [
           { validator: validatePass2, trigger: 'blur' }
         ],
-        age: [
-          { validator: checkAge, trigger: 'blur' }
+        oldPwd: [
+          { validator: checkOldpwd, trigger: 'blur' }
         ]
       }
     }
@@ -121,28 +121,24 @@ export default {
   methods: {
     // 修改密码
     submitForm(formName) {
-      if (this.propData.type === 'pwd') {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            if (formName === 'ruleForm') { // 修改密码提交
-              const md5 = this.$md5(this.ruleForm.pass)
-              const data = {
-                bizId: this.bizId,
-                oldPassword: this.propData.oldPassword,
-                newPassword: md5
-              }
-              updatePwd(data).then(res => {
-                this.$message(res.msg)
-                if (res.data === 1) {
-                  this.onSubmit()
-                }
-              })
-            }
-          } else {
-            return false
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          const md5 = this.$md5(this.ruleForm.pass)
+          const data = {
+            bizId: this.bizId,
+            oldPassword: this.propData.oldPassword,
+            newPassword: md5
           }
-        })
-      }
+          updatePwd(data).then(res => {
+            this.$message(res.msg)
+            if (res.data === 1) {
+              this.onSubmit()
+            }
+          })
+        } else {
+          return false
+        }
+      })
     },
     // 判断修改手机、邮箱或密码，根据状态显示对应表单
     getModifyType() {
