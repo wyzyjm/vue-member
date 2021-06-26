@@ -29,7 +29,7 @@
           <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" placeholder="请确定新密码" />
         </el-form-item>
         <el-form-item class="item-btn">
-          <el-button @click="goHome">取消</el-button>
+          <el-button @click="cancel">取消</el-button>
           <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
         </el-form-item>
       </el-form>
@@ -149,6 +149,11 @@ export default {
       this.submitedSuccess = false
     },
     goHome() {
+      this.$refs['ruleForm'].resetFields()
+      this.$parent.isShow = true
+      location.reload()
+    },
+    cancel() {
       this.$refs['ruleForm'].resetFields()
       this.$parent.isShow = true
     }

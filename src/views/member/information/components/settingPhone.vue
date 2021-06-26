@@ -1,6 +1,5 @@
 <template>
   <div class="content">
-    phone
     <ce-steps
       :active="active"
       :datalist="dataPhone[phoneType].item"
@@ -88,7 +87,7 @@
             <el-button
               type="primary"
               plain
-              @click="goHome"
+              @click="cancel"
             >取消</el-button>
             <el-button
               v-show="!hasSubmited"
@@ -358,6 +357,11 @@ export default {
       })
     },
     goHome() {
+      this.$refs['formLabelAlign'].resetFields()
+      this.$parent.isShow = true
+      location.reload()
+    },
+    cancel() {
       this.$refs['formLabelAlign'].resetFields()
       this.$parent.isShow = true
     },
