@@ -51,10 +51,8 @@
             </p>
             <div>
               <el-button v-if="!data.user.email" type="text" @click="updateEmail(0)">绑定邮箱</el-button>
-              <div v-else>
-                <el-button type="text" @click="updateEmail(1)">更换邮箱</el-button>
-                <el-button type="text" @click="updateEmail(2)">解绑邮箱</el-button>
-              </div>
+              <el-button v-if="data.user.email" type="text" @click="updateEmail(1)">更换邮箱</el-button>
+              <el-button v-if="data.user.email" type="text" @click="updateEmail(2)">解绑邮箱</el-button>
             </div>
           </div>
           <div class="item">
@@ -93,9 +91,9 @@
       </div>
     </div>
     <div v-else>
-      <SettingEmail v-show="showModule === 0" :setdata="dataList" />
-      <SettingPwd v-show="showModule === 1" :setdata="dataList" />
-      <SettingPhone v-show="showModule === 2" :setdata="dataList" />
+      <SettingEmail v-if="showModule === 0" :setdata="dataList" />
+      <SettingPwd v-if="showModule === 1" :setdata="dataList" />
+      <SettingPhone v-if="showModule === 2" :setdata="dataList" />
     </div>
   </div>
 </template>
