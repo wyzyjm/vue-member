@@ -7,7 +7,7 @@
     <!-- 新增+ 提示 开始 -->
     <div class="mt15 mb15">
       <!-- 新增按钮 -->
-      <el-button type="primary" size="mini" @click="showDialog('create')"
+      <el-button type="primary" size="mini" @click="showAddressform('create')"
         >新增收货地址</el-button
       >
       <!-- 提示区域 -->
@@ -22,12 +22,12 @@
     <!-- 收货地址列表 开始 -->
     <el-card
       class="mb15"
-      v-for="item in logisticsInfoList"
-      :key="item.id"
+      v-for="(item, index) in logisticsInfoList"
+      :key="item.id + index"
       :body-style="cardBody"
     >
       <!-- 每个卡片信息区 -->
-      <ul>
+      <ul v-loading="isLoading">
         <!-- 收货人 -->
         <li>
           <span class="attrName text-grey"> 收货人: </span>
@@ -40,8 +40,14 @@
         <li>
           <span class="attrName text-grey"> 所在地区: </span>
           <span class="attrValue">
-            {{ item.consigneeProvince }} {{ item.consigneeCity }}
-            {{ item.consigneeCounty }}
+            {{
+              getAddress(
+                item.consigneeCountry,
+                item.consigneeProvince,
+                item.consigneeCity,
+                item.consigneeCounty
+              )
+            }}
           </span>
         </li>
         <!-- 详细地址 -->
@@ -87,14 +93,14 @@
     <!-- 收货地址列表 结束 -->
 
     <!-- 收货人地址弹窗 开始 -->
-    <!-- 
+    <!--
       定义ref 向自组件传值 : dialogFormVisible:弹窗显示与隐藏  dialogStatus:弹窗类型 (create:新增  edit: 编辑)
 
       confirm事件 : 收货地址关闭触发的事件
      -->
     <AddressForm
       ref="addressDialog"
-      :setAddrForm="current"
+      :addressFormProp="current"
       @confirm="confirmDialog"
     ></AddressForm>
     <!-- 收货人地址弹窗 结束 -->
@@ -105,6 +111,10 @@
 <script>
 import PageTitle from "@/views/components/pageTitle"; // 头部
 import AddressForm from "@/views/components/addressForm"; // 收货人地址弹窗
+
+// import * as utils from "@/utils/index";
+
+import address from "@/views/components/resource/locList_zh_CN.js"; // 国家josn
 
 import {
   getAddressList,
@@ -119,7 +129,7 @@ export default {
     return {
       // 页面参数
       mostNum: 10, // 最多个数
-
+      joinAddress: "", // 地址链接
       // data
       // 收货地址信息列表
       logisticsInfoList: [],
@@ -131,6 +141,8 @@ export default {
       },
 
       current: {}, // 弹窗传值
+
+      isLoading: true, // loading加载
     };
   },
   // 组件
@@ -144,10 +156,14 @@ export default {
   methods: {
     // 获取地址列表
     async getList() {
+      this.isLoading = true;
       try {
         const res = await getAddressList();
+
+        console.log(res);
         if (res.status !== 200) return;
         this.logisticsInfoList = res.data.addressList;
+        this.isLoading = false;
       } catch (error) {
         console.log("获取收货地址失败", error);
       }
@@ -245,13 +261,13 @@ export default {
     },
 
     // 编辑
-    async eidtAddress(item) {
+    eidtAddress(item) {
       this.current = JSON.parse(JSON.stringify(item)); // 赋值
-      this.showDialog("edit");
+      this.showAddressform("edit");
     },
 
     // 弹窗 显示
-    showDialog(status) {
+    showAddressform(status) {
       if (status === "create" && this.logisticsInfoList.length === 10)
         return this.$message({
           message: "抱歉，地址信息最多可创建10条，请删除一条在创建吧!",
@@ -259,12 +275,58 @@ export default {
         });
       const _this = this.$refs["addressDialog"]; // 获取当前弹窗组件实例
       _this.dialogFormVisible = true; // 修改弹窗 显示状态
-      _this.dialogStatus = status; // 修改弹窗 类型 create:创建 | edit:编辑
+      _this.formType = status; // 修改弹窗 类型 create:创建 | edit:编辑
     },
     // 弹窗确认事件
     confirmDialog() {
       this.current = {}; // 清空当前值
       this.getList(); // 重新获取收货地址列表
+    },
+  },
+  computed: {
+    getAddress: function () {
+      return (country, province, city, area) => {
+        if (!country) return; // 没有国家 返回
+        var _country = "",
+          _a = "",
+          _b = "",
+          _c = ""; // 省市区
+        address.Location.CountryRegion.map((item) => {
+          if (item["-Code"] !== country) return;
+          _country = item["-Name"]; // 获取国家名称
+          if (!item.State) return; //  只返回一个国家
+          if (Array.isArray(item.State)) {
+            item.State.map((i) => {
+              if (i["-Code"] !== province) return;
+              _a = i["-Name"]; // 获取省
+              if (!i.City) return; // 不存在市
+
+              i.City.map((v) => {
+                if (v["-Code"] !== city) return;
+                _b = v["-Name"];
+
+                if (!v.Region) return; // 不存在区
+
+                if (Array.isArray(v.Region)) {
+                  v.Region.map((c) => {
+                    if (c["-Code"] !== area) return; // 不存在区
+                    _c = c["-Name"];
+                  });
+                } else {
+                  if (v.Region["-Code"] !== area) return;
+                  _c = v.Region["-Name"];
+                }
+              });
+            });
+          } else {
+            item.State.City.map((i) => {
+              if (i["-Code"] !== province) return;
+              _a = i["-Name"];
+            });
+          }
+        });
+        return _a + _b + _c;
+      };
     },
   },
 };
