@@ -273,7 +273,7 @@ export default {
 			selectProduct: [],
 			cartList: [],
 			unvalidList: [],
-			tenantId:1600018169,
+			tenantId:'',
 			data: {
 				totalPrice: 5,
 				totalNum: 8,
@@ -396,6 +396,7 @@ export default {
 		//初始化数据
 		async renderData() {
 			//this.data =[];
+			this.tenantId = this.$tenantId;
 			this.cartList=[];
 			this.unvalidList=[]
 			 let res = await cartData({tenantId:this.tenantId})
@@ -526,7 +527,7 @@ export default {
 	 async	changeQuantity(currentValue,oldValue,item){
 		 let obj = item.row;
 		 let timer =null;
-		 if(obj.quantity<obj.moq && currentValue < oldValue){
+		 if(obj.quantity<obj.moq && currentValue      < oldValue){
 			 
 			timer = setTimeout(() =>{
 				this.$message({ 
