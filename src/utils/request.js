@@ -11,7 +11,9 @@ const service = axios.create({
 })
 service.defaults.headers.post['Content-Type'] = 'application/json'
 service.defaults.headers.post['tenantId'] = 1600018169
+service.defaults.headers.get['tenantId'] = 1600018169
 service.defaults.headers.post['instance'] = "qinhui20210610"
+service.defaults.headers.post['appId'] = 1
 // request interceptor
 service.interceptors.request.use(
   config => {

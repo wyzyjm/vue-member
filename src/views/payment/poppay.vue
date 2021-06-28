@@ -1,196 +1,228 @@
 <template>
   <div class="app-container wrapper">
     <el-card>
-      <corderinfo :orderInfo="orderInfo" :orderDetail="orderDetail"></corderinfo>
+      <corderinfo
+        :orderInfo="orderInfo"
+        :orderDetail="orderDetail"
+      ></corderinfo>
       <el-card class="box-card" style="margin-left: 40px; margin-top: 20px">
-        <p class="pay-title">
-          <strong>微信支付</strong>
-          距离二维码过期还剩
-          <span class="text-danger">57</span> 秒，过期后请刷新页面重新获取二维码
-
-          <span class="text-danger"
-            >二维码已过期，<el-button type="text">刷新</el-button>
-            页面重新获取二维码</span
-          >
-        </p>
-        <div class="vchat-wrapper">
-          <div class="vchat-img">
-            <div class="code">
-              <div class="c-wrapper">
-                <img
-                  class="vcode-img border-grey"
-                  src="../../assets/images/no-img.svg"
-                />
-                <div class="bg-wrapper"></div>
-                <div class="c-fail">获取失败 点击重新获取二维码</div>
-              </div>
-
-              <div class="vchat-bg">
-                <img src="../../assets/images/icon-red.png" /><span class="text"
-                  >请使用微信扫一扫<br />扫描二维码支付</span
+        <template v-if="orderInfo.payType === 0">
+          <template v-if="$route.query.payCode == 'Wechat'">
+            <p class="pay-title">
+              <strong>微信支付</strong>
+              <template v-if="!failTime">
+                <span class="v-tip-tip">
+                  距离二维码过期还剩
+                  <span class="text-danger">
+                    <timer
+                      :endTime="endTime"
+                      @time-end="failTime = true"
+                    ></timer>
+                  </span>
+                  ，过期后请刷新页面重新获取二维码
+                </span>
+              </template>
+              <template v-else>
+                <span class="text-danger"
+                  >二维码已过期，<el-button type="text" @click="createPay"
+                    >刷新</el-button
+                  >
+                  页面重新获取二维码</span
                 >
-              </div>
-            </div>
-            <div class="guide">
-              <img src="../../assets/images/phone.png" />
-            </div>
-          </div>
-        </div>
-        <div class="offline-wrapper">
-          <div>
-            <p class="offline-title">
-              <strong>{{ payInfo.payName }}</strong>
+              </template>
             </p>
-            <div class="oreveiver-list">
-              <!-- <div class="oreceiver-item" v-for="item in payeeList" :key="item.id">
-                <span class="item-title"> {{item.attrName}}</span>
-                <span>{{item.attrValue}}</span>
-              </div> -->
+            <div class="vchat-wrapper">
+              <div class="vchat-img">
+                <div class="code">
+                  <div class="c-wrapper">
+                    <template v-if="!failTime">
+                      <div id="qrcode" ref="qrcode"></div>
+                    </template>
+                    <template v-else>
+                      <div class="bg-wrapper" @click="createPay"></div>
+                      <div class="c-fail">获取失败 点击重新获取二维码</div>
+                    </template>
+                  </div>
 
-              <div class="oreceiver-item">
-                <span class="item-title"> First Name:</span>
-                <span>hua</span>
-              </div>
-              <div class="oreceiver-item">
-                <span class="item-title">Country:</span>
-                <span>janpan</span>
-              </div>
-              <div class="oreceiver-item">
-                <span class="item-title">Last Name:</span>
-                <span>dddddddd</span>
-              </div>
-
-              <div class="oreceiver-item">
-                <span class="item-title">Tel:</span>
-                <span>dddddddd</span>
-              </div>
-
-              <div class="oreceiver-item">
-                <span class="item-title">City:</span>
-                <span>dddddddd</span>
-              </div>
-              <div class="oreceiver-item">
-                <span class="item-title">Address:</span>
-                <span>dddddddd</span>
+                  <div class="vchat-bg">
+                    <img src="../../assets/images/icon-red.png" /><span
+                      class="text"
+                      >请使用微信扫一扫<br />扫描二维码支付</span
+                    >
+                  </div>
+                </div>
+                <div class="guide">
+                  <img src="../../assets/images/phone.png" />
+                </div>
               </div>
             </div>
+          </template>
+          <template v-else>
+            <div id="aliPayWrapper"></div>
+          </template>
+        </template>
 
-            <!-- <div class="oreveiver-list">
-              <div class="oreceiver-item">
-                <span class="item-title"> Beneficiary’s Bank：:</span>
-                <span>hua</span>
-              </div>
-              <div class="oreceiver-item">
-                <span class="item-title">SWIFT BIC: </span>
-                <span>janpan</span>
-              </div>
-              <div class="oreceiver-item">
-                <span class="item-title">Beneficiary Name：</span>
-                <span>dddddddd</span>
-              </div>
+        <template v-else>
+          <div class="offline-wrapper">
+            <div>
+              <p class="offline-title">
+                <strong>{{ payInfo.code }}</strong>
+              </p>
+              <template v-if="payInfo.code !== 'BankTransfer'">
+                <div class="oreveiver-list">
+                  <div class="oreceiver-item">
+                    <span class="item-title"> First Name:</span>
+                    <span>{{ payInfo.receiverFirstName }}</span>
+                  </div>
+                  <div class="oreceiver-item">
+                    <span class="item-title">Country:</span>
+                    <span>{{ payInfo.receiverCountry }}</span>
+                  </div>
+                  <div class="oreceiver-item">
+                    <span class="item-title">Last Name:</span>
+                    <span>{{ payInfo.receiverLastName }}</span>
+                  </div>
 
-              <div class="oreceiver-item">
-                <span class="item-title">Account Number：</span>
-                <span>dddddddd</span>
-              </div>
+                  <div class="oreceiver-item">
+                    <span class="item-title">Tel:</span>
+                    <span>{{ payInfo.receiverPhone }}</span>
+                  </div>
 
-              <div class="oreceiver-item">
-                <span class="item-title">BANK Address：</span>
-                <span>dddddddd</span>
-              </div>
-            </div> -->
-            <div style="clear: both"></div>
-            <el-divider></el-divider>
-            <p class="offline-subtitle">{{ payInfo.payName }} info of Sender</p>
-          </div>
-          <!-- 西联支付+速汇金表单 -->
-          <el-form
-            ref="form"
-            :model="form"
-            label-width="120px"
-            :rules="rules"
-            style="width: 600px; margin: 0 auto"
-          >
-            <el-row>
-              <el-col :span="11">
-                <el-form-item label="First Name" prop="firstname">
-                  <el-input v-model="form.firstname"></el-input>
+                  <div class="oreceiver-item">
+                    <span class="item-title">City:</span>
+                    <span>{{ payInfo.receiverCity }}</span>
+                  </div>
+                  <div class="oreceiver-item">
+                    <span class="item-title">Address:</span>
+                    <span>{{ payInfo.receiverAddr }}</span>
+                  </div>
+                </div>
+              </template>
+              <template v-else>
+                <div class="oreveiver-list bank-info">
+                  <div class="oreceiver-item">
+                    <span class="item-title"> Beneficiary’s Bank：:</span>
+                    <span>{{ payInfo.receiverBank }}</span>
+                  </div>
+                  <div class="oreceiver-item">
+                    <span class="item-title">SWIFT BIC: </span>
+                    <span>{{ payInfo.swiftCode }}</span>
+                  </div>
+                  <div class="oreceiver-item">
+                    <span class="item-title">Beneficiary Name：</span>
+                    <span>{{ payInfo.receiverName }}</span>
+                  </div>
+
+                  <div class="oreceiver-item">
+                    <span class="item-title">Account Number：</span>
+                    <span>{{ payInfo.receiverAccount }}</span>
+                  </div>
+
+                  <div class="oreceiver-item">
+                    <span class="item-title">BANK Address：</span>
+                    <span>{{ payInfo.receiverBankAddr }}</span>
+                  </div>
+                </div>
+              </template>
+              <div style="clear: both"></div>
+              <el-divider></el-divider>
+              <p class="offline-subtitle">{{ payInfo.code }} info of Sender</p>
+            </div>
+            <!-- 西联支付+速汇金表单 -->
+            <template v-if="payInfo.code !== 'BankTransfer'">
+              <el-form
+                ref="form"
+                :model="form"
+                label-width="120px"
+                :rules="rules"
+                style="width: 600px; margin: 0 auto"
+              >
+                <el-row>
+                  <el-col :span="11">
+                    <el-form-item label="First Name" prop="firstname">
+                      <el-input v-model="form.firstname"></el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="11">
+                    <el-form-item label="Last Name" prop="lastname">
+                      <el-input v-model="form.lastname"></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="11">
+                    <el-form-item label="Send Money" prop="money">
+                      <el-input v-model="form.money"></el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="11">
+                    <el-form-item label="MTCN# No." prop="number">
+                      <el-input v-model="form.number"></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="11">
+                    <el-form-item label="Currency" prop="currency">
+                      <el-input v-model="form.currency"></el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="11">
+                    <el-form-item label="Country" prop="country">
+                      <el-input v-model="form.country"></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+
+                <el-form-item label="Contents">
+                  <el-input type="textarea" v-model="form.contents"></el-input>
                 </el-form-item>
-              </el-col>
-              <el-col :span="11">
-                <el-form-item label="Last Name" prop="lastname">
-                  <el-input v-model="form.lastname"></el-input>
+                <el-form-item>
+                  <el-button type="primary" @click="onSubmit('form')"
+                    >Complete Order Now</el-button
+                  >
+                  <el-button @click="$router.push('/payment/pay')"
+                    >Pay Later</el-button
+                  >
                 </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="11">
-                <el-form-item label="Send Money" prop="money">
-                  <el-input v-model="form.money"></el-input>
+              </el-form>
+            </template>
+            <template v-else>
+              <!-- 银行转账表单 -->
+              <el-form
+                ref="bankform"
+                :model="bankform"
+                label-width="170px"
+                :rules="bankrules"
+                style="width: 500px; margin: 0 auto"
+              >
+                <el-form-item label="Bank Transaction No." prop="number">
+                  <el-input v-model="bankform.number"></el-input>
                 </el-form-item>
-              </el-col>
-              <el-col :span="11">
-                <el-form-item label="MTCN# No." prop="number">
-                  <el-input v-model="form.number"></el-input>
+                <el-form-item label="Send money" prop="money">
+                  <el-input v-model="bankform.money"></el-input>
                 </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="11">
                 <el-form-item label="Currency" prop="currency">
-                  <el-input v-model="form.currency"></el-input>
+                  <el-input v-model="bankform.currency"></el-input>
                 </el-form-item>
-              </el-col>
-              <el-col :span="11">
-                <el-form-item label="Country" prop="country">
-                  <el-input v-model="form.country"></el-input>
+                <el-form-item label="Contents">
+                  <el-input
+                    type="textarea"
+                    v-model="bankform.contents"
+                  ></el-input>
                 </el-form-item>
-              </el-col>
-            </el-row>
-
-            <el-form-item label="Contents">
-              <el-input type="textarea" v-model="form.contents"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="onSubmit"
-                >Complete Order Now</el-button
-              >
-              <el-button @click="$router.push('/payment/pay')"
-                >Pay Later</el-button
-              >
-            </el-form-item>
-          </el-form>
-
-          <!-- 银行转账表单 -->
-          <el-form
-            ref="bankform"
-            :model="bankform"
-            label-width="170px"
-            :rules="bankrules"
-            style="width: 500px; margin: 0 auto"
-          >
-            <el-form-item label="Bank Transaction No." prop="number">
-              <el-input v-model="bankform.number"></el-input>
-            </el-form-item>
-            <el-form-item label="Send money" prop="money">
-              <el-input v-model="bankform.money"></el-input>
-            </el-form-item>
-            <el-form-item label="Currency" prop="currency">
-              <el-input v-model="bankform.currency"></el-input>
-            </el-form-item>
-            <el-form-item label="Contents">
-              <el-input type="textarea" v-model="bankform.contents"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="onSubmit"
-                >Complete Order Now</el-button
-              >
-              <el-button @click="$router.push('/order/list')"
-                >Pay Later</el-button
-              >
-            </el-form-item>
-          </el-form>
-        </div>
+                <el-form-item>
+                  <el-button type="primary" @click="onSubmit('bankform')"
+                    >Complete Order Now</el-button
+                  >
+                  <el-button @click="$router.push('/order/list')"
+                    >Pay Later</el-button
+                  >
+                </el-form-item>
+              </el-form>
+            </template>
+          </div>
+        </template>
         <span class="el-icon-arrow-left"></span>
         <el-button type="text" @click="$router.push('/payment/pay')"
           >选择其他支付方式</el-button
@@ -200,7 +232,16 @@
   </div>
 </template>
 <script>
-import corderinfo from './components/orderinfo.vue'
+import corderinfo from "./components/orderinfo.vue";
+import timer from "@/views/components/timer";
+import QRCode from "qrcodejs2";
+import { getResult } from "@/utils/resultValidate";
+import {
+  saveOffLineTransfer,
+  getPayModeByCode,
+  orderPayInit,
+  createPayment,
+} from "@/api/pay";
 export default {
   data() {
     return {
@@ -306,22 +347,56 @@ export default {
         contents: "",
       },
       payInfo: {},
-      payeeList: [],
       orderInfo: {},
       orderDetail: {},
+      codeTimer: 0,
+      aliPayForm: "",
+      endTime: "4",
+      failTime: false,
     };
   },
-  components:{
-    corderinfo
+  components: {
+    corderinfo,
+    timer,
   },
   methods: {
-    onSubmit() {
-      this.$refs.form.validate((valid) => {
+    onSubmit(form) {
+      this.$refs[form].validate((valid) => {
         if (valid) {
-          alert("submit!");
-          this.$router.push("/payment/result");
+          let params = {};
+          if (this.payInfo.code !== "BankTransfer") {
+            //西联支付/速汇金
+            params.amount = this.form.money;
+            params.currency = this.form.currency;
+            params.draweeCountry = this.form.country;
+            params.draweeFirstName = this.form.firstname;
+            params.draweeLastName = this.form.lastname;
+            params.draweeRemark = this.form.contents;
+            params.mtcnNo = this.form.number;
+          } else {
+            //银行转帐
+            params.transactionNumber = this.bankform.number;
+            params.amount = this.bankform.money;
+            params.currency = this.bankform.currency;
+            params.draweeRemark = this.bankform.contents;
+          }
+
+          //公共
+          params.code = this.payInfo.code;
+          params.orderId = this.orderInfo.orderId;
+
+          saveOffLineTransfer(params).then((res) => {
+            if (res.status === 200) {
+              this.$router.push({
+                path: "/payment/result",
+                query: { orderId: this.orderInfo.orderId },
+              });
+            } else {
+              this.$message.error(res.msg);
+            }
+          });
         } else {
-          console.log("error submit!!");
+          this.$message.warning("请检查表单项！");
           return false;
         }
       });
@@ -333,70 +408,85 @@ export default {
         this.showDetail = true;
       }
     },
+    createPay() {
+      this.failTime = false;
+      let params = {};
+      params.callbackUrl =
+        "http://localhost:8080/#/payment/result?orderId=857658374929309696";
+      params.orderId = this.orderInfo.orderId;
+      params.payCode = this.$route.query.payCode;
+      createPayment(params).then((res) => {
+        if (res.status === 200) {
+          if (this.$route.query.payCode == "Wechat") {
+            this.codeTimer = res.data.qrEffectiveTime;
+            this.$refs.qrcode.innerHTML = "";
+            let qrcode = new QRCode("qrcode", {
+              width: 300, // 二维码宽度
+              height: 300, // 二维码高度
+              text: res.data.qrImg,
+            });
+          } else if (this.$route.query.payCode == "Alipay") {
+            this.aliPayForm = res.data.qrImg;
+            var oframe = document.createElement("iframe");
+            oframe.id = "oframe";
+            oframe.width = 700;
+            oframe.height = 700;
+            oframe.border = "none";
+            oframe.src = "about:blank";
+            document.getElementById("aliPayWrapper").appendChild(oframe);
+            var doc =
+              document.getElementById("oframe").contentWindow.document ||
+              document.getElementById("oframe").contentDocument;
+            doc.write(this.aliPayForm);
+            doc.close();
+          } else if (this.$route.query.payCode == "Paypal") {
+          }
+        } else {
+          this.$message.error(res.msg);
+        }
+      });
+    },
   },
   mounted() {
-    let data = {
-      payId: 23456,
-      payName: "Western Union",
-      qrEffectiveTime: 23145476,
-      qrImg: "../二维码.png",
-      payeeList: [
-        {
-          attrName: "配置名称",
-          attrValue: "属性值",
-        },
-      ],
-    };
-    this.payInfo = data;
-    this.payeeList = data.payeeList;
+    let orderResult = getResult(this.$route.query.orderId);
 
-    //data
-    let data2 = {
-      orderId: 88,
-      userId: 99,
-      userName: "小明",
-      orderNo: "202105111523178740",
-      amount: 2420.0,
-      currencySymbol: "￥",
-      createTime: 23454567879,
-      failureTime: 3600,
-      payType: 0,
-      payList: [
-        {
-          id: 1,
-          payName: "微信支付",
-          payImg: "../../../src/assets/images/vchat.png",
-        },
-        {
-          id: 2,
-          payName: "支付宝",
-          payImg: "../../assets/images/alipay.png",
-        },
-        {
-          id: 3,
-          payName: "paypal",
-          payImg: "../../assets/images/paypal.png",
-        },
-      ],
-      orderDetail: {
-        id: 123,
-        consigneeName: "收货人名称",
-        consigneeProvince: "省",
-        consigneeCity: "市",
-        consigneeCounty: "区",
-        consigneeAddr: "详细地址值",
-        consigneePhoneHead: "0086",
-        consigneePhone: 18636908524,
-        productName: ["商品名称", "手机", "电脑", "电动车"],
-      },
-    };
-    // for(let i in data){
-    //  this.$set(this.orderInfo,i,data[i])
+    orderResult.then((hasPay) => {
+      if (hasPay) {
+        this.$router.push({
+          path: "/order/detail",
+          query: { id: this.$route.query.orderId },
+        });
+      } else {
+        //订单详情数据
+        let param = {};
+        param.orderId = this.$route.query.orderId;
+        orderPayInit(param).then((res) => {
+          if (res.status === 200) {
+            this.orderInfo = res.data;
+            this.orderDetail = res.data.orderDetail;
+            this.payList = res.data.payList;
+
+            //receive信息
+
+            let codeParams = {};
+            codeParams.code = this.$route.query.payCode;
+            getPayModeByCode(codeParams).then((res) => {
+              if (res.status === 200) {
+                this.payInfo = res.data;
+                this.createPay();
+              } else {
+                this.$message.error(res.msg);
+              }
+            });
+          } else {
+            this.$message.error(res.msg);
+          }
+        });
+      }
+    });
+    // if(orderResult){
+    //   this.$router.push({path:'/order/detail',query:{id:this.$route.query.orderId}})
     // }
-    this.orderInfo = data2
-    this.orderDetail = data2.orderDetail;
-    this.payList = data2.payList;
-    console.log(this.orderInfo);
   },
 };
 </script>
@@ -404,6 +494,10 @@ export default {
 .offline-wrapper {
   width: 800px;
   margin: 20px auto;
+}
+.pay-title {
+  height: 40px;
+  line-height: 40px;
 }
 .pay-title strong {
   font-size: 20px;
@@ -494,7 +588,7 @@ export default {
   z-index: 100;
 }
 .oreveiver-list {
-  width: 400px;
+  width: 500px;
   margin: 10px auto;
 }
 .oreceiver-item {
@@ -508,12 +602,24 @@ export default {
   text-align: right;
   padding-right: 10px;
 }
+.bank-info .item-title {
+  width: 150px;
+}
+.bank-info {
+  width: 670px;
+}
 .offline-title {
   text-align: center;
   font-size: 20px;
 }
 .offline-subtitle {
   text-align: center;
+}
+.v-tip-title {
+  display: inline-block;
+  vertical-align: middle;
+  height: 40px;
+  line-height: 40px;
 }
 </style>
 

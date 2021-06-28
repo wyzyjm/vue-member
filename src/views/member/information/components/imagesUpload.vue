@@ -1,82 +1,139 @@
 <template>
-    <div v-show="value" class="images-upload">
-        <div class="vicp-wrap">
-            <div class="vicp-header">
-                <span>头像上传</span>
-                <span class="vicp-close" @click="off"><i class="vicp-icon4"></i></span>
-            </div>
-            <div class="crop-upload">
-                <el-upload
-                    class="avatar-uploader"
-                    action="https://jsonplaceholder.typicode.com/posts/"
-                    :show-file-list="false"
-                    :on-success="handleAvatarSuccess"
-                    :before-upload="beforeAvatarUpload"
-                >
-                    <img
-                    v-if="imageUrl"
-                    class="avatar"
-                    :src="imageUrl"
-                    >
-                    <i
-                    v-else
-                    class="el-icon-plus avatar-uploader-icon"
-                    ></i>
-                </el-upload>
-                <p>只支持JPG、PNGBMP,大小不超过3M</p>
-            </div>
-            <div class="vicp-button">
-                <el-button type="primary" @click="off" plain>取消</el-button>
-                <el-button type="primary" @click="onSubmit">保存</el-button>
-            </div>
-        </div>
+  <div v-show="value" class="images-upload">
+    <div class="vicp-wrap">
+      <div class="vicp-header">
+        <span>头像上传</span>
+        <span class="vicp-close" @click="off"><i class="vicp-icon4" /></span>
+      </div>
+      <div class="crop-upload">
+        <!-- <el-upload
+          ref="upload"
+          action="https://jsonplaceholder.typicode.com/posts/"
+          :show-file-list="false"
+          :on-success="handleAvatarSuccess"
+          :before-upload="beforeAvatarUpload"
+        >
+          <img
+            v-if="imageUrl"
+            class="avatar"
+            :src="imageUrl"
+          >
+          <i v-else class="el-icon-plus avatar-uploader-icon" />
+        </el-upload> -->
+
+
+        <el-upload
+          action="#"
+          list-type="picture-card"
+          :on-success="handleAvatarSuccess"
+          :auto-upload="false"
+        >
+          <i slot="default" class="el-icon-plus avatar-uploader-icon"></i>
+          <div slot="file" slot-scope="{file}">
+            <img
+              class="el-upload-list__item-thumbnail"
+              :src="file.url"
+            >
+            <span class="el-upload-list__item-actions">
+              <span
+                class="el-upload-list__item-preview"
+                @click="handlePictureCardPreview(file)"
+              >
+                <i class="el-icon-zoom-in"></i>
+              </span>
+              <span
+                v-if="!disabled"
+                class="el-upload-list__item-delete"
+                @click="handleRemove(file)"
+              >
+                <i class="el-icon-delete"></i>
+              </span>
+            </span>
+          </div>
+        </el-upload>
+
+        <el-dialog :visible.sync="dialogVisible">
+          <img width="100%" :src="dialogImageUrl" alt="">
+        </el-dialog>
+        <p>只支持JPG、PNGBMP,大小不超过3M</p>
+      </div>
+      <div class="vicp-button">
+        <el-button plain type="primary" @click="off">取消</el-button>
+        <el-button type="primary" @click="onSubmit">保存</el-button>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
+import { updateMember } from '@/api/user'
 
 export default {
-    props: {
-        // 显示该控件与否
-        value: {
-            type: Boolean,
-            default: true
+  props: {
+    // 显示该控件与否
+    value: {
+      type: Boolean,
+      default: true
+    }
+  },
+  data() {
+    return {
+      imageUrl: '',
+      dialogImageUrl: '',
+      dialogVisible: false,
+      disabled: false,
+      isShow: false
+    }
+  },
+  methods: {
+    // 保存头像
+    async onSubmit() {
+      if (this.imageUrl) {
+        const data = {
+          // tenantId: '1600018169',
+          // instance: 'qinhui20210610',
+          bizId: '854299120902660096',
+          headImage: this.imageUrl
         }
+        const res = await updateMember(data)
+        if (res.status !== 200) return
+        this.$parent.data.url = this.imageUrl
+        this.$emit('close')
+        // location.reload()
+      }
     },
-    data() {
-        return {
-            imageUrl: ''
-        }
+    // 关闭控件
+    off() {
+      this.$emit('close')
     },
-    methods: {
-        // 保存头像
-        onSubmit() {
-            if(this.imageUrl) {
-                this.$parent.data.url = this.imageUrl
-            }
-            this.$emit('close')
-        },
-        // 关闭控件
-        off() {
-            this.$emit('close')
-        },
-        // 上传图像
-        handleAvatarSuccess(res, file) {
-            this.imageUrl = URL.createObjectURL(file.raw)
-        },
-        beforeAvatarUpload(file) {
-            const isJPG = file.type === 'image/jpeg'
-            const isLt2M = file.size / 1024 / 1024 < 2
-            if (!isJPG) {
-                this.$message.error('上传头像图片只能是 JPG 格式!')
-            }
-            if (!isLt2M) {
-                this.$message.error('上传头像图片大小不能超过 2MB!')
-            }
-            return isJPG && isLt2M
-        }
+    // 上传图像
+    handleAvatarSuccess(res, file) {
+      console.log(file, res)
+      this.isShow = true
     },
-    components: {}
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === 'image/jpeg'
+      const isLt3M = file.size / 1024 / 1024 < 3
+      if (!isJPG) {
+        this.$message('上传头像图片只能是 JPG 格式!')
+      }
+      if (!isLt3M) {
+        this.$message('上传头像图片大小不能超过 3MB!')
+      }
+      return isJPG && isLt3M
+    },
+    submitUpload() {
+      this.$refs.upload.submit()
+      console.log(this.fileList)
+    },
+    handleRemove(file) {
+      file = ''
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -95,7 +152,6 @@ export default {
     background-color: rgba(0, 0, 0, 0.65);
     -webkit-tap-highlight-color: transparent;
     -moz-tap-highlight-color: transparent;
-    
     .vicp-wrap {
         -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
@@ -178,7 +234,7 @@ export default {
     .avatar-uploader .el-upload:hover {
         border-color: #409EFF;
     }
-    .avatar-uploader-icon {
+    .avatar-uploader-icon, .el-upload--picture-card {
         font-size: 28px;
         color: #8c939d;
         width: 95px;
@@ -201,4 +257,21 @@ export default {
         text-align: center;
     }
 }
+</style>
+<style>
+
+.el-upload--picture-card ,.el-upload-list--picture-card .el-upload-list__item{
+        font-size: 28px;
+        color: #8c939d;
+        width: 95px;
+        height: 95px;
+        line-height: 95px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+.el-upload--picture-card{
+        border: none;
+    }
 </style>

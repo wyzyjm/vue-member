@@ -7,7 +7,7 @@
       <span class="right"
         >应付金额：<strong class="text-danger" style="font-size: 24px"
           >{{ orderInfo.currencySymbol }}{{ orderInfo.amount }} </strong
-        >元</span
+        ></span
       >
     </div>
     <div class="order-info">
@@ -15,10 +15,12 @@
         请您在
         <span class="order-timer text-danger">
           <!-- 23分01秒 -->
-          <template v-if="orderTimeCount > 59">
+          <!-- <template v-if="orderTimeCount > 59">
             {{ parseInt(orderTimeCount / 60) }}分
           </template>
-          {{ orderTimeCount % 60 }}秒
+          {{ orderTimeCount % 60 }}秒 -->
+          <timer :endTime="endTime" @time-end="$router.push({ path: '/order/list', query: { type: 0 } });
+      "></timer>
         </span>
         内完成支付，否则订单会被自动取消
       </div>
@@ -52,6 +54,8 @@
   </div>
 </template>
 <script >
+import timer from "@/views/components/timer"
+// import Timer from '@/views/components/timer.vue';
 export default {
   name:"corderinfo",
   data() {
@@ -59,7 +63,8 @@ export default {
       showDetail: false,
       // orderInfo:{},
       // orderDetail:{},
-      orderTimeCount:0
+      orderTimeCount:0,
+      endTime:'121061'
     };
   },
   props:[
@@ -74,9 +79,13 @@ export default {
       }
     },
   },
+  components:{
+    timer
+    
+  },
   mounted(){
     let datajson = { timer: 3365, date: 2344 };
-    this.orderTimeCount = datajson.timer;
+    this.orderTimeCount = this.orderInfo.failureTime;
     if (this.orderTimeCount > 0) {
       this.orderTimer = setInterval(() => {
         this.orderTimeCount--;
@@ -84,6 +93,17 @@ export default {
     }
 
     
+  },
+  filters:{
+    format(val){
+      let d = val/(60*60*24);
+      let h = val/(60*60);
+      let m = val/(60);
+      let s = val%60;
+      if(val/60/60/24>1){
+
+      }
+    }
   },
   methods: {
     viewDetail() {
