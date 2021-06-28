@@ -11,6 +11,7 @@
         <!-- 导航栏 -->
         <el-tabs v-model="activeName" @tab-click="tabClick">
           <el-tab-pane
+            v-loading="isLoading"
             v-for="item in tabList"
             :key="item.id"
             :label="item.collectName"
@@ -21,6 +22,7 @@
             <div class="no-content-tip" v-if="total === 0">
               您还没有收藏过任何内容哦！
             </div>
+
             <!-- 有内容 -->
             <ul class="content" v-else>
               <li v-for="item in collectList" :key="item.id">
@@ -54,7 +56,7 @@
                 <a :href="item.href">
                   <!-- 图片 开始 -->
                   <custom-img
-                    :src="item.imgUrl"
+                    :src="'https://pre-omo-oss-image.site.cn/' + item.imgUrl"
                     :title="item.title"
                     :alt="item.title"
                     class="img"
@@ -163,6 +165,8 @@ export default {
       total: 0, // 总条数
       currentPage: 1, // 当前页
       pageSize: 10, // 每页条数
+
+      isLoading: true, // loading效果
     };
   },
   components: {
@@ -182,24 +186,13 @@ export default {
           collectName: "产品收藏",
           collectType: "product",
         },
-        // {
-        //   id: 34543543,
-        //   userId: 34567,
-        //   collectName: "课程收藏",
-        //   collectType: "1",
-        // },
-        // {
-        //   id: 2354565464245,
-        //   userId: 34567,
-        //   collectName: "资讯收藏",
-        //   collectType: "2",
-        // },
       ];
       // 2. 请求第一栏 内容
-      this.getCollectList(1, this.pageSize);
+      this.getCollectList(this.currentPage, this.pageSize);
     },
     // 获取 内容列表
     async getCollectList(currentPage, pageSize) {
+      this.isLoading = true;
       const data = {
         currentPage: currentPage,
         pageSize: pageSize,
@@ -217,6 +210,8 @@ export default {
         this.total = res.page.totalCount; // 收藏总数
         this.currentPage = res.page.currentPage; // 当前页码
         this.pageSize = res.page.pageSize; // 每页条数
+
+        this.isLoading = false;
       } catch (error) {
         console.log("请求失败", error);
       }
@@ -328,20 +323,30 @@ export default {
     },
 
     // 添加收藏
-    // async addCollectionFn() {
-    //   const data = {
-    //     memberBizId: "854299120902660096",
-    //     collectionType: "product",
-    //     collectionDataId: "854402193578582016",
-    //   };
-    //   try {
-    //     const res = await addCollectionContent(data);
-    //     console.log(res);
-    //     this.getCollectList();
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // },
+    async addCollectionFn() {
+      // 852945602618646528
+      // 852953242098786304
+      // 852968746842644480
+      // 854294742711721984
+      // 854336192438657024
+      // 854345646085300224
+      // 854399327782625280
+      // 854400995769245696
+      // 854401691063214080
+      // 854402193578582016
+      const data = {
+        memberBizId: "854299120902660096",
+        collectionType: "product",
+        collectionDataId: "852945602618646528",
+      };
+      try {
+        const res = await addCollectionContent(data);
+        console.log(res);
+        this.getCollectList();
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
 };
 </script>

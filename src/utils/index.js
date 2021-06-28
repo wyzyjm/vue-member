@@ -1,6 +1,7 @@
 /**
  * Created by PanJiaChen on 16/11/18.
  */
+import address from "@/views/components/resource/locList_zh_CN.js" // 国家josn
 
 /**
  * Parse the time to string
@@ -124,10 +125,59 @@ export function telValidate(inputVal) {
   }
 }
 export function emailValidate(val) {
-  var reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$"); 
+  var reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");
   if (!reg.test(val)) {
     return false;
   } else {
     return true;
   }
+}
+
+/**
+ * @param {string}  province 省code
+ * @param {string}  city 市code
+ * @param {string}   detail 详细地址code
+ * @param {number}   reverseFlag 是否倒排
+ * @param {boolean}   isJoin 是否拼接
+ * 
+ */
+export const getAddressName = (country, province, city, area) => {
+  if (!country) return; // 没有国家 返回
+  var _country = "", _a = "", _b = "", _c = ""; // 省市区
+  address.Location.CountryRegion.map(item => {
+    if (item['-Code'] !== country) return;
+    _country = item['-Name'] // 获取国家名称
+    if (!item.State) return _country; //  只返回一个国家
+    if (Array.isArray(item.State)) {
+      item.State.map(i => {
+        if (i['-Code'] !== province) return;
+        _a = i['-Name'] // 获取省
+        if (!i.City) return; // 不存在市
+
+        i.City.map(v => {
+          if (v['-Code'] !== city) return;
+          _b = v['-Name']
+
+          if (!v.Region) return; // 不存在区 
+
+          if (Array.isArray(v.Region)) {
+            v.Region.map(c => {
+              if (c['-Code'] !== area) return; // 不存在区
+              _c = c['-Name']
+            })
+          } else {
+            if (v.Region['-Code'] !== area) return;
+            _c = v.Region['-Name']
+          }
+        })
+
+      })
+    } else {
+      item.State.City.map(i => {
+        if (i['-Code'] !== province) return;
+        _a = i['-Name']
+      })
+    }
+  })
+  return _a + _b + _c
 }
