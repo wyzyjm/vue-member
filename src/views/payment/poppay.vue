@@ -235,6 +235,7 @@
 import corderinfo from "./components/orderinfo.vue";
 import timer from "@/views/components/timer";
 import QRCode from "qrcodejs2";
+import { getResult } from "@/utils/resultValidate";
 import {
   saveOffLineTransfer,
   getPayModeByCode,
@@ -447,31 +448,45 @@ export default {
     },
   },
   mounted() {
-    //订单详情数据
-    let param = {};
-    param.orderId = this.$route.query.orderId;
-    orderPayInit(param).then((res) => {
-      if (res.status === 200) {
-        this.orderInfo = res.data;
-        this.orderDetail = res.data.orderDetail;
-        this.payList = res.data.payList;
+    let orderResult = getResult(this.$route.query.orderId);
 
-        //receive信息
-
-        let codeParams = {};
-        codeParams.code = this.$route.query.payCode;
-        getPayModeByCode(codeParams).then((res) => {
+    orderResult.then((hasPay) => {
+      if (hasPay) {
+        this.$router.push({
+          path: "/order/detail",
+          query: { id: this.$route.query.orderId },
+        });
+      } else {
+        //订单详情数据
+        let param = {};
+        param.orderId = this.$route.query.orderId;
+        orderPayInit(param).then((res) => {
           if (res.status === 200) {
-            this.payInfo = res.data;
-            this.createPay();
+            this.orderInfo = res.data;
+            this.orderDetail = res.data.orderDetail;
+            this.payList = res.data.payList;
+
+            //receive信息
+
+            let codeParams = {};
+            codeParams.code = this.$route.query.payCode;
+            getPayModeByCode(codeParams).then((res) => {
+              if (res.status === 200) {
+                this.payInfo = res.data;
+                this.createPay();
+              } else {
+                this.$message.error(res.msg);
+              }
+            });
           } else {
             this.$message.error(res.msg);
           }
         });
-      } else {
-        this.$message.error(res.msg);
       }
     });
+    // if(orderResult){
+    //   this.$router.push({path:'/order/detail',query:{id:this.$route.query.orderId}})
+    // }
   },
 };
 </script>
@@ -480,7 +495,7 @@ export default {
   width: 800px;
   margin: 20px auto;
 }
-.pay-title{
+.pay-title {
   height: 40px;
   line-height: 40px;
 }
@@ -600,9 +615,9 @@ export default {
 .offline-subtitle {
   text-align: center;
 }
-.v-tip-title{
+.v-tip-title {
   display: inline-block;
-  vertical-align: middle;;
+  vertical-align: middle;
   height: 40px;
   line-height: 40px;
 }

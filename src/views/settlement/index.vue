@@ -302,12 +302,19 @@ export default {
     productList,
   },
   mounted() {
-    //获取收货地址list
-    this.getList();
-    //获取支付方式，配送方式
-    this.getPayMode();
-    //商品清单
-    this.getProductList();
+    if (
+      this.$route.query.skuId == undefined &&
+      this.$route.query.shoppingCartIds == undefined
+    ) {
+      this.$router.push("/cart");
+    } else {
+      //获取收货地址list
+      this.getList();
+      //获取支付方式，配送方式
+      this.getPayMode();
+      //商品清单
+      this.getProductList();
+    }
   },
   methods: {
     // 获取地址列表
@@ -492,7 +499,12 @@ export default {
     },
     getProductList() {
       let params = {};
-      params.shoppingCartIds = this.$route.query.shoppingCartIds;
+      if (this.$route.query.shoppingCartIds !== undefined) {
+        params.shoppingCartIds = this.$route.query.shoppingCartIds;
+      }
+      if (this.$route.query.skuId !== undefined) {
+        params.skuId = this.$route.query.skuId;
+      }
       skuItem(params).then((res) => {
         if (res.status === 200) {
           this.productlist = res.data.shoppingCartList;

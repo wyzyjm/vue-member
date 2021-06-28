@@ -13,7 +13,7 @@
         :orderDetail="orderDetail"
       ></corderinfo>
       <el-card style="margin-top: 20px">
-        <div >
+        <div>
           <p v-if="orderInfo.payType === 0"><strong>在线支付</strong></p>
           <p v-if="orderInfo.payType === 1"><strong>线下支付</strong></p>
           <div class="online">
@@ -23,37 +23,40 @@
               class="item"
               @click="openPay(item.payCode)"
             >
-              <template v-if="item.payCode==='Wechat'">
+              <template v-if="item.payCode === 'Wechat'">
                 <img style="width: 100px" src="../../assets/images/vchat.png" />
               </template>
-              
 
-              <template v-if="item.payCode==='Paypal'">
-                <img style="width: 100px" src="../../assets/images/paypal.png" />
+              <template v-if="item.payCode === 'Paypal'">
+                <img
+                  style="width: 100px"
+                  src="../../assets/images/paypal.png"
+                />
               </template>
-              <template v-if="item.payCode==='Alipay'">
-                <img style="width: 100px" src="../../assets/images/alipay.png" />
+              <template v-if="item.payCode === 'Alipay'">
+                <img
+                  style="width: 100px"
+                  src="../../assets/images/alipay.png"
+                />
               </template>
 
-              <template v-if="item.payCode==='WesternUnion'">
-                <img style="width: 100px" src="../../assets/images/WesternUnion.png" />
+              <template v-if="item.payCode === 'WesternUnion'">
+                <img
+                  style="width: 100px"
+                  src="../../assets/images/WesternUnion.png"
+                />
               </template>
 
-              <template v-if="item.payCode==='MoneyGram'">
+              <template v-if="item.payCode === 'MoneyGram'">
                 <img style="width: 100px" src="../../assets/images/money.png" />
               </template>
 
-              <template v-if="item.payCode==='BankTransfer'">
+              <template v-if="item.payCode === 'BankTransfer'">
                 <img style="width: 100px" src="../../assets/images/bank.png" />
               </template>
-
-            </div>
-            
             </div>
           </div>
-         
-        
-        
+        </div>
       </el-card>
     </el-card>
     <el-dialog title="" :visible.sync="dialogVisible" width="530px">
@@ -68,12 +71,10 @@
           <el-button
             type="primary"
             style="margin-right: 30px"
-            @click="dialogVisible = false"
+            @click="openPay(payCode)"
             >重新支付</el-button
           >
-          <el-button type="primary" plain @click="dialogVisible = false"
-            >已完成付款</el-button
-          >
+          <el-button type="primary" plain @click="confirmPay">已完成付款</el-button>
         </p>
       </div>
     </el-dialog>
@@ -82,6 +83,8 @@
 <script>
 import corderinfo from "./components/orderinfo.vue";
 import { orderPayInit } from "@/api/pay";
+import { getResult } from "@/utils/resultValidate";
+
 export default {
   data() {
     return {
@@ -92,6 +95,7 @@ export default {
       orderInfo: {},
       orderDetail: {},
       payList: {},
+      payCode: "",
       // selectPayCode:""
     };
   },
@@ -99,25 +103,44 @@ export default {
     corderinfo,
   },
   mounted() {
-    //订单详情数据
-    let param = {};
-    param.orderId = this.$route.query.orderId;
-    orderPayInit(param).then((res) => {
-      if (res.status === 200) {
-        this.orderInfo = res.data;
-        this.orderDetail = res.data.orderDetail;
-        this.payList = res.data.payList;
+    let payResult = getResult(this.$route.query.orderId);
+    payResult.then((hasPay) => {
+      if (hasPay) {
+        this.$router.push({
+          path: "/order/detail",
+          query: { id: this.$route.query.orderId },
+        });
       } else {
-        this.$message.error(res.msg);
+        //订单详情数据
+        let param = {};
+        param.orderId = this.$route.query.orderId;
+        orderPayInit(param).then((res) => {
+          if (res.status === 200) {
+            this.orderInfo = res.data;
+            this.orderDetail = res.data.orderDetail;
+            this.payList = res.data.payList;
+          } else {
+            this.$message.error(res.msg);
+          }
+        });
       }
     });
-   
   },
   methods: {
     openPay(code) {
+      this.payCode = code;
       this.dialogVisible = true;
-      let href = this.$router.resolve({ path: "/payment/poppay", query: {payCode:code,orderId:this.orderInfo.orderId} });
-      window.open(href.href,'_blank')
+      let href = this.$router.resolve({
+        path: "/payment/poppay",
+        query: { payCode: code, orderId: this.orderInfo.orderId },
+      });
+      window.open(href.href, "_blank");
+    },
+    confirmPay() {
+      this.$router.push({
+            path: "/payment/result",
+            query: { orderId: this.orderInfo.orderId },
+          });
     },
   },
 };
