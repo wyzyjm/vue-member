@@ -1,5 +1,6 @@
 import Vue from 'vue'
 
+
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
 import ElementUI from 'element-ui'
@@ -19,6 +20,14 @@ import '../static/js/environment.js'
 import CustomImg from '@/components/CustomImg'
 Vue.component('custom-img', CustomImg)
 
+
+fetch(window.location.origin+'/tenant.json')
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(result) {
+    Vue.prototype.$tenantInfo = result;
+  });
 
 import '@/icons' // icon
 import '@/permission' // permission control
