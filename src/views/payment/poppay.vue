@@ -351,7 +351,7 @@ export default {
       orderDetail: {},
       codeTimer: 0,
       aliPayForm: "",
-      endTime: "4",
+      endTime: "",
       failTime: false,
     };
   },
@@ -463,6 +463,7 @@ export default {
         orderPayInit(param).then((res) => {
           if (res.status === 200) {
             this.orderInfo = res.data;
+            // endTime
             this.orderDetail = res.data.orderDetail;
             this.payList = res.data.payList;
 
