@@ -19,7 +19,7 @@
             {{ parseInt(orderTimeCount / 60) }}分
           </template>
           {{ orderTimeCount % 60 }}秒 -->
-          <timer :endTime="endTime" @time-end="$router.push({ path: '/order/list', query: { type: 0 } });
+          <timer :endTime="orderInfo.failureTime" @time-end="$router.push({ path: '/order/list', query: { type: 0 } });
       "></timer>
         </span>
         内完成支付，否则订单会被自动取消
@@ -64,7 +64,7 @@ export default {
       // orderInfo:{},
       // orderDetail:{},
       orderTimeCount:0,
-      endTime:'121061'
+      // endTime:'121061'
     };
   },
   props:[

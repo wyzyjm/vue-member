@@ -15,7 +15,7 @@
                   距离二维码过期还剩
                   <span class="text-danger">
                     <timer
-                      :endTime="endTime"
+                      :endTime="codeTimer"
                       @time-end="failTime = true"
                     ></timer>
                   </span>
@@ -349,9 +349,9 @@ export default {
       payInfo: {},
       orderInfo: {},
       orderDetail: {},
-      codeTimer: 0,
+      codeTimer: "",
       aliPayForm: "",
-      endTime: "",
+     
       failTime: false,
     };
   },
