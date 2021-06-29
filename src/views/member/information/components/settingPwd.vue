@@ -37,6 +37,7 @@
   </div>
 </template>
 <script>
+import md5 from 'js-md5'
 import ceSteps from '@/components/CeSteps'
 import svgIcon from '@/components/SvgIcon'
 import { updatePwd } from '@/api/user'
@@ -123,11 +124,11 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          const md5 = this.$md5(this.ruleForm.pass)
+          const newPwd = md5(this.ruleForm.pass)
           const data = {
             bizId: this.bizId,
             oldPassword: this.propData.oldPassword,
-            newPassword: md5
+            newPassword: newPwd
           }
           updatePwd(data).then(res => {
             this.$message(res.msg)
