@@ -18,39 +18,39 @@
     </div>
     <div v-show="submitedSuccess" class="form-list">
       <!-- 修改邮箱 -->
-        <el-form ref="dynamicValidateForm" :model="dynamicValidateForm" label-width="100px" class="demo-dynamic">
-          <el-form-item
-            v-if="active === 1 || propData.emailType === 0"
-            prop="email"
-            label="邮箱"
-            :rules="[
-              { required: propData.emailType !== 1 ? true : isCheck, message: '请输入邮箱地址', trigger: 'blur' },
-              { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
-            ]"
-          >
-            <el-input v-model="dynamicValidateForm.email" placeholder="请输入新的邮箱地址" />
-          </el-form-item>
-           <!-- v-if="active === 0 && propData.emailType !== 0" -->
-          <el-form-item v-else label="邮箱">
-            <span>{{ propData.email }}</span>
-          </el-form-item>
-          <el-form-item
-            label="验证码"
-            prop="yzm"
-            class="item-get-code"
-            :rules="{
-              required: true, message: '验证码不能为空', trigger: 'blur'
-            }"
-          >
-            <el-input v-model="dynamicValidateForm.yzm" autocomplete="off" placeholder="邮箱验证码" />
-            <el-button class="get-code-btn" @click="getVerfyCode">{{ btnText }}</el-button>
-          </el-form-item>
-          <el-form-item class="item-btn">
-            <el-button @click="goHome">取消</el-button>
-            <el-button v-show="!hasSubmited" type="primary" @click="next('dynamicValidateForm')">下一步</el-button>
-            <el-button v-show="active === 1" type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
-          </el-form-item>
-        </el-form>
+      <el-form ref="dynamicValidateForm" :model="dynamicValidateForm" label-width="100px" class="demo-dynamic">
+        <el-form-item
+          v-if="active === 1 || propData.emailType === 0"
+          prop="email"
+          label="邮箱"
+          :rules="[
+            { required: propData.emailType !== 1 ? true : isCheck, message: '请输入邮箱地址', trigger: 'blur' },
+            { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+          ]"
+        >
+          <el-input v-model="dynamicValidateForm.email" placeholder="请输入新的邮箱地址" />
+        </el-form-item>
+        <!-- v-if="active === 0 && propData.emailType !== 0" -->
+        <el-form-item v-else label="邮箱">
+          <span>{{ propData.email }}</span>
+        </el-form-item>
+        <el-form-item
+          label="验证码"
+          prop="yzm"
+          class="item-get-code"
+          :rules="{
+            required: true, message: '验证码不能为空', trigger: 'blur'
+          }"
+        >
+          <el-input v-model="dynamicValidateForm.yzm" autocomplete="off" placeholder="邮箱验证码" />
+          <el-button class="get-code-btn" @click="getVerfyCode">{{ btnText }}</el-button>
+        </el-form-item>
+        <el-form-item class="item-btn">
+          <el-button @click="goHome">取消</el-button>
+          <el-button v-show="!hasSubmited" type="primary" @click="next('dynamicValidateForm')">下一步</el-button>
+          <el-button v-show="active === 1" type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </template>
@@ -146,26 +146,26 @@ export default {
     submitForm(formName) {
       // this.$refs['dynamicValidateForm'].validate((valid) => {
       //   if (valid) {
-          this.$refs[formName].validate((valid) => {
-            if (valid) {
-              if (formName === 'dynamicValidateForm') { // 修改邮箱
-                const data = {
-                  bizId: this.bizId,
-                  bizType: this.propData.type,
-                  email: this.dynamicValidateForm.email,
-                  verifyCode: this.dynamicValidateForm.yzm
-                }
-                bingling(data).then(res => {
-                  this.$message(res.data.errorMsg ? res.data.errorMsg : res.msg)
-                  if (res.data === 1) {
-                    this.onSubmit()
-                  }
-                })
-              }
-            } else {
-              return false
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          if (formName === 'dynamicValidateForm') { // 修改邮箱
+            const data = {
+              bizId: this.bizId,
+              bizType: this.propData.type,
+              email: this.dynamicValidateForm.email,
+              verifyCode: this.dynamicValidateForm.yzm
             }
-          })
+            bingling(data).then(res => {
+              this.$message(res.data.errorMsg ? res.data.errorMsg : res.msg)
+              if (res.data === 1) {
+                this.onSubmit()
+              }
+            })
+          }
+        } else {
+          return false
+        }
+      })
       //   }
       // })
     },
@@ -195,7 +195,6 @@ export default {
                 this.goHome()
               }
             })
-
           } else if (this.propData.emailType === 0) {
             //  修改邮箱提交
             const data = {
@@ -210,9 +209,8 @@ export default {
                 this.onSubmit()
               }
             })
-
           } else {
-            if(!this.isCheckYzm) {
+            if (!this.isCheckYzm) {
               this.$message('验证失败！')
               return
             }
@@ -229,8 +227,7 @@ export default {
     },
     // 获取验证码
     getVerfyCode() {
-      
-      if (this.propData.emailType === 1 && this.active === 1 && this.dynamicValidateForm.email === '' ) {
+      if (this.propData.emailType === 1 && this.active === 1 && this.dynamicValidateForm.email === '') {
         this.$message('请输入您的邮箱！')
         return
       }
@@ -271,42 +268,42 @@ export default {
     },
     // 接口获取验证码
     queryData() {
-        if (this.propData.emailType === 0 && this.dynamicValidateForm.email === '') {
-          return
+      if (this.propData.emailType === 0 && this.dynamicValidateForm.email === '') {
+        return
+      }
+      let data = {}
+      if (this.propData.emailType === 0 || this.propData.emailType === 1 && this.active === 1) {
+        data = {
+          bizType: this.propData.type,
+          email: this.dynamicValidateForm.email
         }
-        let data = {}
-        if(this.propData.emailType === 0 || this.propData.emailType === 1 && this.active === 1) {
-          data = {
-            bizType: this.propData.type,
-            email: this.dynamicValidateForm.email
-          }
+      } else {
+        data = {
+          bizId: this.bizId,
+          bizType: this.propData.type
+        }
+      }
+      generateCode(data).then(res => {
+        if (res.data) {
+          this.isCheckYzm = true
+          if (this.btnDisabled) return
+          this.btnDisabled = true
+          this.btnText = '60s后重新获取'
+          let count = 60
+          this.setIntID = setInterval(() => {
+            count--
+            if (count === 0) {
+              clearInterval(this.setIntID)
+              this.btnText = '获取验证码'
+              this.btnDisabled = false
+              return
+            }
+            this.btnText = count < 10 ? `0${count}s后重新获取` : `${count}s后重新获取`
+          }, 1000)
         } else {
-          data = {
-            bizId: this.bizId,
-            bizType: this.propData.type
-          }
+          this.$message('发送失败，请稍后重试！')
         }
-        generateCode(data).then(res => {
-          if (res.data) {
-            this.isCheckYzm = true
-            if (this.btnDisabled) return
-            this.btnDisabled = true
-            this.btnText = '60s后重新获取'
-            let count = 60
-            this.setIntID = setInterval(() => {
-              count--
-              if (count === 0) {
-                clearInterval(this.setIntID)
-                this.btnText = '获取验证码'
-                this.btnDisabled = false
-                return
-              }
-              this.btnText = count < 10 ? `0${count}s后重新获取` : `${count}s后重新获取`
-            }, 1000)
-          } else {
-            this.$message('发送失败，请稍后重试！')
-          }
-        })
+      })
       // }
     },
     goHome() {

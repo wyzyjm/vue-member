@@ -22,85 +22,82 @@
     <div v-show="submitedSuccess" class="form-list">
       <!-- 修改手机号 -->
       <!-- <div v-if="propData.type === 'mobile'"> -->
-        <el-form ref="formLabelAlign" label-width="80px" :model="formLabelAlign" class="demo-dynamic">
-          
-          <!-- 手机区号 + 手机号 -->
-          <el-form-item v-if="phoneType === 0 || active === 1" label="手机号">
-            <!-- select选择器+文本框 -->
-            <el-col :span="7">
-              <el-form-item
-                prop="consigneePhoneHead"
+      <el-form ref="formLabelAlign" label-width="80px" :model="formLabelAlign" class="demo-dynamic">
+        <!-- 手机区号 + 手机号 -->
+        <el-form-item v-if="phoneType === 0 || active === 1" label="手机号">
+          <!-- select选择器+文本框 -->
+          <el-col :span="7">
+            <el-form-item
+              prop="consigneePhoneHead"
+            >
+              <el-select
+                v-model="formLabelAlign.consigneePhoneHead"
+                placeholder="请选择"
+                filterable
               >
-                <el-select
-                  v-model="formLabelAlign.consigneePhoneHead"
-                  placeholder="请选择"
-                  filterable
+                <el-option
+                  v-for="(item, index) in frontData.phoneCode"
+                  :key="index"
+                  :label="item.dialCode"
+                  :value="`${item.dialCode},${item.iso2}`"
                 >
-                  <el-option
-                    v-for="(item, index) in frontData.phoneCode"
-                    :key="index"
-                    :label="item.dialCode"
-                    :value="`${item.dialCode},${item.iso2}`"
-                  >
-                    <span> {{ item.dialCode }} {{ item.name }}</span>
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="1" class="txtCenter">-</el-col>
-            <el-col :span="16">
-              <el-form-item
-                prop="consigneePhone"
-                :rules="{
-                  required: phoneType === 0 ? true : isConsigneePhone, message: '请输入您的手机号码', trigger: 'blur'
-                }"
-              >
-                <el-input
-                  v-model.trim="formLabelAlign.consigneePhone"
-                  type="tel"
-                  placeholder="请输入您的手机号码"
-                  @input="checkInputValue('consigneePhone')"
-                />
-              </el-form-item>
-            </el-col>
-          </el-form-item>
-          <el-form-item v-else label="手机号">
-            <span>{{ setdata.phoneHead.substring(0,setdata.phoneHead.lastIndexOf(",")) }} {{ setdata.phone }}</span>
-          </el-form-item>
-
-
-          <el-form-item
-            label="验证码"
-            prop="phoneYzm"
-            class="item-get-code"
-            :rules="{
-              required: true, message: '验证码不能为空', trigger: 'blur'
-            }"
-          >
-            <el-input
-              v-model="formLabelAlign.phoneYzm"
-              placeholder="短信验证码"
-            />
-            <el-button class="get-code-btn" @click="getVerfyCode">{{ btnText }}</el-button>
-          </el-form-item>
-          <el-form-item class="item-btn">
-            <el-button
-              type="primary"
-              plain
-              @click="cancel"
-            >取消</el-button>
-            <el-button
-              v-show="!hasSubmited"
-              type="primary"
-              @click="next('formLabelAlign')"
-            >下一步</el-button>
-            <el-button
-              v-show="hasSubmited"
-              type="primary"
-              @click="submitForm('formLabelAlign')"
-            >保存</el-button>
-          </el-form-item>
-        </el-form>
+                  <span> {{ item.dialCode }} {{ item.name }}</span>
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="1" class="txtCenter">-</el-col>
+          <el-col :span="16">
+            <el-form-item
+              prop="consigneePhone"
+              :rules="{
+                required: phoneType === 0 ? true : isConsigneePhone, message: '请输入您的手机号码', trigger: 'blur'
+              }"
+            >
+              <el-input
+                v-model.trim="formLabelAlign.consigneePhone"
+                type="tel"
+                placeholder="请输入您的手机号码"
+                @input="checkInputValue('consigneePhone')"
+              />
+            </el-form-item>
+          </el-col>
+        </el-form-item>
+        <el-form-item v-else label="手机号">
+          <span>{{ setdata.phoneHead.substring(0,setdata.phoneHead.lastIndexOf(",")) }} {{ setdata.phone }}</span>
+        </el-form-item>
+        <el-form-item
+          label="验证码"
+          prop="phoneYzm"
+          class="item-get-code"
+          :rules="{
+            required: true, message: '验证码不能为空', trigger: 'blur'
+          }"
+        >
+          <el-input
+            v-model="formLabelAlign.phoneYzm"
+            placeholder="短信验证码"
+          />
+          <el-button class="get-code-btn" @click="getVerfyCode">{{ btnText }}</el-button>
+        </el-form-item>
+        <el-form-item class="item-btn">
+          <el-button
+            type="primary"
+            plain
+            @click="cancel"
+          >取消</el-button>
+          <el-button
+            v-show="!hasSubmited"
+            type="primary"
+            @click="next('formLabelAlign')"
+          >下一步</el-button>
+          <el-button
+            v-show="hasSubmited"
+            type="primary"
+            @click="submitForm('formLabelAlign')"
+          >保存</el-button>
+        </el-form-item>
+      </el-form>
       <!-- </div> -->
     </div>
   </div>
@@ -198,7 +195,7 @@ export default {
       rules: {
         // 手机号头部
         consigneePhoneHead: [
-          { required: false, trigger: 'change' }
+          { required: true, trigger: 'change' }
         ],
         // 手机号
         consigneePhone: [
@@ -236,7 +233,6 @@ export default {
               this.onSubmit()
             }
           })
-
         } else {
           return false
         }
@@ -277,7 +273,7 @@ export default {
     // 校验验证码接口
     checkCode() {
       let data = {}
-      if(this.phoneType === 0){
+      if (this.phoneType === 0) {
         this.submitForm('formLabelAlign')
       } else {
         data = {

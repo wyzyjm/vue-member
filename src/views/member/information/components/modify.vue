@@ -23,139 +23,141 @@
               v-model="form.name"
             />
           </el-form-item>
-          <el-form-item v-show="selfDefining.attrDetailType === 'simpleDate'" :label="selfDefining.attrName" class="block">
-            <el-date-picker
-              v-model="form.modifyData"
-              type="date"
-              placeholder="选择日期"
-              value-format="yyyy-MM-dd"
-              style="width: 100%;"
-            />
-          </el-form-item>
-          <!-- 文字 -->
-          <el-form-item v-if="selfDefining.attrDetailType === 'text'" :label="selfDefining.attrName">
-            <el-input
-              v-model="form.modifyData"
-            />
-          </el-form-item>
-          <!-- 下拉单选 -->
-          <el-form-item v-if="selfDefining.attrDetailType === 'selSigle'" :label="selfDefining.attrName">
-            <el-select v-model="form.modifyData" placeholder="请选择">
-              <el-option
+          <el-form-item v-else>
+            <el-form-item v-if="selfDefining.attrDetailType === 'simpleDate'" :label="selfDefining.attrName" class="block">
+              <el-date-picker
+                v-model="form.modifyData"
+                type="date"
+                placeholder="选择日期"
+                value-format="yyyy-MM-dd"
+                style="width: 100%;"
+              />
+            </el-form-item>
+            <!-- 文字 -->
+            <el-form-item v-if="selfDefining.attrDetailType === 'text'" :label="selfDefining.attrName">
+              <el-input
+                v-model="form.modifyData"
+              />
+            </el-form-item>
+            <!-- 下拉单选 -->
+            <el-form-item v-if="selfDefining.attrDetailType === 'selSigle'" :label="selfDefining.attrName">
+              <el-select v-model="form.modifyData" placeholder="请选择">
+                <el-option
+                  v-for="item in selfDefining.optionsData"
+                  :key="item.key"
+                  :label="item.value"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+            <!-- 下拉多选 -->
+            <el-form-item v-if="selfDefining.attrDetailType === 'selMulti'" :label="selfDefining.attrName">
+              <el-select v-model="form.modifyData" multiple placeholder="请选择">
+                <el-option
+                  v-for="item in selfDefining.optionsData"
+                  :key="item.key"
+                  :label="item.value"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+            <!-- redio -->
+            <el-form-item v-if="selfDefining.attrDetailType === 'redio' && modifyType != 'nickName' && modifyType != 'name'" :label="selfDefining.attrName">
+              <el-radio-group v-model="form.modifyData">
+                <el-radio
+                  v-for="item in selfDefining.optionsData"
+                  :key="item.key"
+                  :label="item.value"
+                  :name="item.value"
+                />
+              </el-radio-group>
+            </el-form-item>
+            <!-- checkbox 多选 -->
+            <el-form-item v-if="selfDefining.attrDetailType === 'checkbox'" :label="selfDefining.attrName">
+              <el-checkbox-group v-model="form.type">
+                <el-checkbox
+                  v-for="item in selfDefining.optionsData"
+                  :key="item.key"
+                  :label="item.value"
+                  :name="item.value"
+                />
+              </el-checkbox-group>
+            </el-form-item>
+            <!-- 图片集 -->
+            <el-form-item v-if="selfDefining.attrType === 'image'" :label="selfDefining.attrName">
+              图片集
+              <img
                 v-for="item in selfDefining.optionsData"
                 :key="item.key"
-                :label="item.value"
-                :value="item.value"
+                :src="item.type"
+                :alt="item.type"
+              >
+            </el-form-item>
+            <!-- 多行文本 -->
+            <el-form-item v-if="selfDefining.attrDetailType === 'multiTxt'" :label="selfDefining.attrName">
+              <el-input
+                v-model="form.modifyData"
+                type="textarea"
+                placeholder="详细地址"
               />
-            </el-select>
-          </el-form-item>
-          <!-- 下拉多选 -->
-          <el-form-item v-if="selfDefining.attrDetailType === 'selMulti'" :label="selfDefining.attrName">
-            <el-select v-model="form.modifyData" multiple placeholder="请选择">
-              <el-option
-                v-for="item in selfDefining.optionsData"
-                :key="item.key"
-                :label="item.value"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-          <!-- redio -->
-          <el-form-item v-if="selfDefining.attrDetailType === 'redio' && modifyType != 'nickName' && modifyType != 'name'" :label="selfDefining.attrName">
-            <el-radio-group v-model="form.modifyData">
-              <el-radio
-                v-for="item in selfDefining.optionsData"
-                :key="item.key"
-                :label="item.value"
-                :name="item.value"
-              />
-            </el-radio-group>
-          </el-form-item>
-          <!-- checkbox 多选 -->
-          <el-form-item v-if="selfDefining.attrDetailType === 'checkbox'" :label="selfDefining.attrName">
-            <el-checkbox-group v-model="form.type">
-              <el-checkbox
-                v-for="item in selfDefining.optionsData"
-                :key="item.key"
-                :label="item.value"
-                :name="item.value"
-              />
-            </el-checkbox-group>
-          </el-form-item>
-          <!-- 图片集 -->
-          <el-form-item v-if="selfDefining.attrType === 'image'" :label="selfDefining.attrName">
-            图片集
-            <img
-              v-for="item in selfDefining.optionsData"
-              :key="item.key"
-              :src="item.type"
-              :alt="item.type"
-            >
-          </el-form-item>
-          <!-- 多行文本 -->
-          <el-form-item v-if="selfDefining.attrDetailType === 'multiTxt'" :label="selfDefining.attrName">
-            <el-input
-              v-model="form.modifyData"
-              type="textarea"
-              placeholder="详细地址"
-            />
-          </el-form-item>
-          <!-- 地址级联 -->
-          <el-form-item v-if="selfDefining.attrDetailType === 'area'" :label="selfDefining.attrName">
-            <el-form-item>
-              <el-col :span="7">
-                <!-- 国家/地区 必填 -->
-                <el-form-item prop="consigneeCountry">
-                  <!-- select选择器 -->
-                  <el-select
-                    v-model="addrForm.consigneeCountry"
-                    placeholder="请选择国家"
-                    @change="countryChange"
-                  >
-                    <el-option
-                      v-for="(item, index) in frontData.conuntryOptions"
-                      :key="index"
-                      :label="item.Name"
-                      :value="item.Name"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="1" class="txtCenter">-</el-col>
-              <!-- 级联选择 -->
-              <el-col :span="7">
-                <el-form-item ref="provinceRef" prop="consigneeProvince">
-                  <el-select
-                    v-model="addrForm.consigneeProvince"
-                    placeholder="省份"
-                    @change="provinceChange"
-                  >
-                    <el-option
-                      v-for="item in frontData.province"
-                      :key="item.Name"
-                      :label="item.Name"
-                      :value="item.Name"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="1" class="txtCenter">-</el-col>
-              <el-col :span="7">
-                <el-form-item ref="cityRef" prop="consigneeCity">
-                  <el-select v-model="addrForm.consigneeCity" placeholder="城市">
-                    <el-option
-                      v-for="item in frontData.city"
-                      :key="item.Name"
-                      :label="item.Name"
-                      :value="item.Name"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
+            </el-form-item>
+            <!-- 地址级联 -->
+            <el-form-item v-if="selfDefining.attrDetailType === 'area'" :label="selfDefining.attrName">
+              <el-form-item>
+                <el-col :span="7">
+                  <!-- 国家/地区 必填 -->
+                  <el-form-item prop="consigneeCountry">
+                    <!-- select选择器 -->
+                    <el-select
+                      v-model="addrForm.consigneeCountry"
+                      placeholder="请选择国家"
+                      @change="countryChange"
+                    >
+                      <el-option
+                        v-for="(item, index) in frontData.conuntryOptions"
+                        :key="index"
+                        :label="item.Name"
+                        :value="item.Name"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="1" class="txtCenter">-</el-col>
+                <!-- 级联选择 -->
+                <el-col :span="7">
+                  <el-form-item ref="provinceRef" prop="consigneeProvince">
+                    <el-select
+                      v-model="addrForm.consigneeProvince"
+                      placeholder="省份"
+                      @change="provinceChange"
+                    >
+                      <el-option
+                        v-for="item in frontData.province"
+                        :key="item.Name"
+                        :label="item.Name"
+                        :value="item.Name"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="1" class="txtCenter">-</el-col>
+                <el-col :span="7">
+                  <el-form-item ref="cityRef" prop="consigneeCity">
+                    <el-select v-model="addrForm.consigneeCity" placeholder="城市">
+                      <el-option
+                        v-for="item in frontData.city"
+                        :key="item.Name"
+                        :label="item.Name"
+                        :value="item.Name"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-form-item>
             </el-form-item>
           </el-form-item>
           <el-form-item class="align-center">
-            <el-button type="primary" @click="off" plain>取消</el-button>
+            <el-button plain type="primary" @click="off">取消</el-button>
             <el-button type="primary" @click="onSubmit">保存</el-button>
           </el-form-item>
         </el-form>
@@ -175,6 +177,10 @@ export default {
       type: Boolean,
       default: true
     },
+    bizID: {
+      type: String,
+      default: ''
+    },
     modifyType: {
       type: String,
       default: ''
@@ -186,7 +192,7 @@ export default {
   },
   data() {
     return {
-      bizId: '854299120902660096',
+      bizId: this.bizID,
       // 编辑项目
       editItem: {
         0: {
@@ -213,7 +219,8 @@ export default {
       form: {
         name: '',
         modifyData: '', // 修改数据
-        type: []
+        type: [],
+        userDefined: false // 自定义项
       },
       // 收货地址表单
       addrForm: {

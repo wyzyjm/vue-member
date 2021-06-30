@@ -36,24 +36,26 @@
             <span class="default" v-if="item.isDefault"> 默认地址 </span>
           </span>
         </li>
-        <!-- 所在地区 -->
-        <li>
-          <span class="attrName text-grey"> 所在地区: </span>
-          <span class="attrValue">
-            {{
-              getAddress(
-                item.consigneeCountry,
-                item.consigneeProvince,
-                item.consigneeCity,
-                item.consigneeCounty
-              )
-            }}
-          </span>
-        </li>
-        <!-- 详细地址 -->
-        <li>
-          <span class="attrName text-grey"> 详情地址: </span>
-          <span class="attrValue"> {{ item.consigneeAddr }} </span>
+        <li :class="{ reverse: item.reverseFlag }">
+          <!-- 所在地区 -->
+          <div class="reverseDiv">
+            <span class="attrName text-grey"> 所在地区: </span>
+            <span class="attrValue">
+              {{
+                getAddress(
+                  item.consigneeCountry,
+                  item.consigneeProvince,
+                  item.consigneeCity,
+                  item.consigneeCounty
+                )
+              }}
+            </span>
+          </div>
+          <!-- 详细地址 -->
+          <div class="reverseDiv">
+            <span class="attrName text-grey"> 详情地址: </span>
+            <span class="attrValue"> {{ item.consigneeAddr }} </span>
+          </div>
         </li>
         <!-- 手机区号 + 手机号 -->
         <li>
@@ -160,7 +162,7 @@ export default {
       try {
         const res = await getAddressList();
 
-        console.log(res);
+        console.log("收货地址信息", res);
         if (res.status !== 200) return;
         this.logisticsInfoList = res.data.addressList;
         this.isLoading = false;
@@ -168,32 +170,6 @@ export default {
         console.log("获取收货地址失败", error);
       }
     },
-    // 新增收货地址
-    // async addAddress() {
-    //   var num = 3;
-    //   const data = {
-    //     consigneeCountry: "中国",
-    //     consigneeAddr: "详细地址",
-    //     consigneeProvince: "河南省",
-    //     consigneeCity: "郑州市",
-
-    //     consigneeCounty: "县",
-    //     consigneeName: `我是第${num}个收货人`,
-    //     consigneePhone: "18336908347",
-    //     consigneePhoneHead: "0086",
-    //     consigneeTel: "6769038",
-    //     consigneeTelHead: "8633",
-    //     consigneeZipCode: "453600",
-    //     receiverCode: "新增",
-    //   };
-    //   try {
-    //     const { status } = await addAddressList(data);
-    //     if (status !== 200) return;
-    //     this.getList(); // 重新获取列表
-    //   } catch (error) {
-    //     console.log("新增失败", error);
-    //   }
-    // },
 
     // 设为默认地址
     async setDefault(id) {
@@ -282,6 +258,33 @@ export default {
       this.current = {}; // 清空当前值
       this.getList(); // 重新获取收货地址列表
     },
+
+    // 新增收货地址
+    // async addAddress() {
+    //   var num = 3;
+    //   const data = {
+    //     consigneeCountry: "中国",
+    //     consigneeAddr: "详细地址",
+    //     consigneeProvince: "河南省",
+    //     consigneeCity: "郑州市",
+
+    //     consigneeCounty: "县",
+    //     consigneeName: `我是第${num}个收货人`,
+    //     consigneePhone: "18336908347",
+    //     consigneePhoneHead: "0086",
+    //     consigneeTel: "6769038",
+    //     consigneeTelHead: "8633",
+    //     consigneeZipCode: "453600",
+    //     receiverCode: "新增",
+    //   };
+    //   try {
+    //     const { status } = await addAddressList(data);
+    //     if (status !== 200) return;
+    //     this.getList(); // 重新获取列表
+    //   } catch (error) {
+    //     console.log("新增失败", error);
+    //   }
+    // },
   },
   computed: {
     getAddress: function () {
@@ -350,7 +353,14 @@ li {
 .address-container {
   li {
     display: flex;
+    flex-wrap: wrap;
     line-height: 28px;
+    &.reverse {
+      flex-direction: column-reverse;
+    }
+    .reverseDiv {
+      width: 100%;
+    }
     .attrName {
       display: inline-block;
       width: 60px;

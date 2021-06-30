@@ -84,6 +84,7 @@
         />
         <modify
           v-show="modifyShow"
+          :bizID="bizId"
           :selfDefining="selfDefining"
           :modifyType="modifyType"
           @close="close"
@@ -141,7 +142,7 @@ export default {
   methods: {
     async getMemberDetail() {
       const data = {
-        bizId: '854299120902660096',
+        bizId: '859078866458959872', // '854299120902660096',
         tenantId: '1600018169',
         instance: 'qinhui20210610'
       }
