@@ -56,7 +56,7 @@ export default {
       this.$router.push({path:'/order/detail',query:{id:this.$route.query.orderId}})
     },
     rePay(){
-       this.$router.push({path:'/payment/pay',query:{id:this.$route.query.orderId}})
+       this.$router.push({path:'/payment/pay',query:{payVal:0,orderId:this.$route.query.orderId}})
     }
 
   },

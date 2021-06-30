@@ -32,23 +32,35 @@
             <el-radio label="商品明细">商品明细</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="收票人手机" prop="tel">
+        <el-form-item label="收票人手机" prop="phone">
           <!-- 手机区号+手机号 -->
-          <el-select v-model="form.regionNo" placeholder="请选择" filterable style="width:100px">
-            <el-option
-              v-for="(item, index) in frontData.phoneCode"
-              :key="index"
-              :label="item.dialCode"
-              :value="`${item.dialCode},${item.iso2}`"
-            >
-              <span> {{ item.dialCode }} {{ item.name }}</span>
-            </el-option>
-          </el-select>
-
-          <el-input
-            v-model="form.tel"
-            style="width: 200px; margin-left: 10px"
-          ></el-input>
+          <el-col :span="6">
+            <el-form-item>
+              <el-select
+                v-model="form.phonePerfix"
+                placeholder="请选择"
+                filterable
+                style="width: 100px"
+              >
+                <el-option
+                  v-for="(item, index) in frontData.phoneCode"
+                  :key="index"
+                  :label="item.dialCode"
+                  :value="`${item.dialCode},${item.iso2}`"
+                >
+                  <span> {{ item.dialCode }} {{ item.name }}</span>
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="18">
+            <el-form-item prop="phone">
+              <el-input
+                v-model="form.phone"
+                style="width: 200px; margin-left: 10px"
+              ></el-input>
+            </el-form-item>
+          </el-col>
         </el-form-item>
         <el-form-item label="收票人邮箱" prop="mail">
           <el-input v-model="form.mail" style="width: 310px"></el-input>
@@ -94,9 +106,9 @@ export default {
         type: 1,
         name: "",
         catalog: "商品明细",
-        tel: "",
+        phone: "",
         mail: "",
-        regionNo: "",
+        phonePerfix: "",
         companyName: "",
         companyNumber: "",
       },
@@ -111,7 +123,7 @@ export default {
         mail: [
           { type: "email", message: "请输入正确的邮箱地址", trigger: "blur" },
         ],
-        tel: [{ validator: telFormValidate, trigger: "change" }],
+        phone: [{ validator: telFormValidate, trigger: "change" }],
       },
       loading: false,
       // 省市区数据
@@ -143,7 +155,7 @@ export default {
           checked = false;
         }
       }
-      if (this.form.tel != "" && !telValidate(this.form.tel)) {
+      if (this.form.phone != "" && !telValidate(this.form.phone)) {
         // this.$refs.form.validateField("companyNumber");
         checked = false;
       }
@@ -163,7 +175,10 @@ export default {
           this.form.type === 1 ? this.form.name : this.form.companyName; //发票抬头
         params.invoiceType = this.form.type; //发票类型
         params.phone = this.form.phone; //手机
-        params.taxpayerId = this.form.companyNumber; //纳税人识别号
+        params.phonePerfix = this.form.phonePerfix;
+        if (this.form.type === 2) {
+          params.taxpayerId = this.form.companyNumber; //纳税人识别号
+        }
         addUpdateInvoice(params).then((res) => {
           if (res.status === 200) {
             this.loading = false;
@@ -189,7 +204,7 @@ export default {
       this.form.catalog = data.invoiceContent;
       this.form.phone = data.phone;
       this.form.mail = data.email;
-      this.form.regionNo = data.phonePerfix;
+      this.form.phonePerfix = data.phonePerfix;
     },
   },
   mounted() {

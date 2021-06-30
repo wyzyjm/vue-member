@@ -464,7 +464,7 @@ export default {
       this.receiptInfo.invoiceType = data.type;
       this.receiptInfo.phone = data.phone;
       this.receiptInfo.taxpayerId = data.companyNumber;
-      this.receiptInfo.phonePrefix = data.regionNo;
+      this.receiptInfo.phonePrefix = data.phonePerfix;
     },
     openReceipt(status) {
       this.$refs.getReceipt.dialogVisible = true;

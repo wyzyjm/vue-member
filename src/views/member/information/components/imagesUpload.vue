@@ -6,29 +6,13 @@
         <span class="vicp-close" @click="off"><i class="vicp-icon4" /></span>
       </div>
       <div class="crop-upload">
-        <!-- <el-upload
-          ref="upload"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload"
-        >
-          <img
-            v-if="imageUrl"
-            class="avatar"
-            :src="imageUrl"
-          >
-          <i v-else class="el-icon-plus avatar-uploader-icon" />
-        </el-upload> -->
-
-
         <el-upload
           action="#"
           list-type="picture-card"
-          :on-success="handleAvatarSuccess"
+          :on-change="progress"
           :auto-upload="false"
         >
-          <i slot="default" class="el-icon-plus avatar-uploader-icon"></i>
+          <i v-show="!isShow" slot="default" class="el-icon-plus avatar-uploader-icon" />
           <div slot="file" slot-scope="{file}">
             <img
               class="el-upload-list__item-thumbnail"
@@ -78,6 +62,8 @@ export default {
   },
   data() {
     return {
+      pathUrl: 'shop/dev_product_group/cms/image/',
+      imgList: '',
       imageUrl: '',
       dialogImageUrl: '',
       dialogVisible: false,
@@ -90,16 +76,15 @@ export default {
     async onSubmit() {
       if (this.imageUrl) {
         const data = {
-          // tenantId: '1600018169',
-          // instance: 'qinhui20210610',
           bizId: '854299120902660096',
-          headImage: this.imageUrl
+          headImage: this.pathUrl + this.imageUrl
         }
         const res = await updateMember(data)
         if (res.status !== 200) return
-        this.$parent.data.url = this.imageUrl
+        this.$parent.data.url = this.pathUrl + this.imageUrl
         this.$emit('close')
-        // location.reload()
+        console.log(this.imageUrl)
+        location.reload()
       }
     },
     // 关闭控件
@@ -123,8 +108,8 @@ export default {
       return isJPG && isLt3M
     },
     submitUpload() {
-      this.$refs.upload.submit()
-      console.log(this.fileList)
+      // console.log(this.$refs)
+      // this.$refs.upload.submit()
     },
     handleRemove(file) {
       file = ''
@@ -132,11 +117,20 @@ export default {
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
       this.dialogVisible = true
+    },
+    progress(event, file, fileList) {
+      // if(file.lenght < 1) return
+      this.imageUrl = event.name
+      this.isShow = true
+      console.log(111, this.imageUrl)
     }
   }
 }
 </script>
 <style lang="scss" scoped>
+.display-none{
+  display: none;
+}
 .images-upload{
     position: fixed;
     display: block;
@@ -272,6 +266,14 @@ export default {
         overflow: hidden;
     }
 .el-upload--picture-card{
-        border: none;
-    }
+    border: none;
+}
+.el-upload-list--picture-card .el-upload-list__item-thumbnail{
+  height: 95px;
+  object-fit: cover;
+}
+.crop-upload .el-upload-list--picture-card:nth-child(1){
+  position: relative;
+  left: 45px;
+}
 </style>

@@ -11,20 +11,16 @@
       >
     </div>
     <div class="order-info">
+      <template v-if="orderInfo.failureTime!==0">
       <div style="line-height: 40px">
         请您在
         <span class="order-timer text-danger">
-          <!-- 23分01秒 -->
-          <!-- <template v-if="orderTimeCount > 59">
-            {{ parseInt(orderTimeCount / 60) }}分
-          </template>
-          {{ orderTimeCount % 60 }}秒 -->
           <timer :endTime="orderInfo.failureTime" @time-end="$router.push({ path: '/order/list', query: { type: 0 } });
       "></timer>
         </span>
         内完成支付，否则订单会被自动取消
       </div>
-
+      </template>
       <span :class="['right', { 'text-blue': showDetail }]" @click="viewDetail"
         >订单详情
         <svg-icon v-if="showDetail" name="icon-shang"></svg-icon>
@@ -138,6 +134,7 @@ export default {
 .product-name-title {
   display: inline-block;
   vertical-align: top;
+  margin-right: 0;
 }
 .product-name-list {
   display: inline-block;

@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <p class="title text-normal">
-      <span @click="$router.push('/information/')"
-        >{{ orderInfo.userName }}账户名称</span
+      <span style="cursor:pointer" @click="$router.push('/information/')"
+        >{{ orderInfo.userName }}</span
       >
-      | <span @click="$router.push('/order/list')">我的订单</span>
+      | <span style="cursor:pointer" @click="$router.push('/order/list')">我的订单</span>
     </p>
 
     <el-card class="box-card text-normal" style="clear: both">
