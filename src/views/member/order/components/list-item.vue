@@ -11,76 +11,80 @@
     </div>
     <ul class="item-card-content" :data="list">
       <li
-      v-for="(data) in list"
-      :key="data.id"
-      :id="data.id"
-      class="order">
-          <div class="order-id">
-            <span>下单时间：{{data.createTime}}</span><span class="ml-20">订单号：{{data.orderNumber}}</span>
-          </div>
-          <ul class="order-list">
-            <li class="order-item">
-              <div class="goods">
-                <div 
-                v-for="(item, i) in data.orderProductSkuList"
-                :key="i"
-                class="goods-information">
-                  <div class="goods-cont">
-                    <a :href="item.goodsUrl" class="goods-img">
-                      <custom-img :src="item.skuImg"></custom-img>
-                    </a>
-                    <div class="goods-title">
-                      <p>{{item.skuName}}</p>
-                      <p class="col-9">
-                        <span 
-                        v-for="(skuSpec, s) in item.skuSpec"
-                        :key="s"
-                        >
-                        {{skuSpec.specName}}：{{skuSpec.specValue}}；</span>
-                      </p>
-                    </div>
+        v-for="data in list"
+        :id="data.id"
+        :key="data.id"
+        class="order"
+      >
+        <div class="order-id">
+          <span>下单时间：{{ data.createTime }}</span><span class="ml-20">订单号：{{ data.orderNumber }}</span>
+        </div>
+        <ul class="order-list">
+          <li class="order-item">
+            <div class="goods">
+              <div
+                v-for="item in data.orderProductSkuList"
+                :id="item.id"
+                :key="item.id"
+                class="goods-information"
+              >
+                <div class="goods-cont">
+                  <Custom-img :src="item.skuImg" class="goods-img" />
+                  <div class="goods-title">
+                    <p>{{ item.skuName }}</p>
+                    <p class="col-9">
+                      <span
+                        v-for="skuSpec in item.skuSpec"
+                        :id="skuSpec.specId"
+                        :key="skuSpec.specId"
+                      >{{ skuSpec.specName }}：{{ skuSpec.specValue }}；</span>
+                    </p>
                   </div>
-                  <div class="col-danger goods-price">
-                    <span>{{data.currencySymbol}}{{item.skuPrice}}</span>
-                  </div>
-                  <div class="goods-num"><span>{{item.quantity}}</span></div>
                 </div>
-              </div>
-              <div><span>{{data.consigneeName}}</span></div>
-              <div class="actual-payment">
-                <p>¥{{data.sumPayable}}</p>
-                <p class="col-9 border-bottom p-y m-y">含运费¥{{data.freight}}</p>
-                <p class="col-9">{{data.paymentTypeName}}</p>
-              </div>
-              <div :class="{'col-danger':data.orderStatus != 3}">
-                <span>{{statePayment[data.orderStatus].type}}</span>
-              </div>
-              <div class="operate">
-                <div v-if="data.orderStatus == 0">
-                  <p class="p-y col-danger"><svg-icon name="icon-shijian"></svg-icon> 剩余1时58分</p>
-                  <el-button type="primary">付款</el-button>
+                <div class="col-danger goods-price">
+                  <span>{{ data.currencySymbol }}{{ item.skuPrice }}</span>
                 </div>
-                <el-button v-if="data.orderStatus == 2" type="primary" @click.prevent="confirmReceipt(data.id)">确认收货</el-button>
-                <el-button type="text" @click.prevent="viewOrder(data.id)">查看订单</el-button>
-                <el-popover
-                  v-if="data.orderStatus == 2" 
-                  placement="bottom-end"
-                  width="200"
-                  trigger="hover">
-                    <el-timeline :reverse="reverse">
-                      <el-timeline-item
-                        v-for="(activity, index) in activities"
-                        :key="index"
-                        :timestamp="activity.timestamp">
-                        {{activity.content}}
-                      </el-timeline-item>
-                    </el-timeline>
-                  <el-button type="text" slot="reference" @click.prevent="checkLogistics">查看物流</el-button>
-                </el-popover>
-                <el-button v-else-if="data.orderStatus != 3" type="text" @click.prevent="cancelOrder">取消订单</el-button>
+                <div class="goods-num"><span>{{ item.quantity }}</span></div>
               </div>
-            </li>
-          </ul>
+            </div>
+            <div><span>{{ data.consigneeName }}</span></div>
+            <div class="actual-payment">
+              <p>{{ data.currencySymbol }}{{ data.sumPayable }}</p>
+              <p class="col-9 border-bottom p-y m-y">含运费{{ data.currencySymbol }}{{ data.freight }}</p>
+              <p class="col-9">{{ data.paymentTypeName }}</p>
+            </div>
+            <div :class="{'col-danger':data.orderStatus != 3}">
+              <span>{{ statePayment[data.orderStatus].type }}</span>
+            </div>
+            <div class="operate">
+              <div v-if="data.orderStatus == 0">
+                <!-- 1、永久有效    0、不是永久有效 -->
+                <p v-if="data.forever === 0" class="p-y col-danger"><svg-icon name="icon-shijian" /> 剩余{{ time }}{{ timeDown(data.failureTime) }}</p>
+                <el-button type="primary" @click="paymentOrder(data)">付款</el-button>
+              </div>
+              <el-button v-if="data.orderStatus == 2" type="primary" @click.prevent="confirmReceipt(data.id)">确认收货</el-button>
+              <el-button type="text" @click.prevent="viewOrder(data.id)">查看订单</el-button>
+              <el-popover
+                v-if="data.orderStatus == 2"
+                placement="bottom-end"
+                width="200"
+                trigger="hover"
+              >
+                <el-timeline :reverse="reverse">
+                  <el-timeline-item
+                    v-for="(activity, index) in activities"
+                    :key="index"
+                    :timestamp="activity.timestamp"
+                  >
+                    {{ activity.content }}
+                  </el-timeline-item>
+                </el-timeline>
+                <!-- <el-button slot="reference" type="text" @click.prevent="checkLogistics">查看物流</el-button> -->
+              </el-popover>
+              <el-button v-else-if="data.orderStatus != 3" type="text" @click.prevent="cancelOrder">取消订单</el-button>
+            </div>
+          </li>
+        </ul>
       </li>
     </ul>
   </div>
@@ -88,13 +92,28 @@
 
 <script>
 
-import customImg from '@/components/CustomImg'
+import CustomImg from '@/components/CustomImg'
 import svgIcon from '@/components/SvgIcon'
 
 export default {
+  components: {
+    CustomImg,
+    svgIcon
+  },
+  props: {
+    list: {
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
       showAlt: false,
+      time: '',
+      day: '', // 天
+      hour: '', // 小时
+      minute: '', // 分钟
+      seconds: '', // 秒数
       // 订单状态
       statePayment: {
         0: {
@@ -123,59 +142,97 @@ export default {
       }]
     }
   },
-  components: {
-    customImg,
-    svgIcon
-  },
-  props: {
-    list: {
-      type: Array,
-      default: () => []
-    }
-  },
   computed: {
   },
   methods: {
-    viewOrder(id) {
-      this.$router.push(`/order/detail?orderId=${id}`)
-    },
-    checkLogistics(id) {
-      console.log(id);
-      this.$router.push('/order/detail')
-    },
     confirmReceipt(id) {
-      console.log(id);
       this.$confirm('确认收到所有商品吗？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-        }).then(() => {
-          console.log('确认成功!');
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消操作'
-          });          
-        });
-    },
-    cancelOrder() {
-      this.$confirm('确定取消该订单吗？', '提示', {
         confirmButtonText: '确定',
-        cancelButtonText: '取消',
+        cancelButtonText: '取消'
       }).then(() => {
-        console.log('订单取消成功!');
+        console.log('确认成功!')
       }).catch(() => {
         this.$message({
           type: 'info',
           message: '取消操作'
-        });          
-      });
+        })
+      })
+    },
+    cancelOrder() {
+      this.$confirm('确定取消该订单吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        console.log('订单取消成功!')
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消操作'
+        })
+      })
+    },
+    // 查看详情
+    viewOrder(id) {
+      this.$router.push({
+        path: '/order/detail',
+        query: {
+          orderId: id
+        }
+      })
+    },
+    // 查看物流
+    // checkLogistics(id) {
+    //   console.log(id)
+    //   this.$router.push('/order/detail')
+    // },
+    /**
+     * 支付订单 支付方式
+     * 0:在线支付  1:线下支付 2:货到付款
+     * **/
+    paymentOrder(item) {
+      this.$router.push({
+        path: '/payment/pay',
+        query: {
+          orderId: item.id,
+          payVal: item.payMode
+        }
+      })
+    },
+    timeDown(leftTime) {
+      clearInterval(this.setIntID)
+      if (leftTime <= 0) {
+        return '0时0分0秒'
+      }
+      this.setIntID = setInterval(() => {
+        leftTime--
+        if (leftTime === 0) {
+          clearInterval(this.setIntID)
+          return
+        }
+        this.day = parseInt(leftTime / (24 * 60 * 60))
+        this.hour = this.formate(parseInt((leftTime / (60 * 60)) % 24))
+        this.minute = this.formate(parseInt((leftTime / 60) % 60))
+        this.seconds = this.formate(parseInt(leftTime % 60))
+        if (this.day >= 1) {
+          this.time = `${this.day}天${this.hour}时${this.minute}分${this.seconds}秒`
+        } else if (this.hour >= 1) {
+          this.time = `${this.hour}时${this.minute}分${this.seconds}秒`
+        } else if (this.minute >= 1) {
+          this.time = `${this.minute}分${this.seconds}秒`
+        } else if (this.seconds >= 1) {
+          this.time = `${this.seconds}秒`
+        }
+      }, 1000)
+    },
+    formate(time) {
+      if (time >= 10) {
+        return time
+      } else {
+        return `0${time}`
+      }
     }
-  },
-  showAltType(i) {
-    console.log(i)
-    this.showAlt = this.showAlt;
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

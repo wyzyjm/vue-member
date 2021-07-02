@@ -1,12 +1,12 @@
 <template>
   <div v-if="data" class="app-container">
-    订单详情
+    <!-- 订单详情 -->
     <!-- 进度条 -->
     <CeSteps :active="data.orderStatus+1" :datalist="datalist" class="border-bottom" />
 
     <!-- 订单编号、按钮 -->
     <div class="order-type">
-      <div>订单号：{{ data.order.orderNumber }}
+      <div>订单号：{{ data.orderNumber }}
         <el-button type="text">复制</el-button>
       </div>
       <div
@@ -15,10 +15,10 @@
       ><SvgIcon name="icon-shijian" />剩余0时29分</div>
       <div>订单状态：<span class="font-20 col-danger">{{ statePayment[data.orderStatus].type }}</span></div>
       <div>
-        <el-button v-if="data.orderStatus == 0 || data.paymentTypeName == '货到付款'&&data.orderStatus == 1 " type="text" @click.prevent="cancelOrder('id')">取消订单</el-button>
+        <el-button v-if="data.orderStatus == 0 || data.payInfo.paymentTypeName == '货到付款'&&data.orderStatus == 1 " type="text" @click.prevent="cancelOrder('id')">取消订单</el-button>
         <el-button type="primary" plain @click="dialogTableVisible = true">查看发票信息</el-button>
         <el-button v-if="data.orderStatus == 0" type="primary" plain @click="showDialog('edit')">修改地址</el-button>
-        <el-button v-if="data.orderStatus == 0" type="primary">付款</el-button>
+        <el-button v-if="data.orderStatus == 0" type="primary" @click="payOrder">付款</el-button>
         <el-button v-if="data.orderStatus == 2" type="primary">确认收货</el-button>
       </div>
     </div>
@@ -28,37 +28,54 @@
       <li class="detail-item">
         <p class="title">商品清单/结算信息</p>
         <div class="item-list">
-          <p class="consignee"><span>收货人：</span><span>{{ data.order.consigneeName }}</span></p>
-          <p class="consignee"><span>所在地区：</span><span>{{ data.order.consigneeProvince + data.order.consigneeCity + data.order.consigneeCounty }}</span></p>
-          <p class="consignee"><span>详细地址：</span><span>{{ data.order.consigneeAddr }}</span></p>
-          <p class="consignee"><span>手机号码：</span><span> +{{ data.order.consigneePhoneHead }} {{ data.order.consigneePhone }}</span></p>
-          <p class="consignee"><span>固定电话：</span><span>{{ data.order.consigneeTelHead }}-{{ data.order.consigneeTel }}</span></p>
-          <p class="consignee"><span>邮政编码：</span><span>{{ data.order.consigneeZipCode }}</span></p>
+          <p v-if="data.consigneeInfo.consigneeName" class="consignee"><span>收货人：</span><span>{{ data.consigneeInfo.consigneeName }}</span></p>
+          <p v-if="data.consigneeInfo.consigneeProvince" class="consignee"><span>所在地区：</span><span>{{ data.consigneeInfo.consigneeProvince + data.consigneeInfo.consigneeCity + data.consigneeInfo.consigneeCounty }}</span></p>
+          <p v-if="data.consigneeInfo.consigneeAddr" class="consignee"><span>详细地址：</span><span>{{ data.consigneeInfo.consigneeAddr }}</span></p>
+          <p v-if="data.consigneeInfo.consigneePhoneHead" class="consignee"><span>手机号码：</span><span>{{ data.consigneeInfo.consigneePhoneHead }} {{ data.consigneeInfo.consigneePhone }}</span></p>
+          <p v-if="data.consigneeInfo.consigneeTelHead" class="consignee"><span>固定电话：</span><span v-if="data.consigneeInfo.consigneeTelHead">{{ data.consigneeInfo.consigneeTelHead }}-{{ data.consigneeInfo.consigneeTel }}</span></p>
+          <p v-if="data.consigneeInfo.consigneeZipCode" class="consignee"><span>邮政编码：</span><span>{{ data.consigneeInfo.consigneeZipCode }}</span></p>
         </div>
       </li>
-      <li class="detail-item">
+      <li v-if="data.payInfo" class="detail-item">
         <p class="title">订单信息</p>
         <div class="item-list">
-          <span>支付方式：{{ data.paymentTypeName }}</span>
-          <el-button type="text">支付信息<SvgIcon name="icon-xia" /></el-button>
-          <div class="slot-content">
-            <p v-for="(item, index) in paymentData" :key="index">交易号：2344657687990809090</p>
-          </div>
-          <p>配送方式：{{ data.order.logName }}</p>
+          <span class="pr-10">支付方式：{{ data.payInfo.paymentTypeName }}</span>
+          <el-popover
+            placement="bottom"
+            width="260"
+            trigger="click"
+          >
+            <!-- 微信、支付宝、paypal -->
+            <div v-if="data.payInfo.paymentTypeId === 1 || data.payInfo.paymentTypeId === 2 || data.payInfo.paymentTypeId === 3" class="slot-content">
+              <p>交易号：{{ data.payInfo.payOnline.tradeNo }}</p>
+            </div>
+            <!-- Bank Transfer -->
+            <div v-if="data.payInfo.paymentTypeId === 4" class="slot-content">
+              <p>Bank Transaction No.：{{ data.payInfo.bankTransfer.tradeNo }}</p>
+              <p>Send money：{{ data.payInfo.bankTransfer.money }}</p>
+              <p>Currency：{{ data.payInfo.bankTransfer.currency }}</p>
+              <p>Contents：{{ data.payInfo.bankTransfer.content }}</p>
+            </div>
+            <!-- Western Union/Money Gram> -->
+            <div v-if="data.payInfo.paymentTypeId === 5 || data.payInfo.paymentTypeId === 6" class="slot-content">
+              <p>First Name：{{ data.payInfo.westernUnion.firstName }}</p>
+              <p>Last Name：{{ data.payInfo.westernUnion.lastName }}</p>
+              <p>Send money：{{ data.payInfo.westernUnion.money }}</p>
+              <p>MTCN# No.：{{ data.payInfo.westernUnion.mtcnNo }}</p>
+              <p>Currency：{{ data.payInfo.westernUnion.currency }}</p>
+              <p>Contents：{{ data.payInfo.westernUnion.content }}</p>
+            </div>
+            <el-button slot="reference" type="text">支付信息<SvgIcon name="icon-xia" /></el-button>
+          </el-popover>
         </div>
       </li>
-      <li v-if="data.orderStatus > 1 && data.paymentTypeName != '货到付款'" class="detail-item">
+      <li v-if="data.orderStatus > 1 && data.payInfo.paymentTypeName != '货到付款'" class="detail-item">
         <p class="title">物流信息</p>
         <div class="item-list">
-          <el-timeline :reverse="reverse">
-            <el-timeline-item
-              v-for="(activity, index) in data.order.LogsList"
-              :key="index"
-              :timestamp="formatDate(activity.createTime)"
-            >
-              {{ activity.remark }}
-            </el-timeline-item>
-          </el-timeline>
+          <p class="consignee"><span>配送方式：</span><span>{{ data.logisticsInfo.distribution }}</span></p>
+          <p class="consignee":datatype="data.logisticsInfo.courierCompanyCode"><span>快递公司：</span><span>{{ data.logisticsInfo.courierCompany }}</span></p>
+          <p class="consignee"><span>运单号：</span><span>{{ data.logisticsInfo.trackingNumber }}</span></p>
+          <p class="consignee"><span>物流查询：</span><a target="_blank" :href="data.logisticsInfo.queryUrl" class="el-button--text">{{ data.logisticsInfo.queryUrl }}</a></p>
         </div>
       </li>
     </ul>
@@ -68,24 +85,24 @@
       <p class="title">商品清单/结算信息</p>
       <div class="product-list">
         <ProductList
-          :productList="data.order.orderProductSkuList"
-          :currencySymbol="data.order.currencySymbol"
+          :productList="data.goodsList"
+          :currencySymbol="data.currencySymbol"
         />
         <div class="message-board">
           <div>
             <p>给卖家留言</p>
             <textarea
               id="sellerMsg"
-              v-model="data.order.sellerMsg"
+              v-model="data.sellerMsg"
               name="sellerMsg"
               placeholder="我的留言是不可修改的"
             />
           </div>
           <div class="message-pay">
-            <p>共 <span class="col-danger font-20">{{ data.order.quantity }}</span> 件商品</p>
-            <p>商品总额：  {{ data.order.currencySymbol }} {{ data.totalAmount }}</p>
-            <p>运费总计：  {{ data.order.currencySymbol }} {{ data.order.freight ? data.order.freight : 0 }}</p>
-            <p class="col-danger font-20">实付金额： <span class="font-bold">{{ data.order.currencySymbol }} {{ data.order.sumPayable }}</span></p>
+            <p>共 <span class="col-danger font-20">{{ data.quantity }}</span> 件商品</p>
+            <p>商品总额：  {{ data.currencySymbol }} {{ data.totalAmount }}</p>
+            <p>运费总计：  {{ data.currencySymbol }} {{ data.freight ? data.freight : 0 }}</p>
+            <p class="col-danger font-20">实付金额： <span class="font-bold">{{ data.currencySymbol }} {{ data.sumPayable }}</span></p>
           </div>
         </div>
       </div>
@@ -98,13 +115,13 @@
     />
 
     <!-- 查看发票信息 -->
-    <el-dialog center title="发票信息" :visible.sync="dialogTableVisible">
+    <el-dialog v-if="data.electronicInvoice" center title="发票信息" :visible.sync="dialogTableVisible">
       <div class="invoice">
-        <p class="invoice-item"><span>发票抬头</span><span>{{ data.order.invoice.invoiceTitle }}</span></p>
-        <p class="invoice-item"><span>纳税人识别号</span><span>{{ data.order.invoice.taxpayerNum }}</span></p>
-        <p class="invoice-item"><span>发票内容</span><span>{{ data.order.invoice.invoiceContent }}</span></p>
-        <p class="invoice-item"><span>收票人手机</span><span>{{ data.order.invoice.takerPhone }}</span></p>
-        <p class="invoice-item"><span>收票人邮箱</span><span>{{ data.order.invoice.takerEmail }}</span></p>
+        <p class="invoice-item"><span>发票抬头</span><span>{{ data.electronicInvoice.invoiceTitle }}</span></p>
+        <p v-if="data.electronicInvoice.invoiceType === 2" class="invoice-item"><span>纳税人识别号</span><span>{{ data.electronicInvoice.taxpayerNum }}</span></p>
+        <p class="invoice-item"><span>发票内容</span><span>{{ data.electronicInvoice.invoiceContent }}</span></p>
+        <p class="invoice-item"><span>收票人手机</span><span>{{ data.electronicInvoice.takerPhone }}</span></p>
+        <p class="invoice-item"><span>收票人邮箱</span><span>{{ data.electronicInvoice.takerEmail }}</span></p>
       </div>
       <div slot="footer">
         <!-- 取消 -->
@@ -121,7 +138,7 @@
   </div>
 </template>
 <script>
-import { getDetail } from '@/api/table'
+import { orderDetail } from '@/api/order'
 import CeSteps from '@/components/CeSteps'
 import SvgIcon from '@/components/SvgIcon'
 import AddressForm from '@/views/components/addressForm' // 收货人地址弹窗
@@ -141,6 +158,7 @@ export default {
       current: {}, // 弹窗传值
       currencySymbol: null,
       dialogTableVisible: false,
+      payShow: false,
       datalist: [
         {
           title: '提交订单',
@@ -177,7 +195,6 @@ export default {
           type: '已关闭'
         }
       },
-      reverse: true,
       // activities: [],
       paymentData: [
         {
@@ -192,9 +209,10 @@ export default {
   },
   methods: {
     getDetail() {
-      getDetail(this.listQuery).then(response => {
+      console.log(this.$route.query.orderId)
+      orderDetail({ orderId: this.$route.query.orderId }).then(response => {
         console.log(response.data)
-        this.data = response.data
+        this.data = response.data.data.order
       })
     },
     // 弹窗 显示
@@ -238,6 +256,16 @@ export default {
         })
       })
     },
+    // 支付订单
+    payOrder() {
+      this.$router.push({
+        path: '/payment/pay',
+        query: {
+          orderId: this.data.orderId,
+          payVal: '' // 后台缺少参数
+        }
+      })
+    },
     // 时间转换
     toDou(n) {
       return n < 10 ? '0' + n : '' + n
@@ -274,6 +302,9 @@ ul,li{
 }
 .col-danger{
   color: #F56C6C;
+}
+.pr-10 {
+  padding-right: 10px;
 }
 .border{
   border: 1px solid #C0C4CC;
@@ -365,7 +396,7 @@ ul,li{
 }
 .invoice{
   min-height: 150px;
-  margin-left: 25%;
+  margin-left: 22%;
   line-height: 2.5;
 }
 .invoice-item span:nth-child(1){

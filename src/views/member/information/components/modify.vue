@@ -289,11 +289,11 @@ export default {
         }
       }
       const res = await updateMember(subdata)
-      if (res.status !== 200) return
+      if (res.data !== 1) return
       this.form.modifyData = ''
       this.form.name = ''
       this.$emit('close')
-      // location.reload()
+      location.reload()
     },
     // 国家下拉框变化
     countryChange(val) {
@@ -401,7 +401,7 @@ export default {
         top: 12px;
         left: 4px;
         width: 20px;
-        height: 3px;
+        height: 2px;
         -webkit-transform: rotate(45deg);
         -ms-transform: rotate(45deg);
         transform: rotate(45deg);
@@ -413,9 +413,9 @@ export default {
         transform: rotate(-45deg);
     }
     .vicp-icon4:hover {
-        -webkit-transform: rotate(90deg);
-        -ms-transform: rotate(90deg);
-        transform: rotate(90deg);
+        // -webkit-transform: rotate(90deg);
+        // -ms-transform: rotate(90deg);
+        // transform: rotate(90deg);
     }
     .modify-cont{
         padding: 50px;

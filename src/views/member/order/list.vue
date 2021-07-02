@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div v-if="list" class="app-container">
     <PageTitle :pagetitle="title">
       <slot slot="slot">
         <div class="search">
@@ -11,6 +11,7 @@
           <el-button
             class="get-code-btn"
             icon="el-icon-search"
+            @click="search"
           />
         </div>
       </slot>
@@ -24,38 +25,41 @@
           v-for="(item, index) in tabsArr"
           :key="index"
         >
-          <el-badge slot="label" :value="200" :max="99" class="item">{{ item.text }}</el-badge>
-          <listItem :list="list" />
+          <el-badge v-if="item.type === 0 || item.type === 1 || item.type === 2" slot="label" :value="200" :max="99" class="item">{{ item.text }}</el-badge>
+          <el-badge v-else slot="label" class="item">{{ item.text }}</el-badge>
+          <ListItem v-if="list.length > 0" ref="listItem" :list="list" />
+          <p v-else class="text-center">您还没有相关订单哦~</p>
         </el-tab-pane>
       </el-tabs>
       <el-pagination
         background
         class="page"
         layout="prev, pager, next, jumper"
-        :page-size="pageSize"
-        :current-page="currentPage"
-        :total="total"
+        :page-size="pagination.pageSize"
+        :current-page="pagination.currentPage"
+        :total="pagination.totalCount"
         @current-change="handleCurrentChange"
       />
     </div>
   </div>
 </template>
 <script>
-import { getList } from '@/api/table'
+import { orderList } from '@/api/order'
 import PageTitle from '@/views/components/pageTitle'
-import listItem from './components/list-item'
+import ListItem from './components/list-item'
 
 export default {
   components: {
     PageTitle,
-    listItem
+    ListItem
   },
   data() {
     return {
       title: '我的订单',
-      searchVal: null,
+      searchVal: '',
       tabsModel: 123,
       activeName: '全部订单',
+      orderType: '',
       tabsArr: [
         {
           text: '全部订单',
@@ -83,36 +87,57 @@ export default {
         }
       ],
       list: [],
-      total: 10, // 总条数
-      currentPage: 1, // 当前页
-      pageSize: 10, // 每页条数
-      listQuery: {
-        page: 1,
-        limit: 20
-      }
+      pagination: {},
+      currentPage: 1,
+      kWord: ''
     }
   },
   created() {
-    this.getList()
+    this.initList()
   },
   methods: {
-    getList() {
-      getList(this.listQuery).then(response => {
-        console.log(response.data)
-        this.list = response.data.list
+    initList() {
+      const listQuery = {
+        currentPage: this.currentPage,
+        pageSize: 20,
+        memberId: '852198699132313600',
+        keyWord: this.searchVal.trim(),
+        orderStatus: this.orderType
+      }
+      orderList(listQuery).then(res => {
+        console.log(res.data)
+        this.list = res.data.data.list
+        this.pagination = res.data.data.pagination
       })
     },
+    // tab事件
     handleClick(tab, event) {
+      if (tab.index === '0') {
+        this.orderType = ''
+      } else {
+        this.orderType = tab.index - 1
+      }
+      this.currentPage = 1
       console.log(tab, event)
+      this.initList()
     },
     // 监听页码 变化
     handleCurrentChange(val) {
       console.log(`当前页:${val}`)
+      this.currentPage = val
+      this.initList()
+    },
+    search() {
+      this.currentPage = 1
+      this.initList()
     }
   }
 }
 </script>
 <style lang="scss" scoped>
+.text-center{
+  text-align: center;
+}
   .search{
     width: 300px;
     position: relative;

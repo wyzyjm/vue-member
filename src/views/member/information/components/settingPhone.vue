@@ -29,6 +29,9 @@
           <el-col :span="7">
             <el-form-item
               prop="consigneePhoneHead"
+              :rules="{
+                required: phoneType === 0 ? true : isConsigneePhoneHead, message: '请选择', trigger: 'blur'
+              }"
             >
               <el-select
                 v-model="formLabelAlign.consigneePhoneHead"
@@ -64,7 +67,7 @@
           </el-col>
         </el-form-item>
         <el-form-item v-else label="手机号">
-          <span>{{ setdata.phoneHead.substring(0,setdata.phoneHead.lastIndexOf(",")) }} {{ setdata.phone }}</span>
+          <span>{{ setdata.phoneHead ? '+' : '' }}{{ setdata.phoneHead.substring(0,setdata.phoneHead.lastIndexOf(",")) }} {{ setdata.phone }}</span>
         </el-form-item>
         <el-form-item
           label="验证码"
@@ -140,6 +143,7 @@ export default {
       btnText: '获取验证码',
       btnDisabled: false,
       isConsigneePhone: false, // 是否验证手机号
+      isConsigneePhoneHead: false, // 验证手机区号
       formLabelAlign: {
         phoneYzm: '',
         consigneePhoneHead: '', // 手机区号
@@ -195,7 +199,7 @@ export default {
       rules: {
         // 手机号头部
         consigneePhoneHead: [
-          { required: true, trigger: 'change' }
+          { required: true, trigger: 'blur' }
         ],
         // 手机号
         consigneePhone: [
@@ -215,7 +219,7 @@ export default {
     // 修改密码
     submitForm(formName) {
       if (this.formLabelAlign.consigneePhoneHead === '') {
-        this.$message('区号不能为空！')
+        this.$message('区号不能为空1！')
         return
       }
       this.$refs[formName].validate((valid) => {
@@ -290,6 +294,7 @@ export default {
             this.btnText = '获取验证码'
             this.btnDisabled = false
             this.isConsigneePhone = true
+            this.isConsigneePhoneHead = true
           } else {
             this.$message('验证失败！')
           }
@@ -299,19 +304,40 @@ export default {
     // 获取验证码
     getVerfyCode() {
       if (this.phoneType === 0 && this.active === 0 && this.formLabelAlign.consigneePhoneHead === '') {
-        this.$message('区号不能为空！')
+        // this.$message('区号不能为空！')
+        this.$refs['formLabelAlign'].validate((valid) => {
+          if (valid) {
+            return true
+          } else {
+            return false
+          }
+        })
         return
       }
       if (this.phoneType === 0 && this.active === 0 && this.formLabelAlign.consigneePhone === '') {
-        this.$message('请输入您的手机号码！')
+        // this.$message('请输入您的手机号码！')
+        this.$refs['formLabelAlign'].validate((valid) => {
+          if (valid) {
+            return true
+          } else {
+            return false
+          }
+        })
         return
       }
       if (this.phoneType === 1 && this.active === 1 && this.formLabelAlign.consigneePhoneHead === '') {
-        this.$message('区号不能为空！')
+        // this.$message('区号不能为空！')
+        this.$refs['formLabelAlign'].validate((valid) => {
+          if (valid) {
+            return true
+          } else {
+            return false
+          }
+        })
         return
       }
       if (this.phoneType === 1 && this.active === 1 && this.formLabelAlign.consigneePhone === '') {
-        this.$message('请输入您的手机号码！')
+        // this.$message('请输入您的手机号码！')
         return
       }
       this.queryData()
