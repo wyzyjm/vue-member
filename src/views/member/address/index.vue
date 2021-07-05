@@ -13,8 +13,8 @@
       <!-- 提示区域 -->
       <span class="ml15"
         >您已创建
-        <span class="text-danger"> {{ logisticsInfoList.length }} </span
-        >个,最多创建 <span class="text-danger"> {{ mostNum }} </span>个
+        <span class="text-danger"> {{ logisticsInfoList.length }} </span>
+        个,最多创建 <span class="text-danger"> {{ mostNum }} </span>个
       </span>
     </div>
     <!-- 新增+ 提示 结束 -->
@@ -38,7 +38,7 @@
         </li>
         <li :class="{ reverse: item.reverseFlag }">
           <!-- 所在地区 -->
-          <div class="reverseDiv">
+          <div class="reverseDiv" v-if="item.consigneeProvince">
             <span class="attrName text-grey"> 所在地区: </span>
             <span class="attrValue">
               {{
@@ -46,7 +46,8 @@
                   item.consigneeCountry,
                   item.consigneeProvince,
                   item.consigneeCity,
-                  item.consigneeCounty
+                  item.consigneeCounty,
+                  true
                 )
               }}
             </span>
@@ -58,21 +59,21 @@
           </div>
         </li>
         <!-- 手机区号 + 手机号 -->
-        <li>
+        <li v-if="item.consigneePhone">
           <span class="attrName text-grey"> 手机: </span>
           <span class="attrValue">
             {{ item.consigneePhoneHead }} {{ item.consigneePhone }}</span
           >
         </li>
         <!-- 固定电话 -->
-        <li>
+        <li v-if="item.consigneeTel">
           <span class="attrName text-grey"> 固定电话: </span>
           <span class="attrValue">
             {{ item.consigneeTelHead }} - {{ item.consigneeTel }}
           </span>
         </li>
         <!-- 邮编 -->
-        <li>
+        <li v-if="item.consigneeZipCode">
           <span class="attrName text-grey"> 邮编: </span>
           <span class="attrValue"> {{ item.consigneeZipCode }} </span>
         </li>
@@ -104,6 +105,7 @@
       ref="addressDialog"
       :addressFormProp="current"
       @confirm="confirmDialog"
+      @addressFormDialogClose="addressFormDialogClose"
     ></AddressForm>
     <!-- 收货人地址弹窗 结束 -->
 
@@ -114,16 +116,13 @@
 import PageTitle from "@/views/components/pageTitle"; // 头部
 import AddressForm from "@/views/components/addressForm"; // 收货人地址弹窗
 
-// import * as utils from "@/utils/index";
-
-import address from "@/views/components/resource/locList_zh_CN.js"; // 国家josn
+import { getAddressName } from "@/utils/address";
 
 import {
   getAddressList,
   addAddressList,
   setAddressList,
   deleteAddressList,
-  eidtAddressList,
 } from "@/api/address"; // 购物车api
 
 export default {
@@ -141,9 +140,7 @@ export default {
         display: "flex",
         justifyContent: "space-between",
       },
-
       current: {}, // 弹窗传值
-
       isLoading: true, // loading加载
     };
   },
@@ -173,15 +170,8 @@ export default {
 
     // 设为默认地址
     async setDefault(id) {
-      /**
-       * 1. 获取当前id
-       * 2. 根据id发送请求
-       * 3. 请求成功, 赋值
-       * 4. 重新渲染收货地址列表
-       */
       const params = {
-        tenantId: 1600018169,
-        receiverCode: id,
+        receiverCode: id, // 收货地址id
       };
       try {
         const res = await setAddressList(params); // 设为默认
@@ -221,11 +211,10 @@ export default {
         if (result !== "confirm") return; // 不是确认,直接停止
         const params = {
           receiverCode: item.id,
-          tenantId: 1600018169,
+          // tenantId: 1600018169,
         };
         try {
           const res = await deleteAddressList(params);
-          // console.log(res);
           if (res.status !== 200) return;
           this.getList(); // 重新获取收货地址列表
         } catch (error) {
@@ -240,6 +229,10 @@ export default {
     eidtAddress(item) {
       this.current = JSON.parse(JSON.stringify(item)); // 赋值
       this.showAddressform("edit");
+    },
+    // 弹窗关闭
+    addressFormDialogClose() {
+      this.current = {}; // 清空传入的 值
     },
 
     // 弹窗 显示
@@ -288,48 +281,7 @@ export default {
   },
   computed: {
     getAddress: function () {
-      return (country, province, city, area) => {
-        if (!country) return; // 没有国家 返回
-        var _country = "",
-          _a = "",
-          _b = "",
-          _c = ""; // 省市区
-        address.Location.CountryRegion.map((item) => {
-          if (item["-Code"] !== country) return;
-          _country = item["-Name"]; // 获取国家名称
-          if (!item.State) return; //  只返回一个国家
-          if (Array.isArray(item.State)) {
-            item.State.map((i) => {
-              if (i["-Code"] !== province) return;
-              _a = i["-Name"]; // 获取省
-              if (!i.City) return; // 不存在市
-
-              i.City.map((v) => {
-                if (v["-Code"] !== city) return;
-                _b = v["-Name"];
-
-                if (!v.Region) return; // 不存在区
-
-                if (Array.isArray(v.Region)) {
-                  v.Region.map((c) => {
-                    if (c["-Code"] !== area) return; // 不存在区
-                    _c = c["-Name"];
-                  });
-                } else {
-                  if (v.Region["-Code"] !== area) return;
-                  _c = v.Region["-Name"];
-                }
-              });
-            });
-          } else {
-            item.State.City.map((i) => {
-              if (i["-Code"] !== province) return;
-              _a = i["-Name"];
-            });
-          }
-        });
-        return _a + _b + _c;
-      };
+      return getAddressName;
     },
   },
 };

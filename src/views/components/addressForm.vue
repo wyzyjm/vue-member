@@ -105,20 +105,34 @@
                 placeholder="请输入您的手机号码"
                 v-model.trim="addrForm.consigneePhone"
                 @input="checkInputValue('consigneePhone')"
+                @focus="phoneFocus($event, true)"
               ></el-input>
             </el-form-item>
           </el-col>
         </el-form-item>
         <!-- 固定电话 -->
-        <el-form-item label="固定电话" class="telBox">
+        <el-form-item
+          label="固定电话"
+          class="telBox"
+          :class="{ mb0: errorMsg }"
+        >
           <!-- 下拉+文本框 -->
           <el-col :span="6">
             <el-form-item prop="consigneeTelHead">
-              <el-input
+              <el-select
                 v-model="addrForm.consigneeTelHead"
-                placeholder="固话区号"
-                @input="checkInputValue('consigneeTelHead')"
-              ></el-input>
+                placeholder="请选择"
+                filterable
+              >
+                <el-option
+                  v-for="(item, index) in frontData.phoneCode"
+                  :key="index"
+                  :label="item.dialCode"
+                  :value="item.dialCode"
+                >
+                  <span> {{ item.dialCode }} {{ item.name }}</span>
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="1" class="txtCenter">-</el-col>
@@ -129,10 +143,11 @@
                 placeholder="请输入您的固定电话"
                 v-model.trim="addrForm.consigneeTel"
                 @input="checkInputValue('consigneeTel')"
+                @focus="phoneFocus"
               ></el-input>
             </el-form-item>
           </el-col>
-          <p>温馨提示：手机号和固定电话不能同时为空</p>
+          <p v-show="errorMsg">温馨提示：手机号和固定电话不能同时为空</p>
         </el-form-item>
 
         <!-- 邮政编码 必填 -->
@@ -161,9 +176,13 @@
 </template>
 
 <script>
-import countryData from "@/views/components/resource/locList_zh_CN"; // 国家
+import { addAddressList, eidtAddressList } from "@/api/address.js"; // 接口
 import { countries } from "@/views/components/resource/phoneCodeCountries"; // 手机区号
-import { addAddressList, eidtAddressList } from "@/api/address.js";
+import {
+  getCurrentData,
+  addressFormateData,
+  getCountryData,
+} from "@/utils/address.js"; // 方法
 export default {
   name: "AddressForm",
   props: {
@@ -180,8 +199,10 @@ export default {
       // 页面参数
       formType: "create", // 哪种弹窗 create:创建 edit:编辑
       dialogFormVisible: false, // 是否显示弹窗
+
       isReverse: false, // 是否为外国
       receiverCode: "", // 地址id
+      isAreaMust: true, // 省市区是否必填
 
       // 收货地址表单
       addrForm: {
@@ -211,7 +232,11 @@ export default {
         ],
         // 省市区
         addressABC: [
-          { required: true, message: "请输入详细地址", trigger: "blur" },
+          {
+            required: true,
+            message: "请输入详细地址",
+            trigger: "blur",
+          },
         ],
         // 手机号头部
         consigneePhoneHead: [{ required: false, trigger: "change" }],
@@ -221,7 +246,7 @@ export default {
             required: false,
             validator: (rule, value, callback) => {
               if (!value || value.indexOf("*") > 0) return callback();
-              if (value && !/^\d{0,11}$/.test(value)) {
+              if (value && !/^\d{6,12}$/.test(value)) {
                 return callback(new Error("请输入正确的手机号码"));
               } else {
                 this.addrFormRules.consigneePhoneHead = [
@@ -241,21 +266,6 @@ export default {
         consigneeTelHead: [
           {
             required: false,
-            validator: (rule, value, callback) => {
-              if (!value) return callback();
-              if (!/^\d{1,5}$/.test(value)) {
-                return callback(new Error("请输入正确的固话区号"));
-              } else {
-                this.addrFormRules.consigneeTel = [
-                  {
-                    required: true,
-                    message: "请输入固定电话",
-                    trigger: "change",
-                  },
-                ];
-                callback();
-              }
-            },
             message: "请输入固话区号",
             trigger: "change",
           },
@@ -265,8 +275,8 @@ export default {
           {
             required: false,
             validator: (rule, value, callback) => {
-              if (!value) return callback();
-              if (!/^\d{7,8}$/.test(value)) {
+              if (!value || value.indexOf("*") > 0) return callback();
+              if (!/^\d{6,12}$/.test(value)) {
                 return callback(new Error("请输入正确的电话号码"));
               } else {
                 this.addrFormRules.consigneeTelHead = [
@@ -286,10 +296,12 @@ export default {
         // 邮编
         consigneeZipCode: [
           {
-            required: true,
+            required: false,
             validator: (rule, value, callback) => {
               if (!value) {
                 return callback(new Error("请输入邮政编码"));
+              } else if (!/^\d{3,12}$/.test(value)) {
+                return callback(new Error("请输入正确的邮政编码"));
               } else {
                 callback();
               }
@@ -304,34 +316,55 @@ export default {
         addressData: [], // 省市区数据
         phoneCode: countries, // 手机区号
       },
-
-      // isDisabled:false  // 表单是否禁止提交
-      addressKey: 10000,
+      errorMsg: false, // 是否显示提示语
+      addressKey: 10000, // 省市区下拉
     };
   },
   created() {
-    this.getCountryData(countryData.Location.CountryRegion); // 设置国家下拉数据
+    this.frontData.conuntryOptions = getCountryData(); // 设置国家下拉数据
+    this.frontData.addressData = []; // 省市区下拉数据为空
   },
   // 方法
   methods: {
-    // 清除省市值
-    clearAddress() {},
+    // 设置省市区下拉 数据
+    setAreaSelectData(code) {
+      const areaData = getCurrentData(code); // 获取数据
+      // console.log("省市区下拉数据", areaData);
+      if (areaData.length === 0) {
+        this.isAreaMust = false; // 没有省市区, 就不是必填
+        this.addrFormRules.addressABC[0].required = false;
+      } else {
+        this.isAreaMust = true; // 没有省市区, 就不是必填
+        this.addrFormRules.addressABC[0].required = true;
+      }
+      const formatAreaData = addressFormateData(areaData); // 格式化数据
+      this.frontData.addressData = formatAreaData; // 设置
+    },
+
     // 弹窗打开前
     handleOpen() {
       if (this.addressFormProp && this.formType === "edit") {
-        const propData = JSON.parse(JSON.stringify(this.addressFormProp)); // 表单赋值
+        const propData = JSON.parse(JSON.stringify(this.addressFormProp)); // 拷贝传过来的值
+        console.log("编辑地址,子组件接收到值了", propData);
+
+        this.receiverCode = propData.id; // 收货地址id
+        this.isReverse = propData.reverseFlag ? true : false; // 设置是否反转
         this.addrForm = {
           consigneeCountry: propData.consigneeCountry, // 国家
           consigneeName: propData.consigneeName, // 收货人名称
           addressABC: [], // 省市区
           consigneeAddr: propData.consigneeAddr, // 详细地址
-          consigneePhoneHead: propData.consigneePhoneHead, // 手机区号
+          consigneePhoneHead: propData.consigneePhone
+            ? propData.consigneePhoneHead
+            : "", // 手机区号
           consigneePhone: propData.consigneePhone, // 手机号
-          consigneeTelHead: propData.consigneeTelHead, // 电话区号
+          consigneeTelHead: propData.consigneeTel
+            ? propData.consigneeTelHead
+            : "", // 电话区号
           consigneeTel: propData.consigneeTel, // 电话号
-
           consigneeZipCode: propData.consigneeZipCode, // 邮政编码
         };
+        this.setAreaSelectData(this.addrForm.consigneeCountry); //设置省市区 下拉数据
         if (propData.consigneeProvince) {
           this.addrForm.addressABC[0] = propData.consigneeProvince; // 省
         }
@@ -341,40 +374,17 @@ export default {
         if (propData.consigneeCounty) {
           this.addrForm.addressABC[2] = propData.consigneeCounty; // 区
         }
-        this.isReverse = propData.reverseFlag ? true : false; // 设置是否反转
-        this.receiverCode = propData.id; // 收货地址id
-      } else {
-        this.addrForm = {
-          consigneeCountry: "", // 国家
-          consigneeName: "", // 收货人名称
-          consigneeAddr: "", // 详细地址
-          addressABC: [],
-          consigneePhoneHead: "", // 手机区号
-          consigneePhone: "", // 手机号
-          consigneeTelHead: "", // 电话区号
-          consigneeTel: "", // 电话号
-          consigneeZipCode: "", // 邮政编码
-        };
-        this.isReverse = false; // 不反转
-        this.receiverCode = ""; // 没有id
       }
-      this.countryChange(this.addrForm.consigneeCountry); // 设置国家
     },
 
     // 确定
     saveAddrForm() {
-      /**
-       * 1. 表单预校验
-       * 2. 校验通过,
-       * 3. 是否有id,且是编辑eidt, 得到参数
-       * 4. 发送请求
-       * 5. 关闭弹窗
-       * 6. 派发给父组件一个事件
-       */
       this.$refs.addrFormRef.validate(async (valid) => {
         if (!valid) return;
         if (!this.addrForm.consigneeTel && !this.addrForm.consigneePhone)
-          return; // 手机号和电话号都没有
+          return (this.errorMsg = true); // 手机号和电话号都没有
+        this.errorMsg = false;
+
         const copyData = JSON.parse(JSON.stringify(this.addrForm)); // 拷贝
         const data = {
           consigneeCountry: copyData.consigneeCountry, // 国家
@@ -414,21 +424,52 @@ export default {
         }
       });
     },
+
     // 弹窗关闭
     dialogClose() {
       this.$refs.addrFormRef.resetFields(); // 重置表单
+      this.addrFormRules.addressABC[0].required = true; // 省市区必填
+      this.addrFormRules.consigneePhoneHead[0].required = false; // 手机区号非必填
+      this.addrFormRules.consigneeTelHead[0].required = false; // 电话区号非必填
+      this.addrForm = {
+        consigneeCountry: "", // 国家
+        consigneeName: "", // 收货人名称
+        consigneeAddr: "", // 详细地址
+        addressABC: [], // 省市区
+        consigneePhoneHead: "", // 手机区号
+        consigneePhone: "", // 手机号
+        consigneeTelHead: "", // 电话区号
+        consigneeTel: "", // 电话号
+        consigneeZipCode: "", // 邮政编码
+      };
+      this.isReverse = false; // 不反转
+      this.receiverCode = ""; // 没有id
+      this.$emit("addressFormDialogClose");
     },
+
     // 检验只能输入数字
     checkInputValue(typeName) {
       this.addrForm[typeName] = this.addrForm[typeName].replace(/[^\d]/g, ""); // 只能输入数字
     },
+
+    // 获取焦点, 清空内容
+    phoneFocus(e, isPhoneInput) {
+      console.log(e, isPhoneInput);
+      e.target.value = ""; // 清空输入框的值
+      if (isPhoneInput) {
+        this.addrForm.consigneePhone = ""; // 手机
+      } else {
+        this.addrForm.consigneeTel = ""; // 电话
+      }
+    },
+
     // 国家下拉框变化
     countryChange(val) {
       this.addressKey = this.addressKey + 1;
       // 1. 清空省市下拉数据, 并重置
       this.frontData.addressData = [];
-      // this.addrForm.addressABC = []; // 清空上次绑定的值
-
+      this.addrForm.addressABC = []; // 清空上次绑定的值
+      // console.log(val);
       // 2. 判断是否反转
       if (val !== "1" && val !== "KOR" && val !== "PRK" && val !== "JPN") {
         this.isReverse = true; // 不是中国 就反转
@@ -436,81 +477,7 @@ export default {
         this.isReverse = false; // 是就不反转
       }
       // 3. 设置省市下拉数据
-      let state = [];
-      countryData.Location.CountryRegion.map((item) => {
-        if (item["-Code"] !== val) return;
-        // 只有国家的情况
-        if (!item.State) {
-          this.frontData.addressData = [];
-          this.addrFormRules.addressABC[0].required = false; // 不是必填
-          return;
-        } else {
-          // 有省市区
-          this.addrFormRules.addressABC[0].required = true; // 必填
-          if (Array.isArray(item.State)) {
-            state = item.State;
-          } else {
-            state = item.State.City;
-          }
-        }
-      });
-      const areaRes = this.formateArea(state); // formate
-      this.frontData.addressData = areaRes; // 省市区下拉
-    },
-
-    // 国家 下拉数据
-    getCountryData(arr) {
-      const res = [];
-      arr.map((item) => {
-        res.push({
-          name: item["-Name"],
-          code: item["-Code"],
-        });
-      });
-      this.frontData.conuntryOptions = res;
-    },
-    // 格式化 省市区数据
-    formateArea(state) {
-      if (!state) return;
-      let area = [];
-      state.map((item, index) => {
-        let a = {
-          name: item["-Name"],
-          code: item["-Code"],
-        };
-        // city 省
-        if (item.City) {
-          a.children = [];
-          if (Array.isArray(item.City)) {
-            item.City.map((i, j) => {
-              let b = {
-                name: i["-Name"],
-                code: i["-Code"],
-              };
-              // Region 市
-              if (i.Region) {
-                b.children = [];
-                if (Array.isArray(i.Region)) {
-                  i.Region.map((val) => {
-                    b.children.push({
-                      name: val["-Name"],
-                      code: val["-Code"],
-                    });
-                  });
-                } else {
-                  b.children.push({
-                    name: i.Region["-Name"],
-                    code: i.Region["-Code"],
-                  });
-                }
-              }
-              a.children.push(b);
-            });
-          }
-        }
-        area.push(a);
-      });
-      return area;
+      this.setAreaSelectData(val);
     },
   },
 };
@@ -531,8 +498,9 @@ export default {
   }
 }
 .telBox {
-  margin-bottom: 0;
-  margin-bottom: 0;
+  &.mb0 {
+    margin-bottom: 0;
+  }
   > div {
     display: flex;
     flex-wrap: wrap;
