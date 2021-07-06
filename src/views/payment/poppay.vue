@@ -6,7 +6,7 @@
         :orderDetail="orderDetail"
       ></corderinfo>
       <el-card class="box-card" style="margin-left: 40px; margin-top: 20px">
-        <template v-if="orderInfo.payType === 0">
+        <template v-if="$route.query.payMode=== '0'">
           <template v-if="$route.query.payCode == 'Wechat'">
             <p class="pay-title">
               <strong>微信支付</strong>
@@ -16,9 +16,10 @@
                   <span class="text-danger">
                     <timer
                       :endTime="codeTimer"
-                      @time-end="failTime = true"
+                      @timeEnd="failTime = true"
                     ></timer>
                   </span>
+                  
                   ，过期后请刷新页面重新获取二维码
                 </span>
               </template>
@@ -181,7 +182,13 @@
                   <el-button type="primary" @click="onSubmit('form')"
                     >Complete Order Now</el-button
                   >
-                  <el-button @click="$router.push('/payment/pay')"
+                  <el-button
+                    @click="
+                      $router.push({
+                        path: '/order/detail',
+                        query: { id: orderInfo.orderId },
+                      })
+                    "
                     >Pay Later</el-button
                   >
                 </el-form-item>
@@ -351,7 +358,6 @@ export default {
       orderDetail: {},
       codeTimer: "",
       aliPayForm: "",
-     
       failTime: false,
     };
   },
@@ -360,6 +366,7 @@ export default {
     timer,
   },
   methods: {
+    //线下支付提交
     onSubmit(form) {
       this.$refs[form].validate((valid) => {
         if (valid) {
@@ -408,11 +415,14 @@ export default {
         this.showDetail = true;
       }
     },
+    //线上支付
     createPay() {
       this.failTime = false;
       let params = {};
       params.callbackUrl =
-        "http://localhost:8080/#/payment/result?orderId=857658374929309696";
+        window.location.origin +
+        "/payment/result?orderId=" +
+        this.orderInfo.orderId;
       params.orderId = this.orderInfo.orderId;
       params.payCode = this.$route.query.payCode;
       createPayment(params).then((res) => {
@@ -431,7 +441,7 @@ export default {
             oframe.id = "oframe";
             oframe.width = 700;
             oframe.height = 700;
-            oframe.border = "none";
+            oframe.style.border = 0;
             oframe.src = "about:blank";
             document.getElementById("aliPayWrapper").appendChild(oframe);
             var doc =
@@ -440,6 +450,7 @@ export default {
             doc.write(this.aliPayForm);
             doc.close();
           } else if (this.$route.query.payCode == "Paypal") {
+            window.location.href = res.data.qrImg;
           }
         } else {
           this.$message.error(res.msg);
@@ -449,7 +460,6 @@ export default {
   },
   mounted() {
     let orderResult = getResult(this.$route.query.orderId);
-
     orderResult.then((hasPay) => {
       if (hasPay) {
         this.$router.push({
@@ -468,17 +478,21 @@ export default {
             this.payList = res.data.payList;
 
             //receive信息
-
-            let codeParams = {};
-            codeParams.code = this.$route.query.payCode;
-            getPayModeByCode(codeParams).then((res) => {
-              if (res.status === 200) {
-                this.payInfo = res.data;
-                this.createPay();
-              } else {
-                this.$message.error(res.msg);
-              }
-            });
+            //线上支付不需要请求该接口
+            if (this.$route.query.payMode == 1) {
+              let codeParams = {};
+              codeParams.code = this.$route.query.payCode;
+              getPayModeByCode(codeParams).then((res) => {
+                if (res.status === 200) {
+                  this.payInfo = res.data;
+                } else {
+                  this.$message.error(res.msg);
+                }
+              });
+            } else {
+              //线上支付
+              this.createPay();
+            }
           } else {
             this.$message.error(res.msg);
           }

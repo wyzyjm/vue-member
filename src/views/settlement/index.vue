@@ -35,11 +35,21 @@
           >
             <span class="name">{{ item.consigneeName }}</span>
             <div class="more">
-              <span>{{ item.consigneeName }}</span>
-              <span>{{ item.consigneeCountry }}</span>
+             
+              <!-- <span>{{ item.consigneeCountry }}</span>
               <span>{{ item.consigneeProvince }}</span>
-              <span>{{ item.consigneeCity }}</span>
-              <span>{{ item.consigneeAddr }}</span>
+              <span>{{ item.consigneeCity }}</span> -->
+             
+              <span> {{
+                getAddress(
+                  item.consigneeCountry,
+                  item.consigneeProvince,
+                  item.consigneeCity,
+                  item.consigneeCounty,
+                  true
+                )
+              }}</span>
+               <span>{{ item.consigneeAddr }}</span>
               <span>{{ item.consigneePhone }}</span>
             </div>
             <span v-if="item.isDefault" class="default-address-icon"
@@ -150,10 +160,15 @@
         ><span class="text-danger">{{ currency }}{{ realPayment }}</span>
       </div>
       <div>
-        寄送至：{{ addressInfo.consigneeCountry }}
-        {{ addressInfo.consigneeProvince }}
-        {{ addressInfo.consigneeCity }}
-        {{ addressInfo.consigneeCounty }}
+        寄送至： {{
+                getAddress(
+                  addressInfo.consigneeCountry,
+                  addressInfo.consigneeProvince,
+                  addressInfo.consigneeCity,
+                  addressInfo.consigneeCounty,
+                  true
+                )
+              }}
         {{ addressInfo.consigneeAddr }}
       </div>
       <div>
@@ -174,8 +189,9 @@
     <receipt ref="getReceipt" @formData="getReceiptData"></receipt>
     <address-form
       ref="address"
-      :setAddrForm="editFormItem"
-      @confirm="getConfirm"
+      :addressFormProp="current"
+      @confirm="confirmDialog"
+      @addressFormDialogClose="addressFormDialogClose"
     ></address-form>
 
     <el-dialog title="提示" :visible.sync="messageVisible" width="30%">
@@ -229,6 +245,8 @@ import {
   deleteAddressList,
   eidtAddressList,
 } from "@/api/address"; // 收货地址api
+
+import { getAddressName } from "@/utils/address";
 
 export default {
   data() {
@@ -293,6 +311,7 @@ export default {
       msgContent: "",
       msgCode: "",
       orderId: "",
+      current: {}, // 弹窗传值
     };
   },
   components: {
@@ -300,6 +319,11 @@ export default {
     ceSteps,
     addressForm,
     productList,
+  },
+  computed: {
+    getAddress: function () {
+      return getAddressName;
+    },
   },
   mounted() {
     if (
@@ -386,7 +410,6 @@ export default {
         if (result !== "confirm") return; // 不是确认,直接停止
         const params = {
           receiverCode: item.id,
-          tenantId: 1600018169,
         };
         try {
           const res = await deleteAddressList(params);
@@ -412,12 +435,22 @@ export default {
       this.showDialog("edit");
       this.editFormItem = item;
     },
-    //修改后重新刷新列表
-    getConfirm() {
-      this.getList();
+   // 弹窗确认事件
+    confirmDialog() {
+      this.current = {}; // 清空当前值
+      this.getList(); // 重新获取收货地址列表
+    },
+    // 弹窗关闭
+    addressFormDialogClose() {
+      this.current = {}; // 清空传入的 值
     },
     // 收货地址弹窗
     openAddress(type) {
+       if (status === "create" && this.logisticsInfoList.length === 10)
+        return this.$message({
+          message: "抱歉，地址信息最多可创建10条，请删除一条在创建吧!",
+          type: "warning",
+        });
       this.$refs.address.dialogFormVisible = true;
       this.$refs.address.dialogStatus = type;
     },
@@ -481,6 +514,7 @@ export default {
         this.$refs.getReceipt.form.phone = this.receiptInfo.phone;
         this.$refs.getReceipt.form.mail = this.receiptInfo.email;
         this.$refs.getReceipt.form.invoiceId = this.receiptInfo.invoiceId;
+        this.$refs.getReceipt.form.phonePrefix = this.receiptInfo.phonePrefix;
       }
     },
     choseAddress(index) {
@@ -507,11 +541,15 @@ export default {
       }
       skuItem(params).then((res) => {
         if (res.status === 200) {
-          this.productlist = res.data.shoppingCartList;
-          this.currency = res.data.currencySymbol;
-          this.totalNum = res.data.totalNum;
-          this.totalPrice = res.data.totalPrice;
-          this.calculateFare();
+          if (res.data.shoppingCartList.length > 0) {
+            this.productlist = res.data.shoppingCartList;
+            this.currency = res.data.currencySymbol;
+            this.totalNum = res.data.totalNum;
+            this.totalPrice = res.data.totalPrice;
+            this.calculateFare();
+          } else {
+            this.$router.push("/order/list");
+          }
         }
       });
     },
@@ -703,7 +741,9 @@ export default {
   font-size: 18px;
 }
 .trade-btn {
+  margin-top: 10px;
   text-align: right;
+  margin-bottom: 40px;
 }
 .address-list {
   height: 45px;

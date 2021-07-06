@@ -61,7 +61,7 @@
     </el-card>
     <el-dialog title="" :visible.sync="dialogVisible" width="530px">
       <div class="text-normal" style="text-align: center">
-        <div class="pop-title">支付宝支付</div>
+        <div class="pop-title">{{PayCodeName}}</div>
         <p class="pop-info">
           1、如果未完成付款，请点击继续付款
           <br />2、如果您已完成，请点击“已完成付款”
@@ -96,7 +96,7 @@ export default {
       orderDetail: {},
       payList: {},
       payCode: "",
-      // selectPayCode:""
+      PayCodeName:""
     };
   },
   components: {
@@ -129,10 +129,16 @@ export default {
   methods: {
     openPay(code) {
       this.payCode = code;
+      
+//todo验证是否显示正确
+      this.PayCodeName = this.payList.filter((item)=>{
+        return item.payCode == this.payCode
+      }).payName
+      
       this.dialogVisible = true;
       let href = this.$router.resolve({
         path: "/payment/poppay",
-        query: { payCode: code, orderId: this.orderInfo.orderId },
+        query: { payCode: code, orderId: this.orderInfo.orderId ,payMode: this.orderInfo.payType,},
       });
       window.open(href.href, "_blank");
     },

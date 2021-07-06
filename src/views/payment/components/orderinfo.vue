@@ -11,11 +11,11 @@
       >
     </div>
     <div class="order-info">
-      <template v-if="orderInfo.failureTime!==0">
+      <template v-if="orderInfo.failureTime!=='0'">
       <div style="line-height: 40px">
         请您在
         <span class="order-timer text-danger">
-          <timer :endTime="orderInfo.failureTime" @time-end="$router.push({ path: '/order/list', query: { type: 0 } });
+          <timer :endTime="orderInfo.failureTime" @timeEnd="$router.push({ path: '/order/list', query: { type: 0 } });
       "></timer>
         </span>
         内完成支付，否则订单会被自动取消
@@ -67,20 +67,19 @@ export default {
     'orderInfo',
     'orderDetail'
   ],
-  watch: {
-    orderTimeCount: function (newVal) {
-      if (newVal === 0) {
-        clearInterval(this.orderTimer);
-        this.$router.push({ path: "/order/list", query: { type: 0 } });
-      }
-    },
-  },
+  // watch: {
+  //   orderTimeCount: function (newVal) {
+  //     if (newVal === 0) {
+  //       clearInterval(this.orderTimer);
+  //       this.$router.push({ path: "/order/list", query: { type: 0 } });
+  //     }
+  //   },
+  // },
   components:{
     timer
-    
   },
   mounted(){
-    let datajson = { timer: 3365, date: 2344 };
+    // let datajson = { timer: 3365, date: 2344 };
     this.orderTimeCount = this.orderInfo.failureTime;
     if (this.orderTimeCount > 0) {
       this.orderTimer = setInterval(() => {

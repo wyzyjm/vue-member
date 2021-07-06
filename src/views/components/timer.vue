@@ -35,7 +35,7 @@ export default {
       let s = this.formate(parseInt(leftTime % 60));
       if (leftTime <= 0) {
         this.flag = true;
-        this.$emit("time-end");
+        this.$emit("timeEnd");
       }
       
       if(d>=1){
