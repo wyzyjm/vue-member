@@ -52,11 +52,6 @@ export const constantRoutes = [
                     component: () => import('@/views/member/information/index'),
                     meta: { title: '我的资料', icon: '' }
                 },{
-                    path: '/informationSetting',
-                    name: 'informationSetting',
-                    component: () => import('@/views/member/information/setting'),
-                    meta: { title: '我的资料', icon: '' }
-                },{
                     path: '/form',
                     name: 'form',
                     component: () => import('@/views/member/form/index'),
