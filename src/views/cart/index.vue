@@ -273,7 +273,6 @@ export default {
 			selectProduct: [],
 			cartList: [],
 			unvalidList: [],
-			tenantId:'',
 			data: {
 				totalPrice: 5,
 				totalNum: 8,
@@ -396,10 +395,9 @@ export default {
 		//初始化数据
 		async renderData() {
 			//this.data =[];
-			this.tenantId = this.$tenantId;
 			this.cartList=[];
 			this.unvalidList=[]
-			 let res = await cartData({tenantId:this.tenantId})
+			 let res = await cartData()
 			 this.data = res.data ;
 			 this.data.totalPrice = 0;
 			this.data.shoppingCartList.forEach((e) => {
@@ -418,7 +416,7 @@ export default {
 				type: 'warning'
 			}).then(async () => {
 				let a_shoppingCartCode = obj.row.shoppingCartCode.replace(/^\"|\"$/g,'')
-				let json = {tenantId:this.tenantId, shoppingCartIds:a_shoppingCartCode}
+				let json = { shoppingCartIds:a_shoppingCartCode}
 				let res = await cartDel(json)
 				if(res.status == 200){
 					this.$message({
@@ -453,7 +451,7 @@ export default {
 					arrSelect.forEach(item =>{
 						arr_shoppingCartCode += item.shoppingCartCode + ','
 					})
-					let json = {tenantId:this.tenantId, shoppingCartIds:arr_shoppingCartCode}
+					let json = { shoppingCartIds:arr_shoppingCartCode}
 					let res = await cartDel(json)
 					if(res.status == 200){
 						this.$message({
@@ -555,8 +553,8 @@ export default {
 			 if(timer){
 				 clearTimeout(timer)
 			 }
-			 let  shoppingCartCode = obj.shoppingCartCode.replace(/^\"|\"$/g,'')
-			 let  skuId = obj.skuId.replace(/^\"|\"$/g,'')
+			 let  shoppingCartCode =this.delstr(obj.shoppingCartCode)
+			 let  skuId = this.delstr(obj.skuId)
 			 	let json ={
 				buyAmount: obj.quantity,
 				selected: obj.selected,
