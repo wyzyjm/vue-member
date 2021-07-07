@@ -334,8 +334,7 @@ export default {
     } else {
       //获取收货地址list
       this.getList();
-      //获取支付方式，配送方式
-      this.getPayMode();
+      
       //商品清单
       this.getProductList();
     }
@@ -357,6 +356,8 @@ export default {
           }
         }
         this.addressInfo = this.logisticsInfoList[0];
+        //获取支付方式，配送方式
+          this.getPayMode(this.addressInfo.id);
       } catch (error) {
         console.log("获取收货地址失败", error);
       }
@@ -462,9 +463,11 @@ export default {
         this.showAInfo = true;
       }
     },
-    getPayMode() {
+    getPayMode(id) {
       //获取支付方式列表
-      payModeInitInfo().then((res) => {
+      let params = {}
+      params.receiveCode = id
+      payModeInitInfo(params).then((res) => {
         if (res.status === 200) {
           let data = res.data;
 
@@ -524,7 +527,7 @@ export default {
       }
       this.addressActive = index;
       this.addressInfo = this.logisticsInfoList[index];
-      console.log(this.logisticsInfoList[index]);
+      this.getPayMode(this.addressInfo.id)
       this.logisticsInfoList[index].active = true;
       let activeItem = JSON.stringify(this.logisticsInfoList[index]);
       this.logisticsInfoList.splice(index, 1);
