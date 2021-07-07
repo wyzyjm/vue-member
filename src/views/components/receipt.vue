@@ -37,7 +37,7 @@
           <el-col :span="6">
             <el-form-item>
               <el-select
-                v-model="form.phonePerfix"
+                v-model="form.phonePrefix"
                 placeholder="请选择"
                 filterable
                 style="width: 100px"
@@ -108,7 +108,7 @@ export default {
         catalog: "商品明细",
         phone: "",
         mail: "",
-        phonePerfix: "",
+        phonePrefix: "",
         companyName: "",
         companyNumber: "",
       },
@@ -175,7 +175,7 @@ export default {
           this.form.type === 1 ? this.form.name : this.form.companyName; //发票抬头
         params.invoiceType = this.form.type; //发票类型
         params.phone = this.form.phone; //手机
-        params.phonePerfix = this.form.phonePerfix;
+        params.phonePrefix = this.form.phonePrefix;
         if (this.form.type === 2) {
           params.taxpayerId = this.form.companyNumber; //纳税人识别号
         }
@@ -204,7 +204,7 @@ export default {
       this.form.catalog = data.invoiceContent;
       this.form.phone = data.phone;
       this.form.mail = data.email;
-      this.form.phonePerfix = data.phonePerfix;
+      this.form.phonePrefix = data.phonePrefix;
     },
   },
   mounted() {

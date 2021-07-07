@@ -67,7 +67,7 @@
             </div>
           </template>
           <template v-else>
-            <div id="aliPayWrapper"></div>
+            <div id="aliPayWrapper" style="width:700px;margin:0 auto"></div>
           </template>
         </template>
 
@@ -448,8 +448,9 @@ export default {
             var oframe = document.createElement("iframe");
             oframe.id = "oframe";
             oframe.width = 700;
-            oframe.height = 700;
+            oframe.height = 400;
             oframe.style.border = 0;
+            oframe.scrolling='no'
             oframe.src = "about:blank";
             document.getElementById("aliPayWrapper").appendChild(oframe);
             var doc =

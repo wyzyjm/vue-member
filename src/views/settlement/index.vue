@@ -203,7 +203,7 @@
             >返回购物车</el-button
           >
           <!-- todo query?? -->
-          <el-button type="primary" @click="$router.push('/payment/pay')"
+          <el-button type="primary" @click="submit('continue')"
             >继续结算</el-button
           >
         </template>
@@ -212,7 +212,7 @@
           <el-button type="default" @click="$router.push('/cart')"
             >返回购物车</el-button
           >
-          <!-- todo query?? -->
+          <!-- 刷新运费价格 -->
           <el-button type="primary" @click="calculateFare('pop')"
             >刷新运费价格</el-button
           >
@@ -428,7 +428,7 @@ export default {
     showDialog(status) {
       const _this = this.$refs["address"]; // 获取当前弹窗组件实例
       _this.dialogFormVisible = true; // 修改弹窗 显示状态
-      _this.dialogStatus = status; // 修改弹窗 类型 create:创建 | edit:编辑
+      _this.formType = status; // 修改弹窗 类型 create:创建 | edit:编辑
     },
     // 编辑
     async eidtAddress(item) {
@@ -500,7 +500,7 @@ export default {
       this.receiptInfo.invoiceType = data.type;
       this.receiptInfo.phone = data.phone;
       this.receiptInfo.taxpayerId = data.companyNumber;
-      this.receiptInfo.phonePrefix = data.phonePerfix;
+      this.receiptInfo.phonePrefix = data.phonePrefix;
     },
     openReceipt(status) {
       this.$refs.getReceipt.dialogVisible = true;
@@ -580,7 +580,7 @@ export default {
         }
       });
     },
-    submit() {
+    submit(type) {
       try {
         this.orderLoading = true;
         this.orderDisabled = true;
@@ -592,6 +592,9 @@ export default {
         params.receiverAddressId = this.addressInfo.id;
         params.remark = this.remark;
         params.freight = this.freight;
+        if(type=='continue'){
+          params.continueSettleFlag = true;
+        }
         let shoppingCartList = [];
         for (let i = 0; i < this.productlist.length; i++) {
           shoppingCartList.push({
@@ -611,7 +614,8 @@ export default {
               res.data.code === "10001" ||
               res.data.code === "10002" ||
               res.data.code === "10003" ||
-              res.data.code === "10004"
+              res.data.code === "10004"||
+              res.data.code === "10006"
             ) {
               this.msgCode = res.data.code;
               this.msgContent = res.data.msg;
