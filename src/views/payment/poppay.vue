@@ -2,11 +2,19 @@
   <div
     class="app-container wrapper"
     v-loading="loading"
-    element-loading-text="正在跳转中..."
+    element-loading-text="加载中..."
     element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
   >
-    <el-card>
+    <p class="title text-normal">
+      <span style="cursor: pointer" @click="$router.push('/information/')">{{
+        orderInfo.userName
+      }}</span>
+      |
+      <span style="cursor: pointer" @click="$router.push('/order/list')"
+        >我的订单</span
+      >
+    </p>
+    <el-card class="text-normal" style="clear: both">
       <corderinfo
         :orderInfo="orderInfo"
         :orderDetail="orderDetail"
@@ -67,7 +75,7 @@
             </div>
           </template>
           <template v-else>
-            <div id="aliPayWrapper" style="width:700px;margin:0 auto"></div>
+            <div id="aliPayWrapper" style="width: 700px; margin: 0 auto"></div>
           </template>
         </template>
 
@@ -450,7 +458,7 @@ export default {
             oframe.width = 700;
             oframe.height = 400;
             oframe.style.border = 0;
-            oframe.scrolling='no'
+            oframe.scrolling = "no";
             oframe.src = "about:blank";
             document.getElementById("aliPayWrapper").appendChild(oframe);
             var doc =
@@ -655,6 +663,9 @@ export default {
   vertical-align: middle;
   height: 40px;
   line-height: 40px;
+}
+.title {
+  float: right;
 }
 </style>
 

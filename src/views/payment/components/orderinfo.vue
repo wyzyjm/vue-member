@@ -1,5 +1,6 @@
 <template>
   <div>
+    
     <div class="order-info">
       <span class="info">
         订单提交成功，请尽快付款！订单号：{{ orderInfo.orderNo }}</span
@@ -10,6 +11,7 @@
         ></span
       >
     </div>
+   
     <div class="order-info">
       <template v-if="orderInfo.failureTime!=='0'">
       <div style="line-height: 40px">
