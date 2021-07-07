@@ -11,6 +11,7 @@
       <corderinfo
         :orderInfo="orderInfo"
         :orderDetail="orderDetail"
+         v-if="orderInfo.failureTime!=undefined"
       ></corderinfo>
       <el-card style="margin-top: 20px">
         <div>

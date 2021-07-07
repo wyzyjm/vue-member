@@ -31,10 +31,18 @@
     <div class="order-detail" v-show="showDetail">
       <p>
         <span
-          >收货地址：{{ orderDetail.consigneeProvince
-          }}{{ orderDetail.consigneeCity }}{{ orderDetail.consigneeCounty
-          }}{{ orderDetail.consigneeAddr }}</span
-        >
+          >收货地址：{{
+                getAddress(
+                  orderDetail.consigneeCountry,
+                  orderDetail.consigneeProvince,
+                  orderDetail.consigneeCity,
+                  orderDetail.consigneeCounty,
+                  true
+                )
+              }}
+              {{ orderDetail.consigneeAddr }}
+          </span>
+          
         <span>收货人：{{ orderDetail.consigneeName }}</span>
         <span>{{ orderDetail.consigneePhone }}</span>
       </p>
@@ -51,6 +59,7 @@
 </template>
 <script >
 import timer from "@/views/components/timer"
+import { getAddressName } from "@/utils/address";
 // import Timer from '@/views/components/timer.vue';
 export default {
   name:"corderinfo",
@@ -75,6 +84,11 @@ export default {
   //     }
   //   },
   // },
+  computed: {
+    getAddress: function () {
+      return getAddressName;
+    },
+  },
   components:{
     timer
   },
@@ -113,7 +127,7 @@ export default {
 </script>
 <style scoped>
 .order-info {
-  display: flex;
+  display: flex; 
 }
 .order-info .info {
   font-size: 18px;
@@ -133,7 +147,7 @@ export default {
 .product-name-title {
   display: inline-block;
   vertical-align: top;
-  margin-right: 0;
+  margin-right: 0!important;
 }
 .product-name-list {
   display: inline-block;

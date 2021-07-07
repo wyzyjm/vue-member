@@ -518,7 +518,7 @@ export default {
       }
     },
     choseAddress(index) {
-      console.log("我执行了选择地址操作");
+      
       for (let i = 0; i < this.logisticsInfoList.length; i++) {
         this.logisticsInfoList[i].active = false;
       }

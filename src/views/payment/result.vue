@@ -20,7 +20,7 @@
         </div>
         <div v-if="resultInfo.isSuccess">
           <el-button type="primary" @click="linkTo">查看订单详情</el-button>
-          <el-button type="primary" plain>返回首页</el-button>
+          <el-button type="primary" plain @click="linkToHome">返回首页</el-button>
         </div>
         <div v-else>
           <el-button type="primary" @click="rePay">重新支付</el-button>
@@ -57,6 +57,10 @@ export default {
     },
     rePay(){
        this.$router.push({path:'/payment/pay',query:{payVal:0,orderId:this.$route.query.orderId}})
+    },
+    linkToHome(){
+         this.$router.push({path:'/'})
+   
     }
 
   },

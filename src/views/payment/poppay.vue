@@ -1,12 +1,19 @@
 <template>
-  <div class="app-container wrapper">
+  <div
+    class="app-container wrapper"
+    v-loading="loading"
+    element-loading-text="正在跳转中..."
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+  >
     <el-card>
       <corderinfo
         :orderInfo="orderInfo"
         :orderDetail="orderDetail"
+        v-if="orderInfo.failureTime != undefined"
       ></corderinfo>
       <el-card class="box-card" style="margin-left: 40px; margin-top: 20px">
-        <template v-if="$route.query.payMode=== '0'">
+        <template v-if="$route.query.payMode === '0'">
           <template v-if="$route.query.payCode == 'Wechat'">
             <p class="pay-title">
               <strong>微信支付</strong>
@@ -17,9 +24,10 @@
                     <timer
                       :endTime="codeTimer"
                       @timeEnd="failTime = true"
+                      v-if="codeTimer != ''"
                     ></timer>
                   </span>
-                  
+
                   ，过期后请刷新页面重新获取二维码
                 </span>
               </template>
@@ -231,9 +239,7 @@
           </div>
         </template>
         <span class="el-icon-arrow-left"></span>
-        <el-button type="text" @click="$router.push('/payment/pay')"
-          >选择其他支付方式</el-button
-        >
+        <el-button type="text" @click="backToPay">选择其他支付方式</el-button>
       </el-card>
     </el-card>
   </div>
@@ -359,6 +365,7 @@ export default {
       codeTimer: "",
       aliPayForm: "",
       failTime: false,
+      loading: false,
     };
   },
   components: {
@@ -427,6 +434,7 @@ export default {
       params.payCode = this.$route.query.payCode;
       createPayment(params).then((res) => {
         if (res.status === 200) {
+          this.loading = false;
           if (this.$route.query.payCode == "Wechat") {
             this.codeTimer = res.data.qrEffectiveTime;
             this.$refs.qrcode.innerHTML = "";
@@ -457,6 +465,15 @@ export default {
         }
       });
     },
+    backToPay() {
+      this.$router.push({
+        path: "/payment/pay",
+        query: {
+          payVal: this.$route.query.payMode,
+          orderId: this.orderInfo.orderId,
+        },
+      });
+    },
   },
   mounted() {
     let orderResult = getResult(this.$route.query.orderId);
@@ -481,6 +498,7 @@ export default {
             //线上支付不需要请求该接口
             if (this.$route.query.payMode == 1) {
               let codeParams = {};
+
               codeParams.code = this.$route.query.payCode;
               getPayModeByCode(codeParams).then((res) => {
                 if (res.status === 200) {
@@ -491,6 +509,7 @@ export default {
               });
             } else {
               //线上支付
+              this.loading = true;
               this.createPay();
             }
           } else {
