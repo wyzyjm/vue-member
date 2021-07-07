@@ -81,7 +81,7 @@
                 </el-timeline>
                 <!-- <el-button slot="reference" type="text" @click.prevent="checkLogistics">查看物流</el-button> -->
               </el-popover>
-              <el-button v-else-if="data.orderStatus != 3" type="text" @click.prevent="cancelOrder">取消订单</el-button>
+              <el-button v-else-if="data.orderStatus != 1 && data.orderStatus != 3 && data.orderStatus != 4" type="text" @click.prevent="cancel(data.id)">取消订单</el-button>
             </div>
           </li>
         </ul>
@@ -94,6 +94,7 @@
 
 import CustomImg from '@/components/CustomImg'
 import svgIcon from '@/components/SvgIcon'
+import { confirmOrder, cancelOrder } from '@/api/order'
 
 export default {
   components: {
@@ -104,11 +105,20 @@ export default {
     list: {
       type: Array,
       default: () => []
+    },
+    memberid: {
+      type: String,
+      default: ''
+    },
+    tabsindex: {
+      type: Number,
+      default: 0
     }
   },
   data() {
     return {
       showAlt: false,
+      memberId: this.memberid ? this.memberid : '',
       time: '',
       day: '', // 天
       hour: '', // 小时
@@ -150,7 +160,10 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(() => {
-        console.log('确认成功!')
+        confirmOrder({ orderId: id, memberId: this.memberId }).then(res => {
+          if (res.data.data.code !== '0') return
+          location.reload()
+        })
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -158,12 +171,15 @@ export default {
         })
       })
     },
-    cancelOrder() {
+    cancel(id) {
       this.$confirm('确定取消该订单吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(() => {
-        console.log('订单取消成功!')
+        cancelOrder({ orderId: id, memberId: this.memberId }).then(res => {
+          if (res.data.data.code !== '0') return
+          location.reload()
+        })
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -176,7 +192,7 @@ export default {
       this.$router.push({
         path: '/order/detail',
         query: {
-          orderId: id
+          id: id
         }
       })
     },

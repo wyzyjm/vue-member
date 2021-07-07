@@ -25,9 +25,18 @@
           v-for="(item, index) in tabsArr"
           :key="index"
         >
-          <el-badge v-if="item.type === 0 || item.type === 1 || item.type === 2" slot="label" :value="200" :max="99" class="item">{{ item.text }}</el-badge>
+          <el-badge v-if="item.type === 0" slot="label" :value="orderCount.notPayCount" :max="99" class="item">{{ item.text }}</el-badge>
+          <el-badge v-else-if="item.type === 1" slot="label" :value="orderCount.notDeliverCount" :max="99" class="item">{{ item.text }}</el-badge>
+          <el-badge v-else-if="item.type === 2" slot="label" :value="orderCount.hasDeliverCount" :max="99" class="item">{{ item.text }}</el-badge>
           <el-badge v-else slot="label" class="item">{{ item.text }}</el-badge>
-          <ListItem v-if="list.length > 0" ref="listItem" :list="list" />
+          <ListItem
+            v-if="list.length > 0"
+            ref="listItem"
+            v-loading="loading"
+            :list="list"
+            :memberid="memberId"
+            :tabsindex="tabsIndex"
+          />
           <p v-else class="text-center">您还没有相关订单哦~</p>
         </el-tab-pane>
       </el-tabs>
@@ -44,7 +53,7 @@
   </div>
 </template>
 <script>
-import { orderList } from '@/api/order'
+import { orderList, orderStatus } from '@/api/order'
 import PageTitle from '@/views/components/pageTitle'
 import ListItem from './components/list-item'
 
@@ -55,11 +64,18 @@ export default {
   },
   data() {
     return {
+      memberId: '852198699132313600',
       title: '我的订单',
+      loading: true,
       searchVal: '',
-      tabsModel: 123,
       activeName: '全部订单',
+      orderCount: {
+        hasDeliverCount: 0,
+        notDeliverCount: 0,
+        notPayCount: 0
+      },
       orderType: '',
+      tabsIndex: 0,
       tabsArr: [
         {
           text: '全部订单',
@@ -100,25 +116,34 @@ export default {
       const listQuery = {
         currentPage: this.currentPage,
         pageSize: 20,
-        memberId: '852198699132313600',
+        memberId: this.memberId,
         keyWord: this.searchVal.trim(),
         orderStatus: this.orderType
       }
       orderList(listQuery).then(res => {
-        console.log(res.data)
         this.list = res.data.data.list
         this.pagination = res.data.data.pagination
+        this.loading = false
+        this.initorderStatus()
+      })
+    },
+    initorderStatus() {
+      orderStatus({ memberId: this.memberId }).then(res => {
+        this.orderCount.hasDeliverCount = res.data.data.hasDeliverCount
+        this.orderCount.notDeliverCount = res.data.data.notDeliverCount
+        this.orderCount.notPayCount = res.data.data.notPayCount
       })
     },
     // tab事件
-    handleClick(tab, event) {
+    handleClick(tab) {
+      this.tabsIndex = tab.index
       if (tab.index === '0') {
         this.orderType = ''
       } else {
         this.orderType = tab.index - 1
       }
+      this.loading = true
       this.currentPage = 1
-      console.log(tab, event)
       this.initList()
     },
     // 监听页码 变化

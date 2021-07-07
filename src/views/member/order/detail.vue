@@ -13,13 +13,13 @@
         v-if="data.orderStatus == 0"
         class="col-danger"
       ><SvgIcon name="icon-shijian" />剩余0时29分</div>
-      <div>订单状态：<span class="font-20 col-danger">{{ statePayment[data.orderStatus].type }}</span></div>
+      <div>订单状态：<span class="font-20" :class="{'col-danger': data.orderStatus < 3, 'col-success': data.orderStatus === 3}">{{ statePayment[data.orderStatus].type }}</span></div>
       <div>
-        <el-button v-if="data.orderStatus == 0 || data.payInfo.paymentTypeName == '货到付款'&&data.orderStatus == 1 " type="text" @click.prevent="cancelOrder('id')">取消订单</el-button>
+        <el-button v-if="data.orderStatus == 0 || data.orderStatus == 1 " type="text" @click.prevent="cancelOrder">取消订单</el-button>
         <el-button type="primary" plain @click="dialogTableVisible = true">查看发票信息</el-button>
         <el-button v-if="data.orderStatus == 0" type="primary" plain @click="showDialog('edit')">修改地址</el-button>
         <el-button v-if="data.orderStatus == 0" type="primary" @click="payOrder">付款</el-button>
-        <el-button v-if="data.orderStatus == 2" type="primary">确认收货</el-button>
+        <el-button v-if="data.orderStatus == 2" type="primary" @click="confirm">确认收货</el-button>
       </div>
     </div>
 
@@ -39,7 +39,7 @@
       <li v-if="data.payInfo" class="detail-item">
         <p class="title">订单信息</p>
         <div class="item-list">
-          <span class="pr-10">支付方式：{{ data.payInfo.paymentTypeName }}</span>
+          <span class="pr-10">支付方式：{{ data.payInfo.paymentTypeName ? data.payInfo.paymentTypeName : '' }}</span>
           <el-popover
             placement="bottom"
             width="260"
@@ -49,15 +49,15 @@
             <div v-if="data.payInfo.paymentTypeId === 1 || data.payInfo.paymentTypeId === 2 || data.payInfo.paymentTypeId === 3" class="slot-content">
               <p>交易号：{{ data.payInfo.payOnline.tradeNo }}</p>
             </div>
-            <!-- Bank Transfer -->
+            <!-- Bank Transfer 银行转账 -->
             <div v-if="data.payInfo.paymentTypeId === 4" class="slot-content">
               <p>Bank Transaction No.：{{ data.payInfo.bankTransfer.tradeNo }}</p>
               <p>Send money：{{ data.payInfo.bankTransfer.money }}</p>
               <p>Currency：{{ data.payInfo.bankTransfer.currency }}</p>
               <p>Contents：{{ data.payInfo.bankTransfer.content }}</p>
             </div>
-            <!-- Western Union/Money Gram> -->
-            <div v-if="data.payInfo.paymentTypeId === 5 || data.payInfo.paymentTypeId === 6" class="slot-content">
+            <!-- Western Union 西联> -->
+            <div v-if="data.payInfo.paymentTypeId === 5" class="slot-content">
               <p>First Name：{{ data.payInfo.westernUnion.firstName }}</p>
               <p>Last Name：{{ data.payInfo.westernUnion.lastName }}</p>
               <p>Send money：{{ data.payInfo.westernUnion.money }}</p>
@@ -65,15 +65,24 @@
               <p>Currency：{{ data.payInfo.westernUnion.currency }}</p>
               <p>Contents：{{ data.payInfo.westernUnion.content }}</p>
             </div>
+            <!-- Money Gram 速汇金> -->
+            <div v-if="data.payInfo.paymentTypeId === 6" class="slot-content">
+              <p>First Name：{{ data.payInfo.moneyGram.firstName }}</p>
+              <p>Last Name：{{ data.payInfo.moneyGram.lastName }}</p>
+              <p>Send money：{{ data.payInfo.moneyGram.money }}</p>
+              <p>MTCN# No.：{{ data.payInfo.moneyGram.mtcnNo }}</p>
+              <p>Currency：{{ data.payInfo.moneyGram.currency }}</p>
+              <p>Contents：{{ data.payInfo.moneyGram.content }}</p>
+            </div>
             <el-button slot="reference" type="text">支付信息<SvgIcon name="icon-xia" /></el-button>
           </el-popover>
         </div>
       </li>
-      <li v-if="data.orderStatus > 1 && data.payInfo.paymentTypeName != '货到付款'" class="detail-item">
+      <li v-if="data.orderStatus > 1" class="detail-item">
         <p class="title">物流信息</p>
-        <div class="item-list">
+        <div v-if="data.logisticsInfo" class="item-list">
           <p class="consignee"><span>配送方式：</span><span>{{ data.logisticsInfo.distribution }}</span></p>
-          <p class="consignee":datatype="data.logisticsInfo.courierCompanyCode"><span>快递公司：</span><span>{{ data.logisticsInfo.courierCompany }}</span></p>
+          <p class="consignee" :datatype="data.logisticsInfo.courierCompanyCode"><span>快递公司：</span><span>{{ data.logisticsInfo.courierCompany }}</span></p>
           <p class="consignee"><span>运单号：</span><span>{{ data.logisticsInfo.trackingNumber }}</span></p>
           <p class="consignee"><span>物流查询：</span><a target="_blank" :href="data.logisticsInfo.queryUrl" class="el-button--text">{{ data.logisticsInfo.queryUrl }}</a></p>
         </div>
@@ -90,13 +99,8 @@
         />
         <div class="message-board">
           <div>
-            <p>给卖家留言</p>
-            <textarea
-              id="sellerMsg"
-              v-model="data.sellerMsg"
-              name="sellerMsg"
-              placeholder="我的留言是不可修改的"
-            />
+            <p>给卖家留言：</p>
+            <p id="sellerMsg">{{ data.sellerMsg }}</p>
           </div>
           <div class="message-pay">
             <p>共 <span class="col-danger font-20">{{ data.quantity }}</span> 件商品</p>
@@ -138,7 +142,7 @@
   </div>
 </template>
 <script>
-import { orderDetail } from '@/api/order'
+import { orderDetail, cancelOrder, confirmOrder } from '@/api/order'
 import CeSteps from '@/components/CeSteps'
 import SvgIcon from '@/components/SvgIcon'
 import AddressForm from '@/views/components/addressForm' // 收货人地址弹窗
@@ -160,22 +164,22 @@ export default {
       dialogTableVisible: false,
       payShow: false,
       datalist: [
-        {
-          title: '提交订单',
-          description: '2016-03-25 10:26:10'
-        },
-        {
-          title: '待付款',
-          description: ''
-        },
-        {
-          title: '待发货',
-          description: ''
-        },
-        {
-          title: '待收货',
-          description: ''
-        }
+        // {
+        //   title: '提交订单',
+        //   description: '2016-03-25 10:26:10'
+        // },
+        // {
+        //   title: '待付款',
+        //   description: ''
+        // },
+        // {
+        //   title: '待发货',
+        //   description: ''
+        // },
+        // {
+        //   title: '待收货',
+        //   description: ''
+        // }
       ],
       // 订单状态
       statePayment: {
@@ -208,14 +212,22 @@ export default {
     this.getDetail()
   },
   methods: {
+    // 初始化数据
     getDetail() {
       console.log(this.$route.query.orderId)
-      orderDetail({ orderId: this.$route.query.orderId }).then(response => {
+      orderDetail({ orderId: this.$route.query.id }).then(response => {
         console.log(response.data)
         this.data = response.data.data.order
+        const orderStatusDetailList = response.data.data.order.orderStatusDetailList
+        orderStatusDetailList.forEach((item) => {
+          this.datalist.push({
+            title: item.content,
+            description: this.formatDate(item.time)
+          })
+        })
       })
     },
-    // 弹窗 显示
+    // 修改地址弹窗 显示
     showDialog(status) {
       const _this = this.$refs['addressDialog'] // 获取当前弹窗组件实例
       _this.dialogFormVisible = true // 修改弹窗 显示状态
@@ -241,14 +253,34 @@ export default {
       // this.current = JSON.parse(JSON.stringify(item)); // 赋值
       // this.showDialog('edit');
     },
-    // 取消订单
-    cancelOrder(id) {
-      console.log(id)
-      this.$confirm('确定取消该订单？', '提示', {
+    // 确认订单
+    confirm() {
+      this.$confirm('确认收到所有商品？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(() => {
         console.log('确认成功!')
+        confirmOrder({ orderId: this.data.orderId, memberId: this.data.memberId }).then(res => {
+          if (res.data.code !== '0') return
+          location.reload()
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消操作'
+        })
+      })
+    },
+    // 取消订单
+    cancelOrder() {
+      this.$confirm('确定取消该订单？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        cancelOrder({ orderId: this.data.orderId, memberId: this.data.memberId }).then(res => {
+          if (res.data.code !== '0') return
+          location.reload()
+        })
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -282,8 +314,11 @@ export default {
         'q': Math.floor((date.getMonth() + 3) / 3), // 季度
         'S': date.getMilliseconds() // 毫秒
       }
-      let time = `${o.Y}-${this.toDou(o.M)}-${this.toDou(o.d)}  ${this.toDou(o.h)}:${this.toDou(o.m)}:${this.toDou(o.s)}`
-      return time
+      const dateTime = `${o.Y}-${this.toDou(o.M)}-${this.toDou(o.d)}  ${this.toDou(o.h)}:${this.toDou(o.m)}:${this.toDou(o.s)}`
+      return dateTime
+    },
+    copy() {
+      console.log('成功复制到粘贴板！')
     }
   }
 }
@@ -302,6 +337,9 @@ ul,li{
 }
 .col-danger{
   color: #F56C6C;
+}
+.col-success{
+  color:#67C23A
 }
 .pr-10 {
   padding-right: 10px;
