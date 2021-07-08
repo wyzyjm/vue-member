@@ -1,7 +1,7 @@
 <template>
   <div class="app-container collection">
     <!-- 头部 开始-->
-    <PageTitle pagetitle="我的收藏"></PageTitle>
+    <PageTitle pagetitle="我的收藏" />
     <!-- 头部 结束-->
 
     <!-- 主体区 开始 -->
@@ -11,29 +11,29 @@
         <!-- 导航栏 -->
         <el-tabs v-model="activeName" @tab-click="tabClick">
           <el-tab-pane
-            v-loading="isLoading"
             v-for="item in tabList"
             :key="item.id"
+            v-loading="isLoading"
             :label="item.collectName"
             :name="item.collectType"
           >
             <!-- 内容区 开始 -->
             <!-- 无内容提示 -->
-            <div class="no-content-tip" v-if="total === 0">
+            <div v-if="total === 0" class="no-content-tip">
               您还没有收藏过任何内容哦！
             </div>
 
             <!-- 有内容 -->
-            <ul class="content" v-else>
+            <ul v-else class="content">
               <li v-for="item in collectList" :key="item.id">
                 <!-- 批量操作 -->
                 <div
-                  class="mask"
                   v-show="isBatch"
+                  class="mask"
                   :class="{ 'mask-light': selectList.indexOf(item.id) != -1 }"
                   @click="addCollect(item.id)"
                 >
-                  <svg-icon name="icon-dui" class="icon-dui"></svg-icon>
+                  <svg-icon name="icon-dui" class="icon-dui" />
                 </div>
                 <!-- 取消收藏 -->
                 <div
@@ -44,7 +44,7 @@
                   取消收藏
                 </div>
                 <!-- 内容状态 -->
-                <div class="status" v-if="item.status !== 0">
+                <div v-if="item.status !== 0" class="status">
                   <!-- 已下架 -->
                   <div v-if="item.status === 1">已下架</div>
                   <!-- 无货 -->
@@ -60,7 +60,7 @@
                     :title="item.title"
                     :alt="item.title"
                     class="img"
-                  ></custom-img>
+                  />
                   <!-- 图片 结束-->
 
                   <!-- 标题 开始 -->
@@ -84,41 +84,37 @@
           </el-tab-pane>
         </el-tabs>
 
-        <div class="btn-group" v-if="collectList.length !== 0">
+        <div v-if="collectList.length !== 0" class="btn-group">
           <!-- 批量操作按钮 -->
           <el-button
+            v-show="!isBatch"
             type="primary"
             size="mini"
             plain
-            v-show="!isBatch"
             @click="batchOperate"
           >
-            批量操作</el-button
-          >
+            批量操作</el-button>
           <!-- 全选 -->
           <el-checkbox
-            v-model="allChecked"
             v-show="isBatch"
+            v-model="allChecked"
             @change="allCheckedFn"
-            >全选</el-checkbox
-          >
+          >全选</el-checkbox>
           <!-- 取消收藏 文本按钮 -->
           <el-button
+            v-show="isBatch"
             type="text"
             class="cancel-btn"
-            v-show="isBatch"
             @click="cancelCollect"
-            >取消收藏</el-button
-          >
+          >取消收藏</el-button>
           <!-- 取消按钮 -->
           <el-button
+            v-show="isBatch"
             type="primary"
             plain
             size="mini"
-            v-show="isBatch"
             @click="cancelBatchOperate"
-            >取消操作</el-button
-          >
+          >取消操作</el-button>
         </div>
       </div>
       <!-- 功能 + 内容区 结束 -->
@@ -128,13 +124,12 @@
         v-if="collectList.length !== 0"
         class="page"
         background
-        @current-change="handleCurrentChange"
         layout="prev, pager, next, jumper"
         :total="total"
         :current-page="currentPage"
         :page-size="pageSize"
-      >
-      </el-pagination>
+        @current-change="handleCurrentChange"
+      />
       <!-- 分页 结束 -->
     </div>
     <!-- 主体区 结束 -->
@@ -143,19 +138,22 @@
   </div>
 </template>
 <script>
-import PageTitle from "@/views/components/pageTitle"; // 头部组件
+import PageTitle from '@/views/components/pageTitle' // 头部组件
 
 import {
   getCollectionList,
   addCollectionContent,
-  deleteCollectionContent,
-} from "@/api/collection";
+  deleteCollectionContent
+} from '@/api/collection'
 export default {
+  components: {
+    PageTitle // 页面标题组件
+  },
   data() {
     return {
       // 页面参数
       isBatch: false, // 是否批量
-      activeName: "product", // 高亮哪一个
+      activeName: 'product', // 高亮哪一个
       selectList: [], // 所选内容id
       allChecked: false, // 是否全选
       // data
@@ -166,14 +164,11 @@ export default {
       currentPage: 1, // 当前页
       pageSize: 10, // 每页条数
 
-      isLoading: true, // loading效果
-    };
-  },
-  components: {
-    PageTitle, // 页面标题组件
+      isLoading: true // loading效果
+    }
   },
   created() {
-    this.getTabList(); // 实例创建完毕, 获取tab栏内容, 并获取第一个tab栏下的内容
+    this.getTabList() // 实例创建完毕, 获取tab栏内容, 并获取第一个tab栏下的内容
   },
   methods: {
     // 获取tab栏
@@ -183,109 +178,110 @@ export default {
         {
           id: 23245,
           userId: 34567,
-          collectName: "产品收藏",
-          collectType: "product",
-        },
-      ];
+          collectName: '产品收藏',
+          collectType: 'product'
+        }
+      ]
       // 2. 请求第一栏 内容
-      this.getCollectList(this.currentPage, this.pageSize);
+      this.getCollectList(this.currentPage, this.pageSize)
     },
     // 获取 内容列表
     async getCollectList(currentPage, pageSize) {
-      this.isLoading = true;
+      this.isLoading = true
       const data = {
         currentPage: currentPage,
         pageSize: pageSize,
-        memberBizId: "854299120902660096",
-        collectionType: "product",
+        memberBizId: '854299120902660096',
+        collectionType: 'product',
         orderByMap: {
-          updateDate: "asc",
-        },
-      };
+          updateDate: 'asc'
+        }
+      }
       try {
-        const { data: res } = await getCollectionList(data);
-        console.log(res);
-        if (res.list.length === 0) return;
-        this.collectList = res.list; // 设置列表
-        this.total = res.page.totalCount; // 收藏总数
-        this.currentPage = res.page.currentPage; // 当前页码
-        this.pageSize = res.page.pageSize; // 每页条数
+        const { data: res } = await getCollectionList(data)
+        console.log(res)
+        if (res.list.length === 0) return
+        this.collectList = res.list // 设置列表
+        this.total = res.page.totalCount // 收藏总数
+        this.currentPage = res.page.currentPage // 当前页码
+        this.pageSize = res.page.pageSize // 每页条数
 
-        this.isLoading = false;
+        this.isLoading = false
       } catch (error) {
-        console.log("请求失败", error);
+        console.log('请求失败', error)
       }
     },
     // 取消收藏
     async removeCollection(arrId) {
       const data = {
-        memberBizId: "854299120902660096", // 会员业务ID
-        bizIds: arrId,
-      };
+        memberBizId: '854299120902660096', // 会员业务ID
+        bizIds: arrId
+      }
       try {
-        const { status } = await deleteCollectionContent(data);
+        const { status } = await deleteCollectionContent(data)
         // console.log(res);
-        if (status !== 200) return;
-        this.getCollectList(this.currentPage, this.pageSize);
+        if (status !== 200) return
+        this.getCollectList(this.currentPage, this.pageSize)
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     },
     // 监听tab栏切换
     tabClick(tab, event) {
-      console.log(tab, event);
+      console.log(tab, event)
     },
 
     // 监听页码 变化
     handleCurrentChange(val) {
-      this.getCollectList(val, this.pageSize);
+      this.getCollectList(val, this.pageSize)
     },
 
     // 单独取消
     aloneCancelCollect(id) {
       // 根据id发送 删除请求
-      const arrId = [id];
-      console.log(arrId);
-      this.removeCollection(arrId);
+      const arrId = [id]
+      console.log(arrId)
+      this.removeCollection(arrId)
     },
 
     // 批量操作
     batchOperate() {
-      this.isBatch = true; // 改变状态, 页面ui结构发生变化
+      this.isBatch = true // 改变状态, 页面ui结构发生变化
     },
     // 全选
     allCheckedFn() {
-      if (!this.allChecked) return (this.selectList = []); // 不是选中状态时, 直接置空
+      if (!this.allChecked) return (this.selectList = []) // 不是选中状态时, 直接置空
       /**
        * 1. 当 复选框处于选中状态时
        * 2. 遍历当前所有内容, 判断 选中数组中是否存在 选中的id
        * 3. 将没有选中的内容id, 添加到 选中数组中
        */
       this.collectList.map((v, i) => {
-        if (this.selectList.indexOf(v.id) === -1) this.selectList.push(v.id);
-      });
+        if (this.selectList.indexOf(v.id) === -1) this.selectList.push(v.id)
+      })
     },
     // 取消收藏
     async cancelCollect() {
       // 未勾选内容
-      if (this.selectList.length === 0)
+      if (this.selectList.length === 0) {
         return this.$message({
-          message: "请选择内容",
-          type: "warning",
-        });
+          message: '请选择内容',
+          type: 'warning'
+        })
+      }
       // 勾选内容
       try {
-        const result = await this.$confirm("确认取消所选收藏的商品?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        });
-        if (result !== "confirm") return; // 不是确认直接返回,一般都是confirm
-        this.removeCollection(this.selectList); // 批量删除
-        this.removeStatu(); // 移除批量操作 所有状态
-        this.getCollectList(); // 重新获取内容列表
+        const result = await this.$confirm('确认取消所选收藏的商品?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        if (result !== 'confirm') return // 不是确认直接返回,一般都是confirm
+        this.removeCollection(this.selectList) // 批量删除
+        this.removeStatu() // 移除批量操作 所有状态
+        this.getCollectList() // 重新获取内容列表
       } catch (error) {
-        console.log("取消");
+        console.log('取消')
       }
     },
     // 批量选中 单独点击
@@ -298,28 +294,28 @@ export default {
       if (this.selectList.some((v) => v == id)) {
         this.selectList.map((c, i) => {
           if (c == id) {
-            this.selectList.splice(i, 1);
+            this.selectList.splice(i, 1)
           }
-        });
+        })
       } else {
-        this.selectList.push(id);
+        this.selectList.push(id)
       }
       // 判断被选中的 和 总共的 长度是否相同, 来确定是否全选
       if (this.selectList.length === this.collectList.length) {
-        this.allChecked = true;
+        this.allChecked = true
       } else {
-        this.allChecked = false;
+        this.allChecked = false
       }
     },
     // 取消操作
     cancelBatchOperate() {
-      this.removeStatu();
+      this.removeStatu()
     },
     // 取消批量选择状态
     removeStatu() {
-      this.selectList = []; // 清空选择
-      this.allChecked = false; // 取消全选状态
-      this.isBatch = false; // 取消批量
+      this.selectList = [] // 清空选择
+      this.allChecked = false // 取消全选状态
+      this.isBatch = false // 取消批量
     },
 
     // 添加收藏
@@ -335,20 +331,20 @@ export default {
       // 854401691063214080
       // 854402193578582016
       const data = {
-        memberBizId: "854299120902660096",
-        collectionType: "product",
-        collectionDataId: "852945602618646528",
-      };
-      try {
-        const res = await addCollectionContent(data);
-        console.log(res);
-        this.getCollectList();
-      } catch (error) {
-        console.log(error);
+        memberBizId: '854299120902660096',
+        collectionType: 'product',
+        collectionDataId: '852945602618646528'
       }
-    },
-  },
-};
+      try {
+        const res = await addCollectionContent(data)
+        console.log(res)
+        this.getCollectList()
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
+}
 </script>
 <style  lang="scss">
 ul,
