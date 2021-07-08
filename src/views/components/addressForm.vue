@@ -143,7 +143,8 @@
 <script>
 import {
   addAddressList,
-  eidtAddressList
+  eidtAddressList,
+  editOrderAddress
 } from '@/api/address.js' // 接口
 import {
   countries
@@ -151,8 +152,7 @@ import {
 import {
   getCurrentData,
   addressFormateData,
-  getCountryData,
-  editOrderAddress
+  getCountryData
 } from '@/utils/address.js' // 方法
 export default {
   name: 'AddressForm',
@@ -322,7 +322,7 @@ export default {
         this.receiverCode = propData.id // 收货地址id
         this.isReverse = !!propData.reverseFlag // 设置是否反转
         this.orderId = propData.orderId ? propData.orderId : '' // 设置订单id号
-        this.reverseFlag = propData.reverseFlag ? propData.reverseFlag : 1 // 是否反转
+        // this.reverseFlag = propData.reverseFlag ? propData.reverseFlag : 1 // 是否反转
         this.addrForm = {
           consigneeCountry: propData.consigneeCountry, // 国家
           consigneeName: propData.consigneeName, // 收货人名称
