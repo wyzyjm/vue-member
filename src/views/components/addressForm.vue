@@ -162,7 +162,9 @@ export default {
       type: Object,
       required: false,
       // eslint-disable-next-line vue/require-valid-default-prop
-      default: {}
+      default: () => {
+        return {}
+      }
     }
   },
 
