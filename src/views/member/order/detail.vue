@@ -12,14 +12,14 @@
       <div
         v-if="data.orderStatus == 0"
         class="col-danger"
-      ><SvgIcon name="icon-shijian" />剩余0时29分</div>
+      ><SvgIcon name="icon-shijian" />剩余{{ dataTime }}</div>
       <div>订单状态：<span class="font-20" :class="{'col-danger': data.orderStatus < 3, 'col-success': data.orderStatus === 3}">{{ statePayment[data.orderStatus].type }}</span></div>
       <div>
         <el-button v-if="data.orderStatus == 0 || data.orderStatus == 1 " type="text" @click.prevent="cancelOrder">取消订单</el-button>
         <el-button type="primary" plain @click="dialogTableVisible = true">查看发票信息</el-button>
         <el-button v-if="data.orderStatus == 0" type="primary" plain @click="showDialog('edit')">修改地址</el-button>
         <el-button v-if="data.orderStatus == 0" type="primary" @click="payOrder">付款</el-button>
-        <el-button v-if="data.orderStatus == 2" type="primary" @click="confirm">确认收货</el-button>
+        <el-button v-if="data.orderStatus == 2" type="primary" @click="confirmOrder">确认收货</el-button>
       </div>
     </div>
 
@@ -115,7 +115,7 @@
     <AddressForm
       ref="addressDialog"
       @confirm="confirmDialog"
-      :setAddrForm="current"
+      :addressFormProp="current"
     />
 
     <!-- 查看发票信息 -->
@@ -135,10 +135,16 @@
           v-if="data.orderStatus == 0"
           type="primary"
           size="medium"
+          @click="showReceipt"
         >修改</el-button>
       </div>
     </el-dialog>
 
+    <Receipt
+      ref="receiptDialog"
+      :saveLibray="receiptSaveLibray"
+      @confirm="receiptConfirmDialog"
+    />
   </div>
 </template>
 <script>
@@ -146,6 +152,7 @@ import { orderDetail, cancelOrder, confirmOrder } from '@/api/order'
 import CeSteps from '@/components/CeSteps'
 import SvgIcon from '@/components/SvgIcon'
 import AddressForm from '@/views/components/addressForm' // 收货人地址弹窗
+import Receipt from '@/views/components/receipt' // 修改发票弹窗
 import ProductList from '@/views/components/productList'
 
 export default {
@@ -153,6 +160,7 @@ export default {
     CeSteps,
     SvgIcon,
     AddressForm,
+    Receipt,
     ProductList
   },
   data() {
@@ -163,6 +171,12 @@ export default {
       currencySymbol: null,
       dialogTableVisible: false,
       payShow: false,
+      receiptSaveLibray: false,
+      day: '',
+      hour: '',
+      minute: '',
+      seconds: '',
+      dataTime: '',
       datalist: [
         // {
         //   title: '提交订单',
@@ -215,38 +229,43 @@ export default {
     // 初始化数据
     getDetail() {
       console.log(this.$route.query.orderId)
-      orderDetail({ orderId: this.$route.query.id }).then(response => {
-        console.log(response.data)
-        this.data = response.data.data.order
-        const orderStatusDetailList = response.data.data.order.orderStatusDetailList
+      orderDetail({ orderId: this.$route.query.id }).then(res => {
+        console.log(res.data)
+        this.data = res.data.data.order
+        const orderStatusDetailList = res.data.data.order.orderStatusDetailList
         orderStatusDetailList.forEach((item) => {
           this.datalist.push({
             title: item.content,
             description: this.formatDate(item.time)
           })
         })
+        // 待付款状态下开启倒计时
+        if (this.data.orderStatus === 0) {
+          // this.timeDown(this.data.failureTime)
+        }
+        this.current = { orderId: this.data.orderId, ...this.data.consigneeInfo }
       })
+    },
+    // 修改发票弹窗
+    showReceipt() {
+      const _this = this.$refs['receiptDialog']
+      _this.dialogVisible = true
+    },
+    // 发票弹出确认事件
+    receiptConfirmDialog(status) {
+      console.log(2222, status)
     },
     // 修改地址弹窗 显示
     showDialog(status) {
       const _this = this.$refs['addressDialog'] // 获取当前弹窗组件实例
       _this.dialogFormVisible = true // 修改弹窗 显示状态
       _this.dialogStatus = status // 修改弹窗 类型 create:创建 | edit:编辑
+      _this.formType = status
     },
-    // 弹窗确认事件
+    // 地址弹窗确认事件
     confirmDialog(data, addFormData, status) {
-      /**
-       * 1. 获取子组件传过来的 表单信息, 和 状态
-       * 2. 根据状态, 对将表单信息进行处理
-       */
-      console.log(data)
-      // this.current = {};
-      // if (status === 'create') {
-      //   console.log('这是创建收货地址');
-      // } else {
-      //   console.log('这是编辑收货地址');
-      // }
-      // this.getList();
+      this.current = {}
+      console.log('编辑完收货地址后信息处理', data)
     },
     // 编辑
     eidtAddress(item) {
@@ -254,7 +273,7 @@ export default {
       // this.showDialog('edit');
     },
     // 确认订单
-    confirm() {
+    confirmOrder() {
       this.$confirm('确认收到所有商品？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
@@ -319,6 +338,39 @@ export default {
     },
     copy() {
       console.log('成功复制到粘贴板！')
+    },
+    timeDown(leftTime) {
+      clearInterval(this.setIntID)
+      if (leftTime <= 0) {
+        return '0时0分0秒'
+      }
+      this.setIntID = setInterval(() => {
+        leftTime--
+        if (leftTime === 0) {
+          clearInterval(this.setIntID)
+          return
+        }
+        this.day = parseInt(leftTime / (24 * 60 * 60))
+        this.hour = this.formate(parseInt((leftTime / (60 * 60)) % 24))
+        this.minute = this.formate(parseInt((leftTime / 60) % 60))
+        this.seconds = this.formate(parseInt(leftTime % 60))
+        if (this.day >= 1) {
+          this.dataTime = `${this.day}天${this.hour}时${this.minute}分${this.seconds}秒`
+        } else if (this.hour >= 1) {
+          this.dataTime = `${this.hour}时${this.minute}分${this.seconds}秒`
+        } else if (this.minute >= 1) {
+          this.dataTime = `${this.minute}分${this.seconds}秒`
+        } else if (this.seconds >= 1) {
+          this.dataTime = `${this.seconds}秒`
+        }
+      }, 1000)
+    },
+    formate(time) {
+      if (time >= 10) {
+        return time
+      } else {
+        return `0${time}`
+      }
     }
   }
 }
