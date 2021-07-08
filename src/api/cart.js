@@ -35,3 +35,12 @@ export function cartDel(params) {
       data,
     })
   }
+
+
+  export function cartAdd(data) {
+    return request({
+      url:'/fwebapi/order/shoppingCart/add',
+      method: 'post',
+      data,
+    })
+  }

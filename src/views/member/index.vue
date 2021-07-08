@@ -13,32 +13,7 @@ import sidebar from "./sidebar";
 export default {
 	data() {
 		return {
-			dataList: [
-				{
-					title: "我的资料",
-					path: "/information",
-				},
-				{
-					title: "我的订单",
-					path: "/order/list",
-				},
-				{
-					title: "我的表单",
-					path: "/form",
-				},
-				{
-					title: "我的收藏",
-					path: "/collection",
-				},
-				{
-					title: "收货地址",
-					path: "/address",
-				},
-				{
-					title: "购物车",
-					path: "/memberCart",
-				},
-			],
+			dataList:[]
 		};
 	},
 	computed: {
@@ -50,7 +25,22 @@ export default {
 			return flag;
 		},
 	},
-	methods: {},
+	created(){
+		this.menuList()
+	},
+	methods: {
+		async menuList(){
+		    let res = await this.$store.dispatch(`user/getList`)
+		
+			if(res.code == 200 && res.data.length>0){
+				 res.data.forEach((item) =>{
+					 let path = item.linkAddress.replace(/\/?sys/g,'')
+					 this.dataList.push({title:item.name,path:path,motherHeadId:item.motherHeadId,motherFootId:item.motherFootId})
+				 })
+			}
+		}
+		
+	},
 	components: {
 		sidebar,
 	},

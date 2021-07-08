@@ -6,7 +6,11 @@
       <!-- <div :class="{'fixed-header':fixedHeader}">
         <navbar />
       </div> -->
+      
+      <div >   headerLayout                    
+      </div>
       <app-main />
+      <div>di</div>
     <!-- </div> -->
   </div>
 </template>
@@ -14,13 +18,18 @@
 <script>
 import { Navbar, Sidebar, AppMain } from './components'
 import ResizeMixin from './mixin/ResizeHandler'
-
 export default {
   name: 'Layout',
+  data(){
+    return {
+      str:''
+    }
+  },
   components: {
     Navbar,
     Sidebar,
-    AppMain
+    AppMain,
+    
   },
   mixins: [ResizeMixin],
   computed: {

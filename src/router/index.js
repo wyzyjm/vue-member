@@ -37,6 +37,11 @@ export const constantRoutes = [
         hidden: true
   },
   {
+    path: '/jsonHtml',
+    component: () => import('@/views/jsonHtml'),
+},
+
+  {
     path: '/',
     component: Layout,
     redirect: '/member',
