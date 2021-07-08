@@ -104,7 +104,7 @@ const eidtAddressList = (data) => {
  */
 const editOrderAddress = (data) => {
   return request({
-    url: '/fwebapi​/order​/memberOrder​/editOrderReceiverAddr',
+    url: '/fwebapi/order/memberOrder/editOrderReceiverAddr',
     method: 'POST',
     data
   })

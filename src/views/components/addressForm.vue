@@ -178,7 +178,7 @@ export default {
       isReverse: false, // 是否为外国
       receiverCode: '', // 地址id
       isAreaMust: true, // 省市区是否必填
-      isDefault: 0, // 是否为默认收货地址
+      defaultFlag: 0, // 是否为默认收货地址
       orderId: '', // 订单id
 
       // 收货地址表单
@@ -322,7 +322,7 @@ export default {
         this.receiverCode = propData.id // 收货地址id
         this.isReverse = !!propData.reverseFlag // 设置是否反转
         this.orderId = propData.orderId ? propData.orderId : '' // 设置订单id号
-        // this.reverseFlag = propData.reverseFlag ? propData.reverseFlag : 1 // 是否反转
+        this.defaultFlag = propData.defaultFlag // 是否为默认地址
         this.addrForm = {
           consigneeCountry: propData.consigneeCountry, // 国家
           consigneeName: propData.consigneeName, // 收货人名称
@@ -383,14 +383,15 @@ export default {
           receiverCode: this.receiverCode, // id
           reverseFlag: this.isReverse ? 1 : 0 // 是否反转
         }
+        // 编辑订单地址
         if (this.orderId) {
-          data.orderId = this.orderId
-          delete data.receiverCode
+          data.orderId = this.orderId // 订单id
+          data.defaultFlag = this.defaultFlag // 设置是否为默认地址
+          delete data.receiverCode // 删除收货地址id
         }
-        console.log(data)
-        try {
-          // 根据状态执行 不同请求
+        console.log('请求参数', data)
 
+        try {
           let res
           switch (this.formType) {
             case 'create':
@@ -400,7 +401,7 @@ export default {
               res = this.orderId ? await editOrderAddress(data) : await eidtAddressList(data)
               break
           }
-
+          console.info('响应结果--->', res)
           if (res.status !== 200) return
           this.dialogFormVisible = false // 关闭弹窗
           this.$emit('confirm') // 派发父组件事件
@@ -430,6 +431,7 @@ export default {
       this.isReverse = false // 不反转
       this.receiverCode = '' // 没有id
       this.orderId = '' // 没有订单id
+      this.defaultFlag = 0 // 不是默认地址
       this.$emit('addressFormDialogClose')
     },
 
