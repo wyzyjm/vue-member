@@ -7,7 +7,7 @@
     <!-- 订单编号、按钮 -->
     <div class="order-type">
       <div>订单号：{{ data.orderNumber }}
-        <el-button type="text">复制</el-button>
+        <el-button id="orderNum" type="text" :data-clipboard-text="data.orderNumber" @click="copy">复制</el-button>
       </div>
       <div
         v-if="data.orderStatus == 0"
@@ -122,7 +122,7 @@
     <el-dialog v-if="data.electronicInvoice" center title="发票信息" :visible.sync="dialogTableVisible">
       <div class="invoice">
         <p class="invoice-item"><span>发票抬头</span><span>{{ data.electronicInvoice.invoiceTitle }}</span></p>
-        <p v-if="data.electronicInvoice.invoiceType === 2" class="invoice-item"><span>纳税人识别号</span><span>{{ data.electronicInvoice.taxpayerNum }}</span></p>
+        <p v-if="data.electronicInvoice.invoiceType === 2" class="invoice-item"><span>纳税人识别号</span><span>{{ data.electronicInvoice.taxNum }}</span></p>
         <p class="invoice-item"><span>发票内容</span><span>{{ data.electronicInvoice.invoiceContent }}</span></p>
         <p class="invoice-item"><span>收票人手机</span><span>{{ data.electronicInvoice.takerPhone }}</span></p>
         <p class="invoice-item"><span>收票人邮箱</span><span>{{ data.electronicInvoice.takerEmail }}</span></p>
@@ -143,11 +143,12 @@
     <Receipt
       ref="receiptDialog"
       :saveLibray="receiptSaveLibray"
-      @confirm="receiptConfirmDialog"
+      @formData="receiptConfirmDialog"
     />
   </div>
 </template>
 <script>
+import ClipboardJS from 'clipboard'
 import { orderDetail, cancelOrder, confirmOrder } from '@/api/order'
 import CeSteps from '@/components/CeSteps'
 import SvgIcon from '@/components/SvgIcon'
@@ -177,24 +178,7 @@ export default {
       minute: '',
       seconds: '',
       dataTime: '',
-      datalist: [
-        // {
-        //   title: '提交订单',
-        //   description: '2016-03-25 10:26:10'
-        // },
-        // {
-        //   title: '待付款',
-        //   description: ''
-        // },
-        // {
-        //   title: '待发货',
-        //   description: ''
-        // },
-        // {
-        //   title: '待收货',
-        //   description: ''
-        // }
-      ],
+      datalist: [],
       // 订单状态
       statePayment: {
         0: {
@@ -228,9 +212,7 @@ export default {
   methods: {
     // 初始化数据
     getDetail() {
-      console.log(this.$route.query.orderId)
       orderDetail({ orderId: this.$route.query.id }).then(res => {
-        console.log(res.data)
         this.data = res.data.data.order
         const orderStatusDetailList = res.data.data.order.orderStatusDetailList
         orderStatusDetailList.forEach((item) => {
@@ -241,19 +223,28 @@ export default {
         })
         // 待付款状态下开启倒计时
         if (this.data.orderStatus === 0) {
-          // this.timeDown(this.data.failureTime)
+          this.timeDown(this.data.failureTime)
         }
         this.current = { orderId: this.data.orderId, ...this.data.consigneeInfo }
       })
     },
     // 修改发票弹窗
     showReceipt() {
+      this.dialogTableVisible = false
       const _this = this.$refs['receiptDialog']
       _this.dialogVisible = true
     },
     // 发票弹出确认事件
     receiptConfirmDialog(status) {
-      console.log(2222, status)
+      this.data.electronicInvoice.invoiceTitle = status.type === 1 ? status.name : status.companyName // 发票抬头
+      this.data.electronicInvoice.invoiceType = status.type // 发票类型
+      this.data.electronicInvoice.invoiceContent = status.catalog // 发票内容
+      this.data.electronicInvoice.takerEmail = status.mail // 邮箱
+      this.data.electronicInvoice.takerPhone = status.phone // 手机
+      this.data.electronicInvoice.takerPhoneHead = status.phonePrefix
+      if (status.type === 2) {
+        this.data.electronicInvoice.taxNum = status.companyNumber // 纳税人识别号
+      }
     },
     // 修改地址弹窗 显示
     showDialog(status) {
@@ -267,18 +258,12 @@ export default {
       this.current = {}
       console.log('编辑完收货地址后信息处理', data)
     },
-    // 编辑
-    eidtAddress(item) {
-      // this.current = JSON.parse(JSON.stringify(item)); // 赋值
-      // this.showDialog('edit');
-    },
     // 确认订单
     confirmOrder() {
       this.$confirm('确认收到所有商品？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(() => {
-        console.log('确认成功!')
         confirmOrder({ orderId: this.data.orderId, memberId: this.data.memberId }).then(res => {
           if (res.data.code !== '0') return
           location.reload()
@@ -307,14 +292,29 @@ export default {
         })
       })
     },
-    // 支付订单
+    /**
+     * 支付订单 支付方式
+     * 0:在线支付  1:线下支付 2:货到付款
+     * **/
     payOrder() {
       this.$router.push({
         path: '/payment/pay',
         query: {
           orderId: this.data.orderId,
-          payVal: '' // 后台缺少参数
+          payVal: this.data.payInfo ? this.data.payInfo.paymentTypeId : '' // 后台缺少参数
         }
+      })
+    },
+    // 复制
+    copy() {
+      const _this = this
+      const clipboard = new ClipboardJS('#orderNum')
+      clipboard.on('success', e => {
+        _this.$message('复制成功')
+        clipboard.destory()
+      })
+      clipboard.on('error', e => {
+        clipboard.destory()
       })
     },
     // 时间转换
@@ -336,9 +336,6 @@ export default {
       const dateTime = `${o.Y}-${this.toDou(o.M)}-${this.toDou(o.d)}  ${this.toDou(o.h)}:${this.toDou(o.m)}:${this.toDou(o.s)}`
       return dateTime
     },
-    copy() {
-      console.log('成功复制到粘贴板！')
-    },
     timeDown(leftTime) {
       clearInterval(this.setIntID)
       if (leftTime <= 0) {
@@ -351,9 +348,9 @@ export default {
           return
         }
         this.day = parseInt(leftTime / (24 * 60 * 60))
-        this.hour = this.formate(parseInt((leftTime / (60 * 60)) % 24))
-        this.minute = this.formate(parseInt((leftTime / 60) % 60))
-        this.seconds = this.formate(parseInt(leftTime % 60))
+        this.hour = this.toDou(parseInt((leftTime / (60 * 60)) % 24))
+        this.minute = this.toDou(parseInt((leftTime / 60) % 60))
+        this.seconds = this.toDou(parseInt(leftTime % 60))
         if (this.day >= 1) {
           this.dataTime = `${this.day}天${this.hour}时${this.minute}分${this.seconds}秒`
         } else if (this.hour >= 1) {
@@ -364,13 +361,6 @@ export default {
           this.dataTime = `${this.seconds}秒`
         }
       }, 1000)
-    },
-    formate(time) {
-      if (time >= 10) {
-        return time
-      } else {
-        return `0${time}`
-      }
     }
   }
 }
