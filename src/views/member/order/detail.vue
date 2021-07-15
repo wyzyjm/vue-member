@@ -1,8 +1,8 @@
 <template>
-  <div v-if="data" class="app-container">
+  <div v-if="data" v-loading="loading" class="app-container">
     <!-- 订单详情 -->
     <!-- 进度条 -->
-    <CeSteps :active="data.orderStatus+1" :datalist="datalist" class="border-bottom" />
+    <CeSteps :active="data.orderStatus/10" :datalist="datalist" class="border-bottom" />
 
     <!-- 订单编号、按钮 -->
     <div class="order-type">
@@ -10,16 +10,16 @@
         <el-button id="orderNum" type="text" :data-clipboard-text="data.orderNumber" @click="copy">复制</el-button>
       </div>
       <div
-        v-if="data.orderStatus == 0"
+        v-if="data.orderStatus == 10"
         class="col-danger"
       ><SvgIcon name="icon-shijian" />剩余{{ dataTime }}</div>
-      <div>订单状态：<span class="font-20" :class="{'col-danger': data.orderStatus < 3, 'col-success': data.orderStatus === 3}">{{ statePayment[data.orderStatus].type }}</span></div>
+      <div>订单状态：<span class="font-20" :class="{'col-danger': data.orderStatus < 40, 'col-success': data.orderStatus === 40}">{{ statePayment[data.orderStatus].type }}</span></div>
       <div>
-        <el-button v-if="data.orderStatus == 0 || data.orderStatus == 1 " type="text" @click.prevent="cancelOrder">取消订单</el-button>
+        <el-button v-if="data.orderStatus == 10 || data.orderStatus == 20 " type="text" @click.prevent="cancelOrder">取消订单</el-button>
         <el-button type="primary" plain @click="dialogTableVisible = true">查看发票信息</el-button>
-        <el-button v-if="data.orderStatus == 0" type="primary" plain @click="showDialog('edit')">修改地址</el-button>
-        <el-button v-if="data.orderStatus == 0" type="primary" @click="payOrder">付款</el-button>
-        <el-button v-if="data.orderStatus == 2" type="primary" @click="confirmOrder">确认收货</el-button>
+        <el-button v-if="data.orderStatus == 10" type="primary" plain @click="showDialog('edit')">修改地址</el-button>
+        <el-button v-if="data.orderStatus == 10" type="primary" @click="payOrder">付款</el-button>
+        <el-button v-if="data.orderStatus == 30" type="primary" @click="confirmOrder">确认收货</el-button>
       </div>
     </div>
 
@@ -78,7 +78,7 @@
           </el-popover>
         </div>
       </li>
-      <li v-if="data.orderStatus > 1" class="detail-item">
+      <li v-if="data.orderStatus > 20" class="detail-item">
         <p class="title">物流信息</p>
         <div v-if="data.logisticsInfo" class="item-list">
           <p class="consignee"><span>配送方式：</span><span>{{ data.logisticsInfo.distribution }}</span></p>
@@ -132,7 +132,7 @@
         <el-button type="info" size="medium" @click="dialogTableVisible = false">关闭</el-button>
         <!-- 确定 -->
         <el-button
-          v-if="data.orderStatus == 0"
+          v-if="data.orderStatus == 10"
           type="primary"
           size="medium"
           @click="showReceipt"
@@ -168,6 +168,7 @@ export default {
     return {
       active: 0,
       data: null,
+      loading: true,
       current: {}, // 弹窗传值
       currencySymbol: null,
       dialogTableVisible: false,
@@ -181,19 +182,22 @@ export default {
       datalist: [],
       // 订单状态
       statePayment: {
-        0: {
+        10: {
           type: '待付款'
         },
-        1: {
+        20: {
+          type: '待确认收款'
+        },
+        30: {
           type: '待发货'
         },
-        2: {
+        40: {
           type: '待收货'
         },
-        3: {
+        50: {
           type: '已完成'
         },
-        4: {
+        60: {
           type: '已关闭'
         }
       },
@@ -222,10 +226,11 @@ export default {
           })
         })
         // 待付款状态下开启倒计时
-        if (this.data.orderStatus === 0) {
+        if (this.data.orderStatus === 10) {
           this.timeDown(this.data.failureTime)
         }
         this.current = { orderId: this.data.orderId, ...this.data.consigneeInfo }
+        this.loading = false
       })
     },
     // 修改发票弹窗

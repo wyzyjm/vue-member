@@ -16,8 +16,8 @@
         :key="data.id"
         class="order"
       >
-        <div class="order-id">
-          <span>下单时间：{{ data.createTime }}</span><span class="ml-20">订单号：{{ data.orderNumber }}</span>
+        <div class="col-9 order-id">
+          <span>下单时间：{{ formatDate(data.createTime) }}</span><span class="ml-20">订单号：{{ data.orderNumber }}</span>
         </div>
         <ul class="order-list">
           <li class="order-item">
@@ -53,19 +53,19 @@
               <p class="col-9 border-bottom p-y m-y">含运费{{ data.currencySymbol }}{{ data.freight }}</p>
               <p class="col-9">{{ data.paymentTypeName }}</p>
             </div>
-            <div :class="{'col-danger':data.orderStatus != 3}">
+            <div :class="{'col-danger':data.orderStatus != 50}">
               <span>{{ statePayment[data.orderStatus].type }}</span>
             </div>
             <div class="operate">
-              <div v-if="data.orderStatus == 0">
+              <div v-if="data.orderStatus == 10">
                 <!-- 1、永久有效    0、不是永久有效 -->
-                <p v-if="data.forever === 0" class="p-y col-danger"><svg-icon name="icon-shijian" /> 剩余{{ time }}{{ timeDown(data.failureTime) }}</p>
+                <CountDown v-if="data.forever === 0" class="p-y col-danger" :counttime="data.failureTime" />
                 <el-button type="primary" @click="paymentOrder(data)">付款</el-button>
               </div>
-              <el-button v-if="data.orderStatus == 2" type="primary" @click.prevent="confirmReceipt(data.id)">确认收货</el-button>
+              <el-button v-if="data.orderStatus == 40" type="primary" @click.prevent="confirmReceipt(data.id)">确认收货</el-button>
               <el-button type="text" @click.prevent="viewOrder(data.id)">查看订单</el-button>
               <el-popover
-                v-if="data.orderStatus == 2"
+                v-if="data.orderStatus == 40"
                 placement="bottom-end"
                 width="200"
                 trigger="hover"
@@ -81,7 +81,7 @@
                 </el-timeline>
                 <!-- <el-button slot="reference" type="text" @click.prevent="checkLogistics">查看物流</el-button> -->
               </el-popover>
-              <el-button v-else-if="data.orderStatus != 1 && data.orderStatus != 3 && data.orderStatus != 4" type="text" @click.prevent="cancel(data.id)">取消订单</el-button>
+              <el-button v-else-if="data.orderStatus != 20 && data.orderStatus != 30 && data.orderStatus != 50 && data.orderStatus != 60" type="text" @click.prevent="cancel(data.id)">取消订单</el-button>
             </div>
           </li>
         </ul>
@@ -93,13 +93,13 @@
 <script>
 
 import CustomImg from '@/components/CustomImg'
-import svgIcon from '@/components/SvgIcon'
+import CountDown from './count-down'
 import { confirmOrder, cancelOrder } from '@/api/order'
 
 export default {
   components: {
     CustomImg,
-    svgIcon
+    CountDown
   },
   props: {
     list: {
@@ -126,19 +126,22 @@ export default {
       seconds: '', // 秒数
       // 订单状态
       statePayment: {
-        0: {
+        10: {
           type: '待付款'
         },
-        1: {
+        20: {
+          type: '待确认收款'
+        },
+        30: {
           type: '待发货'
         },
-        2: {
+        40: {
           type: '待收货'
         },
-        3: {
+        50: {
           type: '已完成'
         },
-        4: {
+        60: {
           type: '已关闭'
         }
       },
@@ -214,38 +217,24 @@ export default {
         }
       })
     },
-    timeDown(leftTime) {
-      clearInterval(this.setIntID)
-      if (leftTime <= 0) {
-        return '0时0分0秒'
-      }
-      this.setIntID = setInterval(() => {
-        leftTime--
-        if (leftTime === 0) {
-          clearInterval(this.setIntID)
-          return
-        }
-        this.day = parseInt(leftTime / (24 * 60 * 60))
-        this.hour = this.formate(parseInt((leftTime / (60 * 60)) % 24))
-        this.minute = this.formate(parseInt((leftTime / 60) % 60))
-        this.seconds = this.formate(parseInt(leftTime % 60))
-        if (this.day >= 1) {
-          this.time = `${this.day}天${this.hour}时${this.minute}分${this.seconds}秒`
-        } else if (this.hour >= 1) {
-          this.time = `${this.hour}时${this.minute}分${this.seconds}秒`
-        } else if (this.minute >= 1) {
-          this.time = `${this.minute}分${this.seconds}秒`
-        } else if (this.seconds >= 1) {
-          this.time = `${this.seconds}秒`
-        }
-      }, 1000)
+    // 时间转换
+    toDou(n) {
+      return n < 10 ? '0' + n : '' + n
     },
-    formate(time) {
-      if (time >= 10) {
-        return time
-      } else {
-        return `0${time}`
+    formatDate(date) {
+      date = new Date(Number(date))
+      var o = {
+        'Y': date.getFullYear(),
+        'M': date.getMonth() + 1, // 月份
+        'd': date.getDate(), // 日
+        'h': date.getHours(), // 小时
+        'm': date.getMinutes(), // 分
+        's': date.getSeconds(), // 秒
+        'q': Math.floor((date.getMonth() + 3) / 3), // 季度
+        'S': date.getMilliseconds() // 毫秒
       }
+      const dateTime = `${o.Y}-${this.toDou(o.M)}-${this.toDou(o.d)}  ${this.toDou(o.h)}:${this.toDou(o.m)}:${this.toDou(o.s)}`
+      return dateTime
     }
   }
 }

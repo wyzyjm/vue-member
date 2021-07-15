@@ -25,10 +25,11 @@
           v-for="(item, index) in tabsArr"
           :key="index"
         >
-          <el-badge v-if="item.type === 0" slot="label" :value="orderCount.notPayCount" :max="99" class="item">{{ item.text }}</el-badge>
-          <el-badge v-else-if="item.type === 1" slot="label" :value="orderCount.notDeliverCount" :max="99" class="item">{{ item.text }}</el-badge>
-          <el-badge v-else-if="item.type === 2" slot="label" :value="orderCount.hasDeliverCount" :max="99" class="item">{{ item.text }}</el-badge>
-          <el-badge v-else slot="label" class="item">{{ item.text }}</el-badge>
+          <el-badge v-if="item.status === 10" slot="label" :value="orderCount.notPayCount" :max="99" class="item" :name="item.status">{{ item.text }}</el-badge>
+          <el-badge v-else-if="item.status === 20" slot="label" :value="orderCount.notPayCount" :max="99" class="item" :name="item.status">{{ item.text }}</el-badge>
+          <el-badge v-else-if="item.status === 30" slot="label" :value="orderCount.notDeliverCount" :max="99" class="item" :name="item.status">{{ item.text }}</el-badge>
+          <el-badge v-else-if="item.status === 40" slot="label" :value="orderCount.hasDeliverCount" :max="99" class="item" :name="item.status">{{ item.text }}</el-badge>
+          <el-badge v-else slot="label" class="item" :name="item.status">{{ item.text }}</el-badge>
           <ListItem
             v-if="list.length > 0"
             ref="listItem"
@@ -79,27 +80,38 @@ export default {
       tabsArr: [
         {
           text: '全部订单',
-          type: null
+          type: 0,
+          status: null
         },
         {
           text: '待付款',
-          type: 0
+          type: 1,
+          status: 10
+        },
+        {
+          text: '待确认收款',
+          type: 2,
+          status: 20
         },
         {
           text: '待发货',
-          type: 1
+          type: 3,
+          status: 30
         },
         {
           text: '待收货',
-          type: 2
+          type: 4,
+          status: 40
         },
         {
           text: '已完成',
-          type: 3
+          type: 5,
+          status: 50
         },
         {
           text: '已取消',
-          type: 4
+          type: 6,
+          status: 60
         }
       ],
       list: [],
@@ -140,7 +152,7 @@ export default {
       if (tab.index === '0') {
         this.orderType = ''
       } else {
-        this.orderType = tab.index - 1
+        this.orderType = tab.index * 10
       }
       this.loading = true
       this.currentPage = 1
