@@ -13,7 +13,37 @@ import sidebar from "./sidebar";
 export default {
 	data() {
 		return {
-			dataList:[]
+			dataList: [
+				{
+					title: "我的资料",
+					path: "/information",
+				},
+				{
+					title: "我的订单",
+					path: "/order/list",
+				},
+				{
+					title: "我的表单",
+					path: "/form",
+				},
+				{
+					title: "我的收藏",
+					path: "/collection",
+				},
+				{
+					title: "收货地址",
+					path: "/address",
+				},
+				{
+					title: "购物车",
+					path: "/memberCart",
+				},
+				{
+					title: "自行增加数据",
+					path: "/jsonHtml",
+				},
+			],
+
 		};
 	},
 	computed: {

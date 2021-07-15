@@ -36,10 +36,7 @@ export const constantRoutes = [
         component: () => import('@/views/404'),
         hidden: true
   },
-  {
-    path: '/jsonHtml',
-    component: () => import('@/views/jsonHtml'),
-},
+  
 
   {
     path: '/',
@@ -51,6 +48,10 @@ export const constantRoutes = [
             redirect: '/information',
             component: () => import('@/views/member/index'),
             children: [
+                {
+                    path: '/jsonHtml',
+                    component: () => import('@/views/member/jsonHtml'),
+                },
                 {
                     path: '/information',
                     name: 'information',
@@ -94,7 +95,8 @@ export const constantRoutes = [
                     name: 'memberCart',
                     component: () => import('@/views/member/cart/index'),
                     meta: { title: '我的购物车', icon: '' }
-                }
+                },
+                
             ]
         },
         {

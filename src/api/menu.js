@@ -7,5 +7,14 @@ export function getList(data) {
       data
     })
   }
+   
+
+  export function addCarts(data) {
+    return request({
+      url: '/fwebapi/order/shoppingCart/add',
+      method: 'post',
+      data
+    })
+  }
 
   
