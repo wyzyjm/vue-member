@@ -11,7 +11,7 @@ function InitTime(endtime) {
   var dd, hh, mm, ss = null
   var time = parseInt(endtime)
   if (time <= 0) {
-    return '结束'
+    return '0'
   } else {
     dd = Math.floor(time / 60 / 60 / 24)
     hh = Math.floor((time / 60 / 60) % 24)

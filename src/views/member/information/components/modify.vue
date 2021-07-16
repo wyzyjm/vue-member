@@ -16,7 +16,6 @@
         <el-form
           ref="form"
           :model="form"
-          label-width="30%"
         >
           <el-form-item v-if="modifyType === 'name' || modifyType === 'nickName'" :label="modifyType === 'nickName' ? '昵称' : '姓名'">
             <el-input
@@ -86,12 +85,15 @@
             <!-- 图片集 -->
             <el-form-item v-if="selfDefining.attrType === 'image'" :label="selfDefining.attrName">
               图片集
-              <img
+              <!-- <img
                 v-for="item in selfDefining.optionsData"
                 :key="item.key"
                 :src="item.type"
                 :alt="item.type"
-              >
+              > -->
+              <!-- <UploadImgs
+                :imgVal=
+              /> -->
             </el-form-item>
             <!-- 多行文本 -->
             <el-form-item v-if="selfDefining.attrDetailType === 'multiTxt'" :label="selfDefining.attrName">
@@ -155,6 +157,16 @@
                 </el-col>
               </el-form-item>
             </el-form-item>
+            <!-- 附件集 -->
+            <el-form-item v-if="selfDefining.attrType === 'image'" :label="selfDefining.attrName">
+              附件
+              <img
+                v-for="item in selfDefining.optionsData"
+                :key="item.key"
+                :src="item.type"
+                :alt="item.type"
+              >
+            </el-form-item>
           </el-form-item>
           <el-form-item class="align-center">
             <el-button plain type="primary" @click="off">取消</el-button>
@@ -167,10 +179,14 @@
 </template>
 
 <script>
+// import UploadImgs from './uploadImg'
 import countryData from '@/views/components/resource/locList_zh_CN' // 国家
 import { updateMember } from '@/api/user'
 
 export default {
+  components: {
+    // UploadImgs
+  },
   props: {
     // 显示该控件与否
     value: {
@@ -419,11 +435,18 @@ export default {
     }
     .modify-cont{
         padding: 50px;
-        .align-center{
-            margin-left: -40%;
-            margin-top: 100px;
-            text-align: center;
+        .el-form-item{
+          display: flex;
+          justify-content: center;
         }
+        .align-center{
+          // margin-left: -40%;
+            margin-top: 100px;
+            // text-align: center;
+        }
+    }
+    .el-form-item__label{
+      width: 100px;
     }
 }
 </style>

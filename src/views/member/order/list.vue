@@ -25,10 +25,10 @@
           v-for="(item, index) in tabsArr"
           :key="index"
         >
-          <el-badge v-if="item.status === 10" slot="label" :value="orderCount.notPayCount" :max="99" class="item" :name="item.status">{{ item.text }}</el-badge>
-          <el-badge v-else-if="item.status === 20" slot="label" :value="orderCount.notPayCount" :max="99" class="item" :name="item.status">{{ item.text }}</el-badge>
-          <el-badge v-else-if="item.status === 30" slot="label" :value="orderCount.notDeliverCount" :max="99" class="item" :name="item.status">{{ item.text }}</el-badge>
-          <el-badge v-else-if="item.status === 40" slot="label" :value="orderCount.hasDeliverCount" :max="99" class="item" :name="item.status">{{ item.text }}</el-badge>
+          <el-badge v-if="item.status === 10 && orderCount.notPayCount != 0" slot="label" :value="orderCount.notPayCount" :max="99" class="item" :name="item.status">{{ item.text }}</el-badge>
+          <el-badge v-else-if="item.status === 20 && orderCount.notConfirmCount != 0" slot="label" :value="orderCount.notConfirmCount" :max="99" class="item" :name="item.status">{{ item.text }}</el-badge>
+          <el-badge v-else-if="item.status === 30 && orderCount.notDeliverCount != 0" slot="label" :value="orderCount.notDeliverCount" :max="99" class="item" :name="item.status">{{ item.text }}</el-badge>
+          <el-badge v-else-if="item.status === 40 && orderCount.hasDeliverCount != 0" slot="label" :value="orderCount.hasDeliverCount" :max="99" class="item" :name="item.status">{{ item.text }}</el-badge>
           <el-badge v-else slot="label" class="item" :name="item.status">{{ item.text }}</el-badge>
           <ListItem
             v-if="list.length > 0"
@@ -70,11 +70,7 @@ export default {
       loading: true,
       searchVal: '',
       activeName: '全部订单',
-      orderCount: {
-        hasDeliverCount: 0,
-        notDeliverCount: 0,
-        notPayCount: 0
-      },
+      orderCount: {},
       orderType: '',
       tabsIndex: 0,
       tabsArr: [
@@ -141,9 +137,7 @@ export default {
     },
     initorderStatus() {
       orderStatus({ memberId: this.memberId }).then(res => {
-        this.orderCount.hasDeliverCount = res.data.data.hasDeliverCount
-        this.orderCount.notDeliverCount = res.data.data.notDeliverCount
-        this.orderCount.notPayCount = res.data.data.notPayCount
+        this.orderCount = res.data.data
       })
     },
     // tab事件
