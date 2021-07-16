@@ -602,7 +602,9 @@ export default {
 				"goodsId": 0,
 				"shoppingCartId": 0,
 				"unitPrice": 0,
-				"currencySymbol":"￥"
+				"currencySymbol":"￥",
+				"appId":'',
+				"templateId":''
 			}
 
 			let arr = [];
@@ -613,7 +615,9 @@ export default {
 					"productId":this.delstr(item.productId),
 					"shoppingCartCode":this.delstr(item.shoppingCartCode) ,
 					"skuPrice": item.skuPrice,
-					"currencySymbol":item.currency
+					"currencySymbol":item.currency,
+					"appId":item.appId,
+					"templateId":item.templateId
 				}
 				arr.push(json)
 			})
@@ -653,10 +657,15 @@ export default {
 			if(res.status == 200){
 				this.renderData();
 				let dataIDs ='';
+				let appId='';
+				let templateId=''
 				arr.forEach( item =>{
+					let temp = item.templateId
 					dataIDs += item.shoppingCartCode + ','
+					appId += item.appId + ','
+					templateId += temp?temp:null + ','
 				})
-				this.$router.push({ path: '/settlement',query:{shoppingCartIds:dataIDs}})
+				this.$router.push({ path: '/settlement',query:{shoppingCartIds:dataIDs,appId:appId,templateId:templateId}})
 			}
 			
 			console.log(rthis.$router)
