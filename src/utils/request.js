@@ -15,7 +15,7 @@ service.defaults.headers.post['tenantId'] = 1600018169
 service.defaults.headers.get['tenantId'] = 1600018169
 service.defaults.headers.post['instance'] = "qinhui20210610"
 service.defaults.headers.get['instance'] = "qinhui20210610"
-service.defaults.headers.post['appId'] = 1
+service.defaults.headers.post['appId'] = 143150160001
 // request interceptor
 service.interceptors.request.use(
   config => {

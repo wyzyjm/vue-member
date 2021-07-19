@@ -56,7 +56,7 @@ export default {
 		},
 	},
 	created(){
-		this.menuList()
+		//this.menuList()
 	},
 	methods: {
 		async menuList(){

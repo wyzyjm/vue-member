@@ -668,7 +668,7 @@ export default {
 				this.$router.push({ path: '/settlement',query:{shoppingCartIds:dataIDs,appId:appId,templateId:templateId}})
 			}
 			
-			console.log(rthis.$router)
+			console.log(this.$router)
 		}
 	},
 	//去除引号
