@@ -25,7 +25,7 @@ service.interceptors.request.use(
       config.baseURL = 'http://10.12.68.205:8096'
     }
     // 请求会员信息 更换baseURL
-    if (config.url.indexOf('member') !== -1) {
+    if (config.url.indexOf('member/') !== -1) {
       config.baseURL = 'http://10.12.68.205:8096/'
     }
     if (store.getters.token) {
