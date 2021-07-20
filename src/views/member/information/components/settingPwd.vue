@@ -40,7 +40,7 @@
 import md5 from 'js-md5'
 import ceSteps from '@/components/CeSteps'
 import svgIcon from '@/components/SvgIcon'
-import { updatePwd } from '@/api/user'
+import { updatePwd } from '@/api/member'
 
 export default {
   components: {

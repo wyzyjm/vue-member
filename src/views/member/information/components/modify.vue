@@ -181,7 +181,7 @@
 <script>
 // import UploadImgs from './uploadImg'
 import countryData from '@/views/components/resource/locList_zh_CN' // 国家
-import { updateMember } from '@/api/user'
+import { updateMember } from '@/api/member'
 
 export default {
   components: {

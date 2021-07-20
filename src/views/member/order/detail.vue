@@ -2,7 +2,7 @@
   <div v-if="data" v-loading="loading" class="app-container">
     <!-- 订单详情 -->
     <!-- 进度条 -->
-    <CeSteps :active="data.orderStatus > 40 ? data.orderStatusDetailList.length : data.orderStatusDetailList.length - 1" :datalist="datalist" class="border-bottom" />
+    <CeSteps :active="data.orderStatus > 40 ? data.orderStatusDetailList.length : data.orderStatusDetailList.length" :datalist="datalist" class="border-bottom" />
 
     <!-- 订单编号、按钮 -->
     <div class="order-type">
@@ -214,6 +214,10 @@ export default {
         2: {
           description: null,
           title: '已完成'
+        },
+        3: {
+          description: null,
+          title: '待确认付款'
         }
       }
     }
@@ -237,8 +241,10 @@ export default {
         if (this.data.orderStatus === 10) {
           this.timeDown(this.data.failureTime)
         }
-        if (this.data.orderStatus === 10 || this.data.orderStatus === 20) {
+        if (this.data.orderStatus === 10) {
           this.datalist.push(this.stepsList[0], this.stepsList[1])
+        } else if (this.data.orderStatus === 20) {
+          this.datalist.push(this.stepsList[3], this.stepsList[0], this.stepsList[1])
         } else if (this.data.orderStatus === 30 || this.data.orderStatus === 40) {
           this.datalist.push(this.stepsList[1])
         }

@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { updateMember } from '@/api/user'
+import { updateMember } from '@/api/member'
 
 export default {
   props: {

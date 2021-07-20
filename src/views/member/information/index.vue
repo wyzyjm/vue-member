@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import { memberDetail } from '@/api/table'
+import { memberDetail } from '@/api/member'
 import PageTitle from '@/views/components/pageTitle'
 import SvgIcon from '@/components/SvgIcon'
 import imagesUpload from './components/imagesUpload'
