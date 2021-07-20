@@ -564,13 +564,15 @@ export default {
 				}
 				let res = await cartUpdate(json);
 				if(res.status == 200){
+					
 					this.data.shoppingCartList.forEach(item =>{
 						if(item.shoppingCartCode == obj.shoppingCartCode){
 							item.subtotal = res.data.subtotal
 						}
 					})
 					this.totalPrice()
-					console.log(this.cartList[item.$index].quantity)
+					this.cartList[item.$index]['disabled'] = 0;
+					console.log(this.cartList[item.$index])
 				}
 			}
 		},
@@ -589,23 +591,17 @@ export default {
 
 	//结算
 	async submit(){
-		console.log()
-		if(this.unvalidList.length>0){
-			this.$message({
-				type: 'warning',
-				message: '存在失效商品，不能结算哦!'
-			});
-		}else{
-			let json = {
-				"buyAmount": 0,
-				"cargoId": 0,
-				"goodsId": 0,
-				"shoppingCartId": 0,
-				"unitPrice": 0,
-				"currencySymbol":"￥",
-				"appId":'',
-				"templateId":''
-			}
+	
+		let json = {
+			"buyAmount": 0,
+			"cargoId": 0,
+			"goodsId": 0,
+			"shoppingCartId": 0,
+			"unitPrice": 0,
+			"currencySymbol":"￥",
+			"appId":'',
+			"templateId":''
+		}
 
 			let arr = [];
 			this.selectProduct.forEach(item =>{
@@ -669,7 +665,7 @@ export default {
 			}
 			
 			console.log(this.$router)
-		}
+		
 	},
 	//去除引号
 	delstr(ss){
