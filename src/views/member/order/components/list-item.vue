@@ -35,7 +35,6 @@
                     <p class="col-9">
                       <span
                         v-for="skuSpec in item.skuSpec"
-                        :id="skuSpec.specId"
                         :key="skuSpec.specId"
                       >{{ skuSpec.specName }}：{{ skuSpec.specValue }}；</span>
                     </p>
