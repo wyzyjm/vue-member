@@ -4,27 +4,36 @@
       <div class="result-content text-normal">
         <template v-if="resultInfo.isSuccess">
           <svg-icon
-          name="icon-caozuochenggong"
-          style="font-size: 60px; color: #1989fa"
-        ></svg-icon>
+            name="icon-caozuochenggong"
+            style="font-size: 60px; color: #1989fa"
+          ></svg-icon>
           <p class="tips">购买成功，我们尽快为您处理！</p>
         </template>
         <template v-else>
+           <svg-icon
+            name="icon-zhifushibai"
+            style="font-size: 60px; color: #1989fa"
+          ></svg-icon>
           <p class="tips">支付失败，支付遇到问题，请尝试重新支付！</p>
         </template>
         <div class="detail">
-          订单号：{{ resultInfo.orderNumber }}<br />
+          <div v-for="item in resultInfo.orderNumberList" :key="item">
+            订单号：{{ item }}<br />
+          </div>
+
           {{ resultInfo.payName }}：<span class="text-danger"
             >{{ resultInfo.currencySymbol }} {{ resultInfo.sumPayable }}</span
           >
         </div>
         <div v-if="resultInfo.isSuccess">
-          <el-button type="primary" @click="linkTo">查看订单详情</el-button>
-          <el-button type="primary" plain @click="linkToHome">返回首页</el-button>
+          <el-button type="primary" @click="linkTo">查看订单</el-button>
+          <el-button type="primary" plain @click="linkToHome"
+            >返回首页</el-button
+          >
         </div>
         <div v-else>
           <el-button type="primary" @click="rePay">重新支付</el-button>
-          <el-button type="primary" plain @click="linkTo">查看订单详情</el-button>
+          <el-button type="primary" plain @click="linkTo">查看订单</el-button>
         </div>
         <el-divider></el-divider>
         <p>重要提醒：不点击陌生链接、不泄露银行卡和验证码信息，谨防诈骗！</p>
@@ -52,17 +61,21 @@ export default {
     });
   },
   methods: {
-    linkTo(){
-      this.$router.push({path:'/order/detail',query:{id:this.$route.query.orderId}})
+    linkTo() {
+      this.$router.push({
+        path: "/order/list",
+        query: { id: this.$route.query.orderId },
+      });
     },
-    rePay(){
-       this.$router.push({path:'/payment/pay',query:{payVal:0,orderId:this.$route.query.orderId}})
+    rePay() {
+      this.$router.push({
+        path: "/payment/pay",
+        query: { payVal: 0, orderId: this.$route.query.orderId },
+      });
     },
-    linkToHome(){
-         this.$router.push({path:'/'})
-   
-    }
-
+    linkToHome() {
+      this.$router.push({ path: "/" });
+    },
   },
 };
 </script>

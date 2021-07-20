@@ -13,92 +13,102 @@
     <p class="order-subtitle">填写并核对订单信息</p>
 
     <div class="order-details">
-      <p><strong>收货人信息</strong></p>
-      <el-button
-        style="float: right; margin-top: -45px"
-        type="text"
-        @click="openAddress('create')"
-        >新增收货地址</el-button
-      >
-      <div :class="['address-list', { 'show-detail': showAInfo }]">
-        <!-- {{ logisticsInfoList }} -->
-        <p style="color: #f56c6c" v-if="logisticsInfoList.length == 0">
-          请添加收货信息
-        </p>
+      <template v-if="!hasFormJson">
+        <p><strong>收货人信息</strong></p>
+        <el-button
+          style="float: right; margin-top: -45px"
+          type="text"
+          @click="openAddress('create')"
+          >新增收货地址</el-button
+        >
+        <div :class="['address-list', { 'show-detail': showAInfo }]">
+          <!-- {{ logisticsInfoList }} -->
+          <p style="color: #f56c6c" v-if="logisticsInfoList.length == 0">
+            请添加收货信息
+          </p>
 
-        <div v-else class="address-group">
-          <div
-            v-for="(item, index) in logisticsInfoList"
-            :key="item.id"
-            :class="['address-item', { active: item.active }]"
-            @click="choseAddress(index)"
-          >
-            <span class="name">{{ item.consigneeName }}</span>
-            <div class="more">
-             
-              <!-- <span>{{ item.consigneeCountry }}</span>
+          <div v-else class="address-group">
+            <div
+              v-for="(item, index) in logisticsInfoList"
+              :key="item.id"
+              :class="['address-item', { active: item.active }]"
+              @click="choseAddress(index)"
+            >
+              <span class="name">{{ item.consigneeName }}</span>
+              <div class="more">
+                <!-- <span>{{ item.consigneeCountry }}</span>
               <span>{{ item.consigneeProvince }}</span>
               <span>{{ item.consigneeCity }}</span> -->
-             
-              <span> {{
-                getAddress(
-                  item.consigneeCountry,
-                  item.consigneeProvince,
-                  item.consigneeCity,
-                  item.consigneeCounty,
-                  true
-                )
-              }}</span>
-               <span>{{ item.consigneeAddr }}</span>
-              <span>{{ item.consigneePhone }}</span>
-            </div>
-            <span v-if="item.isDefault" class="default-address-icon"
-              >默认地址</span
-            >
-            <div class="address-btns">
-              <el-button
-                v-if="!item.isDefault"
-                type="text"
-                size="mini"
-                @click.stop="setDefault(item.id)"
-                >设为默认</el-button
+
+                <span>
+                  {{
+                    getAddress(
+                      item.consigneeCountry,
+                      item.consigneeProvince,
+                      item.consigneeCity,
+                      item.consigneeCounty,
+                      true
+                    )
+                  }}</span
+                >
+                <span>{{ item.consigneeAddr }}</span>
+                <span>{{ item.consigneePhone }}</span>
+              </div>
+              <span v-if="item.isDefault" class="default-address-icon"
+                >默认地址</span
               >
-              <el-button type="text" size="mini" @click.stop="eidtAddress(item)"
-                >编辑</el-button
-              >
-              <el-button
-                type="text"
-                size="mini"
-                @click.stop="deleteAddress(item)"
-                >删除</el-button
-              >
+              <div class="address-btns">
+                <el-button
+                  v-if="!item.isDefault"
+                  type="text"
+                  size="mini"
+                  @click.stop="setDefault(item.id)"
+                  >设为默认</el-button
+                >
+                <el-button
+                  type="text"
+                  size="mini"
+                  @click.stop="eidtAddress(item)"
+                  >编辑</el-button
+                >
+                <el-button
+                  type="text"
+                  size="mini"
+                  @click.stop="deleteAddress(item)"
+                  >删除</el-button
+                >
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <p
-        v-if="logisticsInfoList.length > 1"
-        class="show-more"
-        @click="showAddress"
-      >
-        <span v-show="showAInfo">
-          收起地址<i class="el-icon-d-arrow-right"></i>
-        </span>
-        <span v-show="!showAInfo">
-          更多地址<i class="el-icon-d-arrow-left"></i>
-        </span>
-      </p>
-      <el-divider></el-divider>
-      <p><strong>配送方式</strong></p>
-
-      <el-radio-group v-model="distributionVal">
-        <el-radio
-          v-for="item in distributionList"
-          :key="item.id"
-          :label="item.id"
-          >{{ item.name }}</el-radio
+        <p
+          v-if="logisticsInfoList.length > 1"
+          class="show-more"
+          @click="showAddress"
         >
-      </el-radio-group>
+          <span v-show="showAInfo">
+            收起地址<i class="el-icon-d-arrow-right"></i>
+          </span>
+          <span v-show="!showAInfo">
+            更多地址<i class="el-icon-d-arrow-left"></i>
+          </span>
+        </p>
+        <el-divider></el-divider>
+        <p><strong>配送方式</strong></p>
+
+        <el-radio-group v-model="distributionVal">
+          <el-radio
+            v-for="item in distributionList"
+            :key="item.id"
+            :label="item.id"
+            >{{ item.name }}</el-radio
+          >
+        </el-radio-group>
+      </template>
+      <template v-else>
+        <p><strong>表单信息</strong></p>
+        <div>adsfjaldfjaldfj</div>
+      </template>
       <el-divider></el-divider>
       <p><strong>支付方式</strong></p>
       <el-radio-group v-model="payVal">
@@ -119,40 +129,53 @@
         </el-radio>
       </el-radio-group>
       <el-divider></el-divider>
-      <product-list
-        :productList="productlist"
-        :currencySymbol="currency"
-      ></product-list>
-      <p><strong>发票信息</strong></p>
-      <div>
-        电子发票
-        <template v-if="receiptInfo.invoiceId == ''">
-          <el-button type="text" @click="openReceipt('new')">开发票</el-button>
+      <div v-for="(item, index) in productlist" :key="item.skuId">
+        <product-list
+          :productList="item.shoppingCartList"
+          :currencySymbol="currency"
+        ></product-list>
+        <p><strong>发票信息</strong></p>
+        <div>
+          电子发票
+          <template v-if="receiptList[index].receiptInfo.invoiceTitle == ''">
+            <el-button type="text" @click="openReceipt('new', index)"
+              >开发票</el-button
+            >
+          </template>
+          <template v-else>
+            {{ receiptList[index].receiptInfo.invoiceTitle }}
+            {{ receiptList[index].receiptInfo.invoiceContent }}
+            <el-button type="text" @click="openReceipt('edit', index)"
+              >修改</el-button
+            >
+          </template>
+        </div>
+        <el-divider></el-divider>
+        <p><strong>给卖家留言</strong></p>
+        <el-input
+          type="textarea"
+          placeholder="订单有要求，请先与商家协商，选填"
+          v-model="remarkAttrs[index].value"
+          maxlength="255"
+          show-word-limit
+          style="width: 520px"
+        >
+        </el-input>
+
+        <el-divider></el-divider>
+        <div style="float: right; text-align: right; line-height: 24px">
+          共 <span class="text-danger">{{ item.totalNum }}</span> 件商品<br />
+          商品总额： <span>{{ currency }} {{ item.payableGoodsAmount }}</span
+          ><br />
+          运费总计： <span>{{ currency }} {{ item.freightPrice }}</span>
+        </div>
+
+        <div style="clear: both"></div>
+        <template v-if="index!==productlist.length-1">
+          <el-divider></el-divider>
         </template>
-        <template v-else>
-          {{ receiptInfo.invoiceTitle }} {{ receiptInfo.invoiceContent }}
-          <el-button type="text" @click="openReceipt('edit')">修改</el-button>
-        </template>
+        
       </div>
-      <el-divider></el-divider>
-      <p><strong>给卖家留言</strong></p>
-      <el-input
-        type="textarea"
-        placeholder="订单有要求，请先与商家协商，选填"
-        v-model="remark"
-        maxlength="255"
-        show-word-limit
-        style="width: 520px"
-      >
-      </el-input>
-      <el-divider></el-divider>
-      <div style="float: right; text-align: right; line-height: 24px">
-        共 <span class="text-danger">{{ totalNum }}</span> 件商品<br />
-        商品总额： <span>{{ currency }} {{ totalPrice }}</span
-        ><br />
-        运费总计： <span>{{ currency }} {{ freight }}</span>
-      </div>
-      <div style="clear: both"></div>
     </div>
     <div class="order-foot background-grey text-grey">
       <div class="foot-price">
@@ -160,15 +183,16 @@
         ><span class="text-danger">{{ currency }}{{ realPayment }}</span>
       </div>
       <div>
-        寄送至： {{
-                getAddress(
-                  addressInfo.consigneeCountry,
-                  addressInfo.consigneeProvince,
-                  addressInfo.consigneeCity,
-                  addressInfo.consigneeCounty,
-                  true
-                )
-              }}
+        寄送至：
+        {{
+          getAddress(
+            addressInfo.consigneeCountry,
+            addressInfo.consigneeProvince,
+            addressInfo.consigneeCity,
+            addressInfo.consigneeCounty,
+            true
+          )
+        }}
         {{ addressInfo.consigneeAddr }}
       </div>
       <div>
@@ -186,7 +210,11 @@
         <template v-else>提交订单</template></el-button
       >
     </div>
-    <receipt ref="getReceipt" @formData="getReceiptData"></receipt>
+    <receipt
+      ref="getReceipt"
+      :saveLibray="false"
+      @formData="getReceiptData"
+    ></receipt>
     <address-form
       ref="address"
       :addressFormProp="current"
@@ -213,7 +241,7 @@
             >返回购物车</el-button
           >
           <!-- 刷新运费价格 -->
-          <el-button type="primary" @click="calculateFare('pop')"
+          <el-button type="primary" @click="getProductList('pop')"
             >刷新运费价格</el-button
           >
         </template>
@@ -267,7 +295,7 @@ export default {
       ],
       stepActive: 1,
       showAInfo: false,
-      remark: "",
+      remark: [],
       receiptInfo: {
         invoiceId: "",
         email: "",
@@ -312,6 +340,10 @@ export default {
       msgCode: "",
       orderId: "",
       current: {}, // 弹窗传值
+      hasFormJson: true,
+      remarkAttrs: [],
+      receiptList: [],
+      receiptIndex: null,
     };
   },
   components: {
@@ -332,11 +364,13 @@ export default {
     ) {
       this.$router.push("/cart");
     } else {
-      //获取收货地址list
+      if (this.$route.query.formData == undefined) {
+        this.hasFormJson = false;
+      } else {
+        this.hasFormJson = true;
+      }
+      //获取收货地址
       this.getList();
-      
-      //商品清单
-      this.getProductList();
     }
   },
   methods: {
@@ -356,8 +390,10 @@ export default {
           }
         }
         this.addressInfo = this.logisticsInfoList[0];
+        //商品清单
+        this.getProductList();
         //获取支付方式，配送方式
-          this.getPayMode(this.addressInfo.id);
+        this.getPayMode(this.addressInfo.id);
       } catch (error) {
         console.log("获取收货地址失败", error);
       }
@@ -436,7 +472,7 @@ export default {
       this.showDialog("edit");
       this.editFormItem = item;
     },
-   // 弹窗确认事件
+    // 弹窗确认事件
     confirmDialog() {
       this.current = {}; // 清空当前值
       this.getList(); // 重新获取收货地址列表
@@ -447,7 +483,7 @@ export default {
     },
     // 收货地址弹窗
     openAddress(type) {
-       if (status === "create" && this.logisticsInfoList.length === 10)
+      if (status === "create" && this.logisticsInfoList.length === 10)
         return this.$message({
           message: "抱歉，地址信息最多可创建10条，请删除一条在创建吧!",
           type: "warning",
@@ -465,8 +501,20 @@ export default {
     },
     getPayMode(id) {
       //获取支付方式列表
-      let params = {}
-      params.receiveCode = id
+      let params = {};
+      //如果有表单，receiveCode不传
+      if (!this.hasFormJson) {
+        params.receiveCode = id;
+      }
+
+      if (this.$route.query.shoppingCartIds !== undefined) {
+        params.shoppingCartCodes = this.$route.query.shoppingCartIds;
+      }
+      //商品详情过来结算
+      if (this.$route.query.skuId !== undefined) {
+        params.skuId = this.$route.query.skuId;
+        params.templateId = this.$route.query.templateId;
+      }
       payModeInitInfo(params).then((res) => {
         if (res.status === 200) {
           let data = res.data;
@@ -488,98 +536,144 @@ export default {
       });
     },
     getReceiptData(data) {
-      this.receiptInfo.invoiceId = data.invoiceId;
-      this.receiptInfo.email = data.mail;
-      this.receiptInfo.invoiceContent = data.catalog;
+      let index = this.receiptIndex;
+
+      // this.receiptList[index].receiptInfo.invoiceId = data.invoiceId;
+      this.receiptList[index].receiptInfo.email = data.mail;
+      this.receiptList[index].receiptInfo.invoiceContent = data.catalog;
       if (data.type == 1) {
-        this.receiptInfo.invoiceTitle = data.name;
+        this.receiptList[index].receiptInfo.invoiceTitle = data.name;
       } else {
-        this.receiptInfo.invoiceTitle = data.companyName;
+        this.receiptList[index].receiptInfo.invoiceTitle = data.companyName;
       }
 
-      this.receiptInfo.invoiceType = data.type;
-      this.receiptInfo.phone = data.phone;
-      this.receiptInfo.taxpayerId = data.companyNumber;
-      this.receiptInfo.phonePrefix = data.phonePrefix;
+      this.receiptList[index].receiptInfo.invoiceType = data.type;
+      this.receiptList[index].receiptInfo.phone = data.phone;
+      this.receiptList[index].receiptInfo.taxpayerId = data.companyNumber;
+      this.receiptList[index].receiptInfo.phonePrefix = data.phonePrefix;
     },
-    openReceipt(status) {
+    openReceipt(status, index) {
+      this.receiptIndex = index;
       this.$refs.getReceipt.dialogVisible = true;
       if (status == "edit") {
         if (this.receiptInfo.invoiceType === 1) {
           this.$refs.getReceipt.form.type = 1;
-
-          this.$refs.getReceipt.form.name = this.receiptInfo.invoiceTitle;
+          this.$refs.getReceipt.form.name = this.receiptList[
+            index
+          ].receiptInfo.invoiceTitle;
         } else {
           this.$refs.getReceipt.form.type = 2;
-          this.$refs.getReceipt.form.companyName = this.receiptInfo.invoiceTitle;
-          this.$refs.getReceipt.form.companyNumber = this.receiptInfo.taxpayerId;
+          this.$refs.getReceipt.form.companyName = this.receiptList[
+            index
+          ].receiptInfo.invoiceTitle;
+          this.$refs.getReceipt.form.companyNumber = this.receiptList[
+            index
+          ].receiptInfo.taxpayerId;
         }
-        this.$refs.getReceipt.form.phone = this.receiptInfo.phone;
-        this.$refs.getReceipt.form.mail = this.receiptInfo.email;
-        this.$refs.getReceipt.form.invoiceId = this.receiptInfo.invoiceId;
-        this.$refs.getReceipt.form.phonePrefix = this.receiptInfo.phonePrefix;
+        this.$refs.getReceipt.form.phone = this.receiptList[
+          index
+        ].receiptInfo.phone;
+        this.$refs.getReceipt.form.mail = this.receiptList[
+          index
+        ].receiptInfo.email;
+        this.$refs.getReceipt.form.invoiceId = this.receiptList[
+          index
+        ].receiptInfo.invoiceId;
+        this.$refs.getReceipt.form.phonePrefix = this.receiptList[
+          index
+        ].receiptInfo.phonePrefix;
       }
     },
     choseAddress(index) {
-      
       for (let i = 0; i < this.logisticsInfoList.length; i++) {
         this.logisticsInfoList[i].active = false;
       }
       this.addressActive = index;
       this.addressInfo = this.logisticsInfoList[index];
-      this.getPayMode(this.addressInfo.id)
+      this.getPayMode(this.addressInfo.id);
       this.logisticsInfoList[index].active = true;
       let activeItem = JSON.stringify(this.logisticsInfoList[index]);
       this.logisticsInfoList.splice(index, 1);
       this.logisticsInfoList.unshift(JSON.parse(activeItem));
-      this.calculateFare();
+      this.getProductList();
     },
-    getProductList() {
+    //商品清单
+    getProductList(type) {
       let params = {};
       if (this.$route.query.shoppingCartIds !== undefined) {
-        params.shoppingCartIds = this.$route.query.shoppingCartIds;
+        params.shoppingCartCodes = this.$route.query.shoppingCartIds;
       }
       if (this.$route.query.skuId !== undefined) {
         params.skuId = this.$route.query.skuId;
+        params.templateId = this.$route.query.templateId;
+        params.quantity = this.$route.query.quantity;
       }
+      params.receiverAddressId = this.addressInfo.id;
       skuItem(params).then((res) => {
         if (res.status === 200) {
-          if (res.data.shoppingCartList.length > 0) {
-            this.productlist = res.data.shoppingCartList;
+          if (res.data.orderSplitResponseVOList.length > 0) {
+            this.productlist = res.data.orderSplitResponseVOList;
             this.currency = res.data.currencySymbol;
             this.totalNum = res.data.totalNum;
             this.totalPrice = res.data.totalPrice;
-            this.calculateFare();
+            this.realPayment = res.data.totalPrice;
+            if (type == "pop") {
+              this.messageVisible = false;
+            }
+            for (let i = 0; i < this.productlist.length; i++) {
+              this.remarkAttrs.push({ value: "" });
+              this.receiptList.push({
+                receiptInfo: {
+                  email: "",
+                  invoiceContent: "",
+                  invoiceTitle: "",
+                  invoiceType: "1",
+                  phone: "",
+                  taxpayerId: "",
+                  phonePrefix: "",
+                },
+              });
+            }
+
+            //获取收货地址list
+            // if (!this.hasFormJson) {
+            //   this.getList();
+            // }
+            // this.calculateFare();
+            // this.getPayMode();
           } else {
             this.$router.push("/order/list");
           }
         }
       });
     },
-    calculateFare(type) {
-      //计算运费
-      let params = {};
-      let productSkuSelected = [];
-      for (let i = 0; i < this.productlist.length; i++) {
-        productSkuSelected.push({
-          buyAmount: this.productlist[i].quantity,
-          skuId: this.productlist[i].skuId,
-        });
-      }
-      params.productSkuSelected = productSkuSelected;
-      params.receiveCode = this.addressInfo.id;
-      calculateFare(params).then((res) => {
-        if (res.status === 200) {
-          this.freight = res.data.freight;
-          this.realPayment = res.data.realPayment;
-          if (type == "pop") {
-            this.messageVisible = false;
-          }
-        } else {
-          this.$message.error(res.msg);
-        }
-      });
-    },
+    //合并到skuItem商品清单接口，暂时注释掉
+    // calculateFare(type) {
+    //   //计算运费
+    //   let params = {};
+    //   let productSkuSelected = [];
+    //   for (let i = 0; i < this.productlist.length; i++) {
+    //     productSkuSelected.push({
+    //       buyAmount: this.productlist[i].quantity,
+    //       skuId: this.productlist[i].skuId,
+    //       appId: this.productlist[i].appId,
+    //       templateId: this.productlist[i].templateId,
+    //     });
+    //   }
+    //   params.productSkuSelected = productSkuSelected;
+    //   params.receiveCode = this.addressInfo.id;
+    //   calculateFare(params).then((res) => {
+    //     if (res.status === 200) {
+    //       this.freight = res.data.freight;
+    //       this.realPayment = res.data.realPayment;
+    //       if (type == "pop") {
+    //         this.messageVisible = false;
+    //       }
+    //     } else {
+    //       this.$message.error(res.msg);
+    //     }
+    //   });
+    // },
     submit(type) {
       try {
         this.orderLoading = true;
@@ -587,26 +681,29 @@ export default {
         let params = {};
         params.currencySymbol = this.currency;
         params.distributionId = this.distributionVal;
-        params.electronicInvoiceId = this.receiptInfo.invoiceId;
+        // params.electronicInvoiceId = this.receiptInfo.invoiceId;
         params.payModeId = this.payVal;
         params.receiverAddressId = this.addressInfo.id;
-        params.remark = this.remark;
-        params.freight = this.freight;
-        if(type=='continue'){
+        // params.remark = this.remark;
+        // params.freight = this.freight;
+        if (type == "continue") {
           params.continueSettleFlag = true;
         }
         let shoppingCartList = [];
+        let totalFreight = null;
+        let volist = this.productlist;
         for (let i = 0; i < this.productlist.length; i++) {
-          shoppingCartList.push({
-            productId: this.productlist[i].productId,
-            quantity: this.productlist[i].quantity,
-            shoppingCartCode: this.productlist[i].shoppingCartCode,
-            skuId: this.productlist[i].skuId,
-            skuPrice: this.productlist[i].skuPrice,
-          });
+          shoppingCartList.push(...this.productlist[i].shoppingCartList);
+          totalFreight = +this.productlist[i].freightPrice;
+          volist[i].remark = this.remarkAttrs[i].value;
+          volist[i].electronicInvoice = this.receiptList[
+            i
+          ].receiptInfo;
         }
         params.shoppingCartList = shoppingCartList;
+        params.orderSplitResponseVOList = volist;
 
+        params.freight = totalFreight;
         addOrder(params).then((res) => {
           if (res.status === 200) {
             if (
@@ -614,7 +711,7 @@ export default {
               res.data.code === "10001" ||
               res.data.code === "10002" ||
               res.data.code === "10003" ||
-              res.data.code === "10004"||
+              res.data.code === "10004" ||
               res.data.code === "10006"
             ) {
               this.msgCode = res.data.code;
@@ -645,6 +742,7 @@ export default {
           this.orderDisabled = false;
         });
       } catch (error) {
+        console.log(error);
         this.$message.error("对不起，系统异常，请稍后再试");
       }
     },

@@ -164,31 +164,38 @@ export default {
         // this.$refs.form.validateField("companyNumber");
         checked = false;
       }
+
       if (checked) {
-        let params = {};
-        if (this.form.invoiceId != "") {
-          params.invoiceId = this.form.invoiceId; //发票id
-        }
-        params.email = this.form.mail; //邮箱
-        params.invoiceContent = this.form.catalog; //发票内容
-        params.invoiceTitle =
-          this.form.type === 1 ? this.form.name : this.form.companyName; //发票抬头
-        params.invoiceType = this.form.type; //发票类型
-        params.phone = this.form.phone; //手机
-        params.phonePrefix = this.form.phonePrefix;
-        if (this.form.type === 2) {
-          params.taxpayerId = this.form.companyNumber; //纳税人识别号
-        }
-        addUpdateInvoice(params).then((res) => {
-          if (res.status === 200) {
-            this.loading = false;
-            this.dialogVisible = false;
-            this.form.invoiceId = res.data;
-            this.$emit("formData", this.form);
-          } else {
-            this.$message.error(res.msg);
+        if (this.saveLibray) {
+          let params = {};
+          if (this.form.invoiceId != "") {
+            params.invoiceId = this.form.invoiceId; //发票id
           }
-        });
+          params.email = this.form.mail; //邮箱
+          params.invoiceContent = this.form.catalog; //发票内容
+          params.invoiceTitle =
+            this.form.type === 1 ? this.form.name : this.form.companyName; //发票抬头
+          params.invoiceType = this.form.type; //发票类型
+          params.phone = this.form.phone; //手机
+          params.phonePrefix = this.form.phonePrefix;
+          if (this.form.type === 2) {
+            params.taxpayerId = this.form.companyNumber; //纳税人识别号
+          }
+          addUpdateInvoice(params).then((res) => {
+            if (res.status === 200) {
+              this.loading = false;
+              this.dialogVisible = false;
+              this.form.invoiceId = res.data;
+              this.$emit("formData", this.form);
+            } else {
+              this.$message.error(res.msg);
+            }
+          });
+        }else{
+          this.loading = false;
+          this.dialogVisible = false;
+          this.$emit("formData", this.form);
+        }
       } else {
         this.loading = false;
       }
