@@ -63,6 +63,7 @@ export default {
 		    let res = await this.$store.dispatch(`user/getList`)
 		
 			if(res.code == 200 && res.data.length>0){
+				this.dataList.length = 0;
 				 res.data.forEach((item) =>{
 					 let path = item.linkAddress.replace(/\/?sys/g,'')
 					 this.dataList.push({title:item.name,path:path,motherHeadId:item.motherHeadId,motherFootId:item.motherFootId})
