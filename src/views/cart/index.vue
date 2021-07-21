@@ -16,7 +16,9 @@
 							class-name="checkboxTd"
 							align="center"
 							:selectable='selectInit'
-						></el-table-column>
+							
+						>
+						</el-table-column>
 						<el-table-column label="商品信息">
 							<template slot-scope="scope">
 								<div class="product">
@@ -254,7 +256,7 @@
 				<div class="icon">
 					<svg-icon name="icon-qicheqianlian-"></svg-icon>
 				</div>
-				<p>购物车内暂时没有商品，登录后将显示您之间加入的商品</p>
+				<p>购物车内暂时没有商品，登录后显示已加入的商品</p>
 				<el-button type="primary" size="small">登录</el-button>
 				<el-button type="primary" size="small" plain>去逛逛</el-button>
 			</div>
@@ -490,10 +492,34 @@ export default {
 			this.isIndeterminate =
 				val.length > 0 && val.length < cartListLength;
 			this.checkAll = val.length === cartListLength;
-			
+			this.updateStatu(val)
 			this.totalPrice()
 			
 		},
+		//状态的请求
+		async updateStatu(obj){
+			let arr = obj;
+			let arrJson =[]
+			for(let i = 0;i<arr.length;i++){
+
+					let  shoppingCartCode =this.delstr(arr[i].shoppingCartCode)
+					let  skuId = this.delstr(arr[i].skuId)
+						let json ={
+						buyAmount: arr[i].quantity,
+						selected: arr[i].selected,
+						shoppingCartId:shoppingCartCode,
+						skuId: skuId
+						
+						}
+						//arrJson.push(json)
+						
+					let res = await cartUpdate(json);
+				
+			}
+		
+				
+		}
+		,
 		//全选
 		selectAllFun(val) {
 			if (val) {
@@ -525,7 +551,7 @@ export default {
 	 async	changeQuantity(currentValue,oldValue,item){
 		 let obj = item.row;
 		 let timer =null;
-		 if(obj.quantity<obj.moq && currentValue      < oldValue){
+		 if(obj.quantity<obj.moq && currentValue < oldValue){
 			 
 			timer = setTimeout(() =>{
 				this.$message({ 

@@ -10,6 +10,7 @@
 </template>
 <script>
 import sidebar from "./sidebar";
+import {getList} from '@/api/menu'
 export default {
 	data() {
 		return {
@@ -42,6 +43,10 @@ export default {
 					title: "自行增加数据",
 					path: "/jsonHtml",
 				},
+				{
+					title: "百度",
+					path: "http://baidu.com",
+				},
 			],
 
 		};
@@ -60,14 +65,20 @@ export default {
 	},
 	methods: {
 		async menuList(){
-		    let res = await this.$store.dispatch(`user/getList`)
+		    let res = await getList()
 		
 			if(res.code == 200 && res.data.length>0){
 				this.dataList.length = 0;
 				 res.data.forEach((item) =>{
-					 let path = item.linkAddress.replace(/\/?sys/g,'')
-					 this.dataList.push({title:item.name,path:path,motherHeadId:item.motherHeadId,motherFootId:item.motherFootId})
+					 
+					 if(item.isMenu){
+						 let path = item.linkAddress.replace(/\/?sys/g,'')
+						 this.dataList.push({title:item.name,path:path,motherHeadId:item.motherHeadId,motherFootId:item.motherFootId})
+					 }
+					 
 				 })
+
+				 this.dataList.push({title:'自行增加数据',path:'/jsonHtml',motherHeadId:null,motherFootId:null})
 			}
 		}
 		

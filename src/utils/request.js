@@ -6,16 +6,16 @@ import { getToken } from '@/utils/auth'
 // create an axios instance
 const service = axios.create({
   // baseURL: 'http://10.12.68.205:8096/', // url = base url + request url
-  baseURL: 'process.env.VUE_APP_BASE_API', // url = base url + request url
+  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
 service.defaults.headers.post['Content-Type'] = 'application/json'
-// service.defaults.headers.post['tenantId'] = 1600018169
-// service.defaults.headers.get['tenantId'] = 1600018169
-// service.defaults.headers.post['instance'] = 'qinhui20210610'
-// service.defaults.headers.get['instance'] = 'qinhui20210610'
-// service.defaults.headers.post['appId'] = 143150160001
+service.defaults.headers.post['tenantId'] = 1600018169
+service.defaults.headers.get['tenantId'] = 1600018169
+service.defaults.headers.post['instance'] = 'qinhui20210610'
+service.defaults.headers.get['instance'] = 'qinhui20210610'
+service.defaults.headers.post['appId'] = 143150160001
 // request interceptor
 service.interceptors.request.use(
   config => {
