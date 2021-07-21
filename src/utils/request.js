@@ -13,16 +13,20 @@ const service = axios.create({
 service.defaults.headers.post['Content-Type'] = 'application/json'
 service.defaults.headers.post['tenantId'] = 1600018169
 service.defaults.headers.get['tenantId'] = 1600018169
-service.defaults.headers.post['instance'] = "qinhui20210610"
-service.defaults.headers.get['instance'] = "qinhui20210610"
+service.defaults.headers.post['instance'] = 'qinhui20210610'
+service.defaults.headers.get['instance'] = 'qinhui20210610'
 service.defaults.headers.post['appId'] = 143150160001
 // request interceptor
 service.interceptors.request.use(
   config => {
     // do something before request is sent
     // 如果 是 收藏请求 更换baseURL
-    if(config.url.indexOf('collection')  !== -1){
-      config.baseURL = "http://10.12.68.205:8096"
+    if (config.url.indexOf('collection') !== -1) {
+      config.baseURL = 'http://10.12.68.205:8096'
+    }
+    // 请求会员信息 更换baseURL
+    if (config.url.indexOf('member/') !== -1) {
+      config.baseURL = 'http://10.12.68.205:8096/'
     }
     if (store.getters.token) {
       // let each request carry token
@@ -30,7 +34,6 @@ service.interceptors.request.use(
       // please modify it according to the actual situation
       config.headers['X-Token'] = getToken()
     }
-   
     return config
   },
   error => {
@@ -78,7 +81,7 @@ service.interceptors.response.use(
     //   }
     //   return Promise.reject(new Error(res.message || 'Error'))
     // } else {
-      return res
+    return res
     // }
   },
   error => {

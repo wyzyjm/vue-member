@@ -18,6 +18,7 @@
       <corderinfo
         :orderInfo="orderInfo"
         :orderDetail="orderDetail"
+        :orderItemList="orderItemList"
         v-if="orderInfo.failureTime != undefined"
       ></corderinfo>
       <el-card class="box-card" style="margin-left: 40px; margin-top: 20px">
@@ -201,8 +202,7 @@
                   <el-button
                     @click="
                       $router.push({
-                        path: '/order/detail',
-                        query: { id: orderInfo.orderId },
+                        path: '/order/list'
                       })
                     "
                     >Pay Later</el-button
@@ -374,6 +374,7 @@ export default {
       aliPayForm: "",
       failTime: false,
       loading: false,
+      orderItemList:[]
     };
   },
   components: {
@@ -502,7 +503,7 @@ export default {
             // endTime
             this.orderDetail = res.data.orderDetail;
             this.payList = res.data.payList;
-
+            this.orderItemList = res.data.orderItemList;
             //receive信息
             //线上支付不需要请求该接口
             if (this.$route.query.payMode == 1) {

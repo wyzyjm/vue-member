@@ -35,9 +35,10 @@
                     <p class="col-9">
                       <span
                         v-for="skuSpec in item.skuSpec"
-                        :id="skuSpec.specId"
                         :key="skuSpec.specId"
-                      >{{ skuSpec.specName }}：{{ skuSpec.specValue }}；</span>
+                      >
+                        <i v-if="skuSpec.specValue">{{ skuSpec.specName }}：{{ skuSpec.specValue }}；</i>
+                      </span>
                     </p>
                   </div>
                 </div>
@@ -245,7 +246,7 @@ export default {
   padding: 0;
   margin: 0;
 }
-ul,li{
+ul,li,i{
   list-style: none;
 }
 

@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2571909 */
-  src: url('iconfont.woff2?t=1622012000678') format('woff2'),
-       url('iconfont.woff?t=1622012000678') format('woff'),
-       url('iconfont.ttf?t=1622012000678') format('truetype');
+  src: url('iconfont.woff2?t=1626770619678') format('woff2'),
+       url('iconfont.woff?t=1626770619678') format('woff'),
+       url('iconfont.ttf?t=1626770619678') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,30 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-yishoukuan:before {
+  content: "\e650";
+}
+
+.icon-zhifushibai:before {
+  content: "\e69f";
+}
+
+.icon-wechat_pay:before {
+  content: "\e603";
+}
+
+.icon-umidd17:before {
+  content: "\e604";
+}
+
+.icon-paypal:before {
+  content: "\e697";
+}
+
+.icon-shang:before {
+  content: "\e636";
 }
 
 .icon-jia:before {

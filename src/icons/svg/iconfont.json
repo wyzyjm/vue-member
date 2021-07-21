@@ -6,6 +6,48 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1263389",
+      "name": "已收款",
+      "font_class": "yishoukuan",
+      "unicode": "e650",
+      "unicode_decimal": 58960
+    },
+    {
+      "icon_id": "7487330",
+      "name": "支付失败",
+      "font_class": "zhifushibai",
+      "unicode": "e69f",
+      "unicode_decimal": 59039
+    },
+    {
+      "icon_id": "16996260",
+      "name": "微信支付",
+      "font_class": "wechat_pay",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "5234182",
+      "name": "支付宝",
+      "font_class": "umidd17",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "12320856",
+      "name": "paypal",
+      "font_class": "paypal",
+      "unicode": "e697",
+      "unicode_decimal": 59031
+    },
+    {
+      "icon_id": "7732801",
+      "name": "上",
+      "font_class": "shang",
+      "unicode": "e636",
+      "unicode_decimal": 58934
+    },
+    {
       "icon_id": "947061",
       "name": "加",
       "font_class": "jia",

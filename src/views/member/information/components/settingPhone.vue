@@ -110,7 +110,7 @@ import countryData from '@/views/components/resource/locList_zh_CN' // 国家
 import { countries } from '@/views/components/resource/phoneCodeCountries' // 手机区号
 import ceSteps from '@/components/CeSteps'
 import svgIcon from '@/components/SvgIcon'
-import { generateCode, validateVerifyCode, bingling, unbundling } from '@/api/user'
+import { generateCode, validateVerifyCode, bingling, unbundling } from '@/api/member'
 
 export default {
   components: {

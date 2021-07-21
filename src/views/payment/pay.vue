@@ -11,6 +11,7 @@
       <corderinfo
         :orderInfo="orderInfo"
         :orderDetail="orderDetail"
+        :orderItemList="orderItemList"
          v-if="orderInfo.failureTime!=undefined"
       ></corderinfo>
       <el-card style="margin-top: 20px">
@@ -95,6 +96,7 @@ export default {
       orderTimeCount: 0,
       orderInfo: {},
       orderDetail: {},
+      orderItemList:[],
       payList: {},
       payCode: "",
       PayCodeName:""
@@ -119,6 +121,7 @@ export default {
           if (res.status === 200) {
             this.orderInfo = res.data;
             this.orderDetail = res.data.orderDetail;
+            this.orderItemList = res.data.orderItemList;
             this.payList = res.data.payList;
           } else {
             this.$message.error(res.msg);

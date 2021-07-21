@@ -2,7 +2,7 @@
   <div v-if="data" v-loading="loading" class="app-container">
     <!-- 订单详情 -->
     <!-- 进度条 -->
-    <CeSteps :active="data.orderStatus/10" :datalist="datalist" class="border-bottom" />
+    <CeSteps :active="data.orderStatus > 40 ? data.orderStatusDetailList.length : data.orderStatusDetailList.length" :datalist="datalist" class="border-bottom" />
 
     <!-- 订单编号、按钮 -->
     <div class="order-type">
@@ -103,7 +103,7 @@
             <p id="sellerMsg">{{ data.sellerMsg }}</p>
           </div>
           <div class="message-pay">
-            <p>共 <span class="col-danger font-20">{{ data.quantity }}</span> 件商品</p>
+            <p>共 <span class="col-danger font-20">{{ inTotal }}</span> 件商品</p>
             <p>商品总额：  {{ data.currencySymbol }} {{ data.totalAmount }}</p>
             <p>运费总计：  {{ data.currencySymbol }} {{ data.freight ? data.freight : 0 }}</p>
             <p class="col-danger font-20">实付金额： <span class="font-bold">{{ data.currencySymbol }} {{ data.sumPayable }}</span></p>
@@ -180,6 +180,7 @@ export default {
       seconds: '',
       dataTime: '',
       datalist: [],
+      inTotal: 0,
       // 订单状态
       statePayment: {
         10: {
@@ -201,13 +202,24 @@ export default {
           type: '已关闭'
         }
       },
-      // activities: [],
-      paymentData: [
-        {
-          key: '交易号',
-          value: '2344657687990809090'
+      stepsList: {
+        0: {
+          description: null,
+          title: '待发货'
+        },
+        1: {
+          description: null,
+          title: '待收货'
+        },
+        2: {
+          description: null,
+          title: '已完成'
+        },
+        3: {
+          description: null,
+          title: '待确认付款'
         }
-      ]
+      }
     }
   },
   created() {
@@ -229,7 +241,15 @@ export default {
         if (this.data.orderStatus === 10) {
           this.timeDown(this.data.failureTime)
         }
+        if (this.data.orderStatus === 10) {
+          this.datalist.push(this.stepsList[0], this.stepsList[1])
+        } else if (this.data.orderStatus === 20) {
+          this.datalist.push(this.stepsList[3], this.stepsList[0], this.stepsList[1])
+        } else if (this.data.orderStatus === 30 || this.data.orderStatus === 40) {
+          this.datalist.push(this.stepsList[1])
+        }
         this.current = { orderId: this.data.orderId, ...this.data.consigneeInfo }
+        this.sumTotal(this.data.goodsList)
         this.loading = false
       })
     },
@@ -366,6 +386,12 @@ export default {
           this.dataTime = `${this.seconds}秒`
         }
       }, 1000)
+    },
+    // 计算订单总数量
+    sumTotal(data) {
+      data.forEach(item => {
+        this.inTotal = this.inTotal + item.quantity
+      })
     }
   }
 }

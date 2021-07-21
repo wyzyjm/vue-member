@@ -50,11 +50,11 @@ export function getSettleById(params) {
   })
 }
 //通过发票id查询发票
-export function skuItem(params) {
+export function skuItem(data) {
   return request({
-    url: '/fwebapi/order/shoppingCart/skuItem',
-    method: 'get',
-    params
+    url: '/fwebapi/order/shoppingCart/skuItemNew',
+    method: 'post',
+    data
   })
 }
 

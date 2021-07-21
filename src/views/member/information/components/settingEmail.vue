@@ -57,7 +57,7 @@
 <script>
 import ceSteps from '@/components/CeSteps'
 import svgIcon from '@/components/SvgIcon'
-import { generateCode, validateVerifyCode, bingling, unbundling } from '@/api/user'
+import { generateCode, validateVerifyCode, bingling, unbundling } from '@/api/member'
 
 export default {
   components: {
