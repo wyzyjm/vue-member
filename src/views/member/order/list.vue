@@ -122,9 +122,13 @@ export default {
     initList() {
       const listQuery = {
         currentPage: this.currentPage,
-        pageSize: 20,
-        keyWord: this.searchVal.trim(),
-        orderStatus: this.orderType
+        pageSize: 20
+      }
+      if (this.searchVal.trim() !== '') {
+        listQuery.keyWord = this.searchVal.trim()
+      }
+      if (this.orderType !== '') {
+        listQuery.orderStatus = this.orderType
       }
       orderList(listQuery).then(res => {
         this.list = res.data.data.list
