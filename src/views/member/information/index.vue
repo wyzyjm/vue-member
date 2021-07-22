@@ -142,7 +142,7 @@ export default {
   methods: {
     async getMemberDetail() {
       const data = {
-        bizId: '854299120902660096' // '854299120902660096',
+        bizId: '852198699132313600' // '854299120902660096',
       }
       const detailData = await memberDetail(data)
       this.data = detailData.data
