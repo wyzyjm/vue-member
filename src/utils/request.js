@@ -3,11 +3,24 @@ import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
+let baseurl = ''
+if (process.env.NODE_ENV == 'development') {
+  baseurl = 'http://qinhui20210610.p.make.test-dcloud.portal1.portal.yun300.cn/nportal/';
+}
+else if (process.env.NODE_ENV == 'production') {
+  baseurl = '/nportal/';
+}
+
+
 // create an axios instance
 const service = axios.create({
+<<<<<<< HEAD
+  baseURL: baseurl, // url = base url + request url
+=======
   // baseURL: 'http://10.12.68.205:8096/', // url = base url + request url
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
+>>>>>>> 685bd69c62dbafe1f0f3ddb4cfee1d864f735a66
   timeout: 5000 // request timeout
 })
 service.defaults.headers.post['Content-Type'] = 'application/json'
@@ -21,13 +34,13 @@ service.interceptors.request.use(
   config => {
     // do something before request is sent
     // 如果 是 收藏请求 更换baseURL
-    if (config.url.indexOf('collection') !== -1) {
-      config.baseURL = 'http://10.12.68.205:8096'
-    }
-    // 请求会员信息 更换baseURL
-    if (config.url.indexOf('member/') !== -1) {
-      config.baseURL = 'http://10.12.68.205:8096/'
-    }
+    // if (config.url.indexOf('collection') !== -1) {
+    //   config.baseURL = 'http://10.12.68.205:8096'
+    // }
+    // // 请求会员信息 更换baseURL
+    // if (config.url.indexOf('member/') !== -1) {
+    //   config.baseURL = 'http://10.12.68.205:8096/'
+    // }
     if (store.getters.token) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
