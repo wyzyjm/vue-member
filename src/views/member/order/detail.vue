@@ -1,5 +1,8 @@
 <template>
   <div v-if="data" v-loading="loading" class="app-container">
+    
+    <PageTitle :pagetitle="title">
+    </PageTitle>
     <!-- 订单详情 -->
     <!-- 进度条 -->
     <CeSteps :active="active" :datalist="datalist" class="border-bottom" />
@@ -151,6 +154,7 @@
 <script>
 import ClipboardJS from 'clipboard'
 import { orderDetail, cancelOrder, confirmOrder } from '@/api/order'
+import PageTitle from '@/views/components/pageTitle'
 import CeSteps from '@/components/CeSteps'
 import SvgIcon from '@/components/SvgIcon'
 import AddressForm from '@/views/components/addressForm' // 收货人地址弹窗
@@ -163,12 +167,14 @@ export default {
     SvgIcon,
     AddressForm,
     Receipt,
-    ProductList
+    ProductList,
+    PageTitle
   },
   data() {
     return {
       active: 0,
       data: null,
+      title: '订单详情',
       loading: true,
       current: {}, // 弹窗传值
       currencySymbol: null,
