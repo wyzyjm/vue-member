@@ -56,7 +56,7 @@
                 <a :href="item.href">
                   <!-- 图片 开始 -->
                   <custom-img
-                    :src="'https://pre-omo-oss-image.site.cn/' + item.imgUrl"
+                    :src="item.imgUrl"
                     :title="item.title"
                     :alt="item.title"
                     class="img"
