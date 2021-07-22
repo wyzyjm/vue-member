@@ -64,7 +64,7 @@ export default {
     linkTo() {
       this.$router.push({
         path: "/order/list",
-        query: { id: this.$route.query.orderId },
+        query: { orderId: this.$route.query.orderId },
       });
     },
     rePay() {

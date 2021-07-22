@@ -556,7 +556,7 @@ export default {
       this.receiptIndex = index;
       this.$refs.getReceipt.dialogVisible = true;
       if (status == "edit") {
-        if (this.receiptInfo.invoiceType === 1) {
+        if (this.receiptList[index].receiptInfo.invoiceType === 1) {
           this.$refs.getReceipt.form.type = 1;
           this.$refs.getReceipt.form.name = this.receiptList[
             index
@@ -723,7 +723,7 @@ export default {
             }
             if (res.data.code === "200") {
               this.orderId = res.data.data;
-              if (this.payVal == 2) {
+              if (this.payVal == 2||this.totalPrice==0) {
                 this.$router.push({
                   path: "/payment/result",
                   query: { orderId: this.orderId },
