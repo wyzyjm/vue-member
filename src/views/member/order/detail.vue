@@ -2,7 +2,7 @@
   <div v-if="data" v-loading="loading" class="app-container">
     <!-- 订单详情 -->
     <!-- 进度条 -->
-    <CeSteps :active="data.orderStatus > 40 ? data.orderStatusDetailList.length : data.orderStatusDetailList.length" :datalist="datalist" class="border-bottom" />
+    <CeSteps :active="active" :datalist="datalist" class="border-bottom" />
 
     <!-- 订单编号、按钮 -->
     <div class="order-type">
@@ -13,7 +13,7 @@
         v-if="data.orderStatus == 10"
         class="col-danger"
       ><SvgIcon name="icon-shijian" />剩余{{ dataTime }}</div>
-      <div>订单状态：<span class="font-20" :class="{'col-danger': data.orderStatus < 40, 'col-success': data.orderStatus === 40}">{{ statePayment[data.orderStatus].type }}</span></div>
+      <div>订单状态：<span class="font-20" :class="{'col-danger': data.orderStatus < 50, 'col-success': data.orderStatus === 50}">{{ statePayment[data.orderStatus].type }}</span></div>
       <div>
         <el-button v-if="data.orderStatus == 10 || data.orderStatus == 20 " type="text" @click.prevent="cancelOrder">取消订单</el-button>
         <el-button type="primary" plain @click="dialogTableVisible = true">查看发票信息</el-button>
@@ -119,13 +119,14 @@
     />
 
     <!-- 查看发票信息 -->
-    <el-dialog v-if="data.electronicInvoice" center title="发票信息" :visible.sync="dialogTableVisible">
+    <el-dialog v-if="data.electronicInvoice" center title="发票信息" width="500px" :visible.sync="dialogTableVisible">
       <div class="invoice">
         <p class="invoice-item"><span>发票抬头</span><span>{{ data.electronicInvoice.invoiceTitle }}</span></p>
         <p v-if="data.electronicInvoice.invoiceType === 2" class="invoice-item"><span>纳税人识别号</span><span>{{ data.electronicInvoice.taxNum }}</span></p>
         <p class="invoice-item"><span>发票内容</span><span>{{ data.electronicInvoice.invoiceContent }}</span></p>
         <p class="invoice-item"><span>收票人手机</span><span>{{ data.electronicInvoice.takerPhone }}</span></p>
         <p class="invoice-item"><span>收票人邮箱</span><span>{{ data.electronicInvoice.takerEmail }}</span></p>
+        <p v-if="data.orderStatus > 40" class="invoice-item"><span>电子发票</span><a class="el-button--text" target="_blank" :href="data.electronicInvoice.invoiceDownLinks[0]" :download="data.electronicInvoice.invoiceTitle">点击下载</a></p>
       </div>
       <div slot="footer">
         <!-- 取消 -->
@@ -237,16 +238,22 @@ export default {
             description: this.formatDate(item.time)
           })
         })
+        this.active = this.datalist.length - 1
+        console.log(this.datalist)
         // 待付款状态下开启倒计时
         if (this.data.orderStatus === 10) {
           this.timeDown(this.data.failureTime)
         }
-        if (this.data.orderStatus === 10) {
-          this.datalist.push(this.stepsList[0], this.stepsList[1])
-        } else if (this.data.orderStatus === 20) {
-          this.datalist.push(this.stepsList[3], this.stepsList[0], this.stepsList[1])
-        } else if (this.data.orderStatus === 30 || this.data.orderStatus === 40) {
+        // 支付流程控制进度条 ORDER_SUBMIT(订单提交),PAYMENT_PROCESS(支付流程),DELIVERY_PROCESS(发货流程),TRADE_SUCCESS(交易成功)
+        if (this.data.orderProcessNodes && this.data.orderProcessNodes.indexOf('DELIVERY_PROCESS') !== -1) {
           this.datalist.push(this.stepsList[1])
+        } else if (this.data.orderProcessNodes && this.data.orderProcessNodes.indexOf('PAYMENT_PROCESS') !== -1) {
+          this.datalist.push(this.stepsList[1])
+        } else if (this.data.orderProcessNodes && this.data.orderProcessNodes.indexOf('TRADE_SUCCESS') !== -1) {
+          this.datalist.push(this.stepsList[2])
+        } else if (this.data.orderStatus === 40) {
+          this.datalist.push(this.stepsList[1])
+          this.active = this.datalist.length
         }
         this.current = { orderId: this.data.orderId, ...this.data.consigneeInfo }
         this.sumTotal(this.data.goodsList)
@@ -283,13 +290,13 @@ export default {
       this.current = {}
       console.log('编辑完收货地址后信息处理', data)
     },
-    // 确认订单
+    // 确认收货
     confirmOrder() {
       this.$confirm('确认收到所有商品？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(() => {
-        confirmOrder({ orderId: this.data.orderId, memberId: this.data.memberId }).then(res => {
+        confirmOrder({ orderId: this.data.orderId}).then(res => {
           if (res.data.code !== '0') return
           location.reload()
         })
@@ -306,7 +313,7 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(() => {
-        cancelOrder({ orderId: this.data.orderId, memberId: this.data.memberId }).then(res => {
+        cancelOrder({ orderId: this.data.orderId }).then(res => {
           if (res.data.code !== '0') return
           location.reload()
         })

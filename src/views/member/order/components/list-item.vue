@@ -107,10 +107,6 @@ export default {
       type: Array,
       default: () => []
     },
-    memberid: {
-      type: String,
-      default: ''
-    },
     tabsindex: {
       type: Number,
       default: 0
@@ -119,7 +115,6 @@ export default {
   data() {
     return {
       showAlt: false,
-      memberId: this.memberid ? this.memberid : '',
       time: '',
       day: '', // 天
       hour: '', // 小时
@@ -164,7 +159,7 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(() => {
-        confirmOrder({ orderId: id, memberId: this.memberId }).then(res => {
+        confirmOrder({ orderId: id }).then(res => {
           if (res.data.data.code !== '0') return
           location.reload()
         })
@@ -180,7 +175,7 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(() => {
-        cancelOrder({ orderId: id, memberId: this.memberId }).then(res => {
+        cancelOrder({ orderId: id }).then(res => {
           if (res.data.data.code !== '0') return
           location.reload()
         })
