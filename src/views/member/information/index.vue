@@ -8,7 +8,7 @@
         <!-- 头像 -->
         <div class="block user">
           <el-image
-            :src="data.user.avatar"
+            :src="'https://pre-omo-oss-image.site.cn/' + data.user.avatar"
             class="uimges"
             @click="vicpWarpShow = true"
           />
@@ -142,7 +142,7 @@ export default {
   methods: {
     async getMemberDetail() {
       const data = {
-        bizId: '859078866458959872' // '854299120902660096',
+        bizId: '852198699132313600' // '854299120902660096',
       }
       const detailData = await memberDetail(data)
       this.data = detailData.data

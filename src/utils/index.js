@@ -116,7 +116,7 @@ export function param2Obj(url) {
   return obj
 }
 export function telValidate(inputVal) {
-  var telReg = /^[1][3,4,5,6,7,8,9][0-9]{9}$/;
+  var telReg = /^\d{6,12}$/;
   if (!telReg.test(inputVal)) {
     return false;
   } else {
