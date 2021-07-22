@@ -65,7 +65,6 @@ export default {
   },
   data() {
     return {
-      memberId: '852198699132313600',
       title: '我的订单',
       loading: true,
       searchVal: '',
@@ -124,7 +123,6 @@ export default {
       const listQuery = {
         currentPage: this.currentPage,
         pageSize: 20,
-        memberId: this.memberId,
         keyWord: this.searchVal.trim(),
         orderStatus: this.orderType
       }
@@ -136,7 +134,7 @@ export default {
       })
     },
     initorderStatus() {
-      orderStatus({ memberId: this.memberId }).then(res => {
+      orderStatus().then(res => {
         this.orderCount = res.data.data
       })
     },

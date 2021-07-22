@@ -14,7 +14,13 @@ else if (process.env.NODE_ENV == 'production') {
 
 // create an axios instance
 const service = axios.create({
+<<<<<<< HEAD
   baseURL: baseurl, // url = base url + request url
+=======
+  // baseURL: 'http://10.12.68.205:8096/', // url = base url + request url
+  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  // withCredentials: true, // send cookies when cross-domain requests
+>>>>>>> 685bd69c62dbafe1f0f3ddb4cfee1d864f735a66
   timeout: 5000 // request timeout
 })
 service.defaults.headers.post['Content-Type'] = 'application/json'

@@ -1,6 +1,6 @@
 <template>
 	<span>
-		<el-image class="customImg" :src="src" fit="cover" lazy>
+		<el-image class="customImg" :src="'https://pre-omo-oss-image.site.cn/' + src" fit="cover" lazy>
 			<div slot="error" class="image-slot" style="height: 100%">
 				<img class="errorImg" :src="errorImg" />
 			</div>

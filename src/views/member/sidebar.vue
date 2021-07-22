@@ -18,6 +18,7 @@ export default {
 	data() {
 		return {
 			dataList: [],
+			flag:0
 		};
 	},
 	props: ["sidebar"],
@@ -34,8 +35,34 @@ export default {
 	},
 	methods: {
 		routerPush(path) {
-			this.$router.push({ path: path });
+			let data = this.$router.options.routes;
+			 this.dataItem(data,path)
+			if(this.flag ){
+				this.flag = 0;
+					this.$router.push({ path: path });
+				
+				}else{
+					window.open(path,'_blank')
+				} 
+			
+
+				
 		},
+		//请求的后台菜单是否属于路由地址，不属于新窗口跳转
+		dataItem(arr,path){ 
+			arr.forEach((item) => { 
+                 if(item.path==path)
+                 {  
+					 this.flag = 1
+                 }
+                 else if(item.children)
+                 {
+                     this.dataItem(item.children, path);                        
+                 }                   
+            })
+
+			
+		}
 	},
 };
 </script>
