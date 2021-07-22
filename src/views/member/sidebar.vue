@@ -1,7 +1,7 @@
 <template>
 	<div class="sidebar">
 		<div class="title">个人中心</div>
-		<ul class="menu">
+		<ul class="menu" v-if="dataList.length>0">
 			<li
 				v-for="(item, index) in dataList"
 				:key="index"
@@ -51,7 +51,7 @@ export default {
 		//请求的后台菜单是否属于路由地址，不属于新窗口跳转
 		dataItem(arr,path){ 
 			arr.forEach((item) => { 
-                 if(item.path==path)
+                 if(item.path.includes('order') !=-1 || item.path==path)
                  {  
 					 this.flag = 1
                  }

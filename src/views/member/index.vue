@@ -1,7 +1,7 @@
 <template>
 	<div class="page-container">
 		<div class="leftMenu" v-if="!noSidebar">
-			<sidebar :sidebar="dataList"></sidebar>
+			<sidebar  :sidebar="dataList"></sidebar>
 		</div>
 		<div class="righCon" :class="{ noSidebar: noSidebar }">
 			<router-view />
