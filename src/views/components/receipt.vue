@@ -1,6 +1,6 @@
 <template>
   <div class="app-container wrapper">
-    <el-dialog title="发票信息" :visible.sync="dialogVisible" width="40%">
+    <el-dialog title="发票信息" :visible.sync="dialogVisible" width="550px">
       <el-form ref="form" :rules="rules" :model="form" label-width="120px">
         <el-form-item label="发票抬头">
           <el-radio-group v-model="form.type" @change="changeType">
