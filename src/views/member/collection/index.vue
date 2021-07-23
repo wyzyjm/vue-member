@@ -134,7 +134,7 @@
     </div>
     <!-- 主体区 结束 -->
 
-    <el-button type="primary" @click="addCollectionFn">添加收藏</el-button>
+    <!-- <el-button type="primary" @click="addCollectionFn">添加收藏</el-button> -->
   </div>
 </template>
 <script>
@@ -333,7 +333,7 @@ export default {
       const data = {
         memberBizId: '854299120902660096',
         collectionType: 'product',
-        collectionDataId: '852945602618646528'
+        collectionDataId: '852953242098786304'
       }
       try {
         const res = await addCollectionContent(data)
