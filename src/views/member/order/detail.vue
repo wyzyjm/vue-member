@@ -1,8 +1,7 @@
 <template>
   <div v-if="data" v-loading="loading" class="app-container">
-    
-    <PageTitle :pagetitle="title">
-    </PageTitle>
+
+    <PageTitle :pagetitle="title" />
     <!-- 订单详情 -->
     <!-- 进度条 -->
     <CeSteps :active="active" :datalist="datalist" class="border-bottom" />
@@ -97,8 +96,8 @@
       <p class="title">商品清单/结算信息</p>
       <div class="product-list">
         <ProductList
-          :productList="data.goodsList"
-          :currencySymbol="data.currencySymbol"
+          :product-list="data.goodsList"
+          :currency-symbol="data.currencySymbol"
         />
         <div class="message-board">
           <div>
@@ -117,8 +116,8 @@
 
     <AddressForm
       ref="addressDialog"
+      :address-form-prop="current"
       @confirm="confirmDialog"
-      :addressFormProp="current"
     />
 
     <!-- 查看发票信息 -->
@@ -146,7 +145,7 @@
 
     <Receipt
       ref="receiptDialog"
-      :saveLibray="receiptSaveLibray"
+      :save-libray="receiptSaveLibray"
       @formData="receiptConfirmDialog"
     />
   </div>
@@ -293,7 +292,7 @@ export default {
     },
     // 地址弹窗确认事件
     confirmDialog(data, addFormData, status) {
-      this.current = {}
+      this.current = data
       console.log('编辑完收货地址后信息处理', data)
     },
     // 确认收货
@@ -302,7 +301,7 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(() => {
-        confirmOrder({ orderId: this.data.orderId}).then(res => {
+        confirmOrder({ orderId: this.data.orderId }).then(res => {
           if (res.data.code !== '0') return
           location.reload()
         })
