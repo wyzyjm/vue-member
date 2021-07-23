@@ -106,10 +106,6 @@ export default {
     list: {
       type: Array,
       default: () => []
-    },
-    tabsindex: {
-      type: Number,
-      default: 0
     }
   },
   data() {

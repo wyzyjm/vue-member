@@ -1,8 +1,6 @@
 <template>
   <div v-if="data" v-loading="loading" class="app-container">
-    
-    <PageTitle :pagetitle="title">
-    </PageTitle>
+    <PageTitle :pagetitle="title" />
     <!-- 订单详情 -->
     <!-- 进度条 -->
     <CeSteps :active="active" :datalist="datalist" class="border-bottom" />
@@ -292,8 +290,9 @@ export default {
       _this.formType = status
     },
     // 地址弹窗确认事件
-    confirmDialog(data, addFormData, status) {
-      this.current = {}
+    confirmDialog(data) {
+      this.current = data
+      this.data.consigneeInfo = data
       console.log('编辑完收货地址后信息处理', data)
     },
     // 确认收货
@@ -302,7 +301,7 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(() => {
-        confirmOrder({ orderId: this.data.orderId}).then(res => {
+        confirmOrder({ orderId: this.data.orderId }).then(res => {
           if (res.data.code !== '0') return
           location.reload()
         })
