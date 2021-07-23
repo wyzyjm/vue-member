@@ -202,7 +202,7 @@
                   <el-button
                     @click="
                       $router.push({
-                        path: '/order/list'
+                        path: '/order/list',
                       })
                     "
                     >Pay Later</el-button
@@ -374,7 +374,7 @@ export default {
       aliPayForm: "",
       failTime: false,
       loading: false,
-      orderItemList:[]
+      orderItemList: [],
     };
   },
   components: {
@@ -435,10 +435,13 @@ export default {
     createPay() {
       this.failTime = false;
       let params = {};
-      params.callbackUrl =
-        window.location.origin +
-        "/payment/result?orderId=" +
-        this.orderInfo.orderId;
+      if (this.$route.query.payCode == "Paypal") {
+        params.callbackUrl =
+          window.location.origin +
+          "/sys/payment/result?orderId=" +
+          this.orderInfo.orderId;
+      }
+
       params.orderId = this.orderInfo.orderId;
       params.payCode = this.$route.query.payCode;
       createPayment(params).then((res) => {
