@@ -41,8 +41,24 @@
           <span class="text-blue" style="flex:1;text-align:right;">订单详情</span>
         </template>
         <p>
-          <span
-            >收货地址：{{
+          <template v-if="orderDetail.reverseFlag">
+<span
+            >收货地址：{{ orderDetail.consigneeAddr }}{{
+              getAddress(
+                orderDetail.consigneeCountry,
+                orderDetail.consigneeProvince,
+                orderDetail.consigneeCity,
+                orderDetail.consigneeCounty,
+                true
+              )
+            }}
+            
+          </span>
+          </template>
+          <template v-else>
+<span
+            >收货地址：
+            {{
               getAddress(
                 orderDetail.consigneeCountry,
                 orderDetail.consigneeProvince,
@@ -52,7 +68,10 @@
               )
             }}
             {{ orderDetail.consigneeAddr }}
+            
           </span>
+          </template>
+          
 
           <span>收货人：{{ orderDetail.consigneeName }}</span>
           <span>{{ orderDetail.consigneePhone }}</span>

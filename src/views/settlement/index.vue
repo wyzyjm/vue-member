@@ -39,19 +39,35 @@
                 <!-- <span>{{ item.consigneeCountry }}</span>
               <span>{{ item.consigneeProvince }}</span>
               <span>{{ item.consigneeCity }}</span> -->
+                <template v-if="item.reverseFlag">
+                  <span>{{ item.consigneeAddr }}</span>
+                  <span>
+                    {{
+                      getAddress(
+                        item.consigneeCountry,
+                        item.consigneeProvince,
+                        item.consigneeCity,
+                        item.consigneeCounty,
+                        true
+                      )
+                    }}</span
+                  >
+                </template>
+                <template>
+                  <span>
+                    {{
+                      getAddress(
+                        item.consigneeCountry,
+                        item.consigneeProvince,
+                        item.consigneeCity,
+                        item.consigneeCounty,
+                        true
+                      )
+                    }}</span
+                  >
+                  <span>{{ item.consigneeAddr }}</span>
+                </template>
 
-                <span>
-                  {{
-                    getAddress(
-                      item.consigneeCountry,
-                      item.consigneeProvince,
-                      item.consigneeCity,
-                      item.consigneeCounty,
-                      true
-                    )
-                  }}</span
-                >
-                <span>{{ item.consigneeAddr }}</span>
                 <span>{{ item.consigneePhone }}</span>
               </div>
               <span v-if="item.isDefault" class="default-address-icon"
@@ -171,10 +187,9 @@
         </div>
 
         <div style="clear: both"></div>
-        <template v-if="index!==productlist.length-1">
+        <template v-if="index !== productlist.length - 1">
           <el-divider></el-divider>
         </template>
-        
       </div>
     </div>
     <div class="order-foot background-grey text-grey">
@@ -184,6 +199,8 @@
       </div>
       <div>
         寄送至：
+        <template v-if="addressInfo.reverseFlag">
+          {{ addressInfo.consigneeAddr }}
         {{
           getAddress(
             addressInfo.consigneeCountry,
@@ -193,7 +210,20 @@
             true
           )
         }}
+        
+        </template>
+        <template v-else>
+          {{
+          getAddress(
+            addressInfo.consigneeCountry,
+            addressInfo.consigneeProvince,
+            addressInfo.consigneeCity,
+            addressInfo.consigneeCounty,
+            true
+          )
+        }}
         {{ addressInfo.consigneeAddr }}
+        </template>
       </div>
       <div>
         收货人：{{ addressInfo.consigneeName }} {{ addressInfo.consigneePhone }}
@@ -696,9 +726,7 @@ export default {
           shoppingCartList.push(...this.productlist[i].shoppingCartList);
           totalFreight = +this.productlist[i].freightPrice;
           volist[i].remark = this.remarkAttrs[i].value;
-          volist[i].electronicInvoice = this.receiptList[
-            i
-          ].receiptInfo;
+          volist[i].electronicInvoice = this.receiptList[i].receiptInfo;
         }
         params.shoppingCartList = shoppingCartList;
         params.orderSplitResponseVOList = volist;
@@ -723,7 +751,7 @@ export default {
             }
             if (res.data.code === "200") {
               this.orderId = res.data.data;
-              if (this.payVal == 2||this.totalPrice==0) {
+              if (this.payVal == 2 || this.totalPrice == 0) {
                 this.$router.push({
                   path: "/payment/result",
                   query: { orderId: this.orderId },
