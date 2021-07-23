@@ -239,6 +239,7 @@ export default {
 }
 ul,li,i{
   list-style: none;
+  font-style: normal;
 }
 
 .col-9{
