@@ -412,12 +412,17 @@ export default {
 				this.data.totalPrice = 0;
 				var _this = this;
 				this.data.shoppingCartList.forEach((e,i) => {
+					if(!e['moq']){
+						e['moq'] = undefined
+					}
+					if(!e['stock']){
+						e['stock'] = undefined
+					}
 					if (e.statusTip == 1) {
 						this.cartList.push(e);
 					} else {
 						this.unvalidList.push(e);
 					}
-						console.log(this.data.shoppingCartList[i].selected)
 					
 				});
 				this.$nextTick(()=> {
@@ -432,17 +437,6 @@ export default {
 					
 				
 			}
-			 
-			
-	//默认select为1的勾选，选中
-	// this.$nextTick(() => {
-	// 		this.cartList.forEach((e,i) => {
-	// 		if(e.selected){
-						
-	// 					this.$refs.cartListRef.toggleRowSelection(e, true);
-	// 				}
-	// 		})
-	// 	})
 			
 		},
 		//删除
@@ -534,23 +528,14 @@ export default {
 		//表格选择
 		selectProductFun(val) {
 			let list = val;
-			// if(list.length>0){
-			// 	list.forEach(item =>{
-			// 		item.selected = 1
-			// 	})
-			// }
+		
 			this.selectProduct = list;
 			//出去不可点击的
 			let cartListLength = 0;
 			let dataCartList = this.cartList;
 			this.cartList.forEach((item,i) =>{
 
-				//取消选中的数据select值为0
-				// if(!this.selectProduct[i]){
-				// 	dataCartList[i].selected = 0;
-				// }else{
-				// 	dataCartList[i].selected = 1;
-				// }
+				
 				if(!item['disabled']){
 					cartListLength ++
 				}
@@ -693,7 +678,17 @@ export default {
 		}
 
 			let arr = [];
+			let btnDis = false;
 			this.selectProduct.forEach(item =>{
+				if(item.moq>item.quantity || item.stock<item.quantity){
+					this.$message({ 
+					type: 'info',
+					message: '存在失效货品！'
+					});
+					btnDis = true
+					
+					
+				}
 				json = {
 					"quantity":item.quantity,
 					"skuId": this.delstr(item.skuId),
@@ -706,6 +701,7 @@ export default {
 				}
 				arr.push(json)
 			})
+			if(btnDis) return;
 			let res = await selectSettle(arr)
 			switch (res.code){
 				case "10001":

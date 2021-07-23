@@ -51,7 +51,7 @@ export default {
 		//请求的后台菜单是否属于路由地址，不属于新窗口跳转
 		dataItem(arr,path){ 
 			arr.forEach((item) => { 
-                 if(item.path.includes('order') !=-1 || item.path==path)
+                 if(path.includes('order') || item.path==path)
                  {  
 					 this.flag = 1
                  }
