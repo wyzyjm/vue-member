@@ -62,7 +62,6 @@ export default {
   },
   data() {
     return {
-      pathUrl: 'shop/dev_product_group/cms/image/',
       imgList: '',
       imageUrl: '',
       dialogImageUrl: '',
@@ -77,14 +76,13 @@ export default {
       if (this.imageUrl) {
         const data = {
           bizId: '852198699132313600',
-          headImage: this.pathUrl + this.imageUrl
+          headImage: this.imageUrl
         }
-        const res = await updateMember(data)
-        if (res.status !== 200) return
-        this.$parent.data.url = this.pathUrl + this.imageUrl
+        // const res = await updateMember(data)
+        // if (res.status !== 200) return
+        // this.$parent.avatar = this.dialogImageUrl
         this.$emit('close')
-        console.log(this.imageUrl)
-        location.reload()
+        // location.reload()
       }
     },
     // 关闭控件
