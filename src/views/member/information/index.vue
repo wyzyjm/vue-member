@@ -8,7 +8,7 @@
         <!-- 头像 -->
         <div class="block user">
           <el-image
-            :src="'https://pre-omo-oss-image.site.cn/' + data.user.avatar"
+            :src="avatar"
             class="uimges"
             @click="vicpWarpShow = true"
           />
@@ -122,6 +122,7 @@ export default {
   data() {
     return {
       bizId: '',
+      avatar: '',
       loading: true,
       title: '我的资料',
       vicpWarpShow: false,
@@ -129,11 +130,9 @@ export default {
       modifyType: '',
       selfDefining: {},
       imagecropperKey: 0,
-      image: 'https://wpimg.wallstcn.com/577965b9-bb9e-4e02-9f0c-095b41417191',
       data: null,
       dataList: {},
       isShow: true,
-      loading: true,
       showModule: 0
     }
   },
@@ -148,6 +147,7 @@ export default {
       }
       const detailData = await memberDetail(data)
       this.data = detailData.data
+      this.avatar = 'https://pre-omo-oss-image.site.cn/' + this.data.user.avatar
       this.bizId = this.data.user.memberId
       this.loading = false
     },

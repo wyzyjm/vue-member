@@ -17,7 +17,7 @@
       <div>订单状态：<span class="font-20" :class="{'col-danger': data.orderStatus < 50, 'col-success': data.orderStatus === 50}">{{ statePayment[data.orderStatus].type }}</span></div>
       <div>
         <el-button v-if="data.orderStatus == 10 || data.orderStatus == 20 " type="text" @click.prevent="cancelOrder">取消订单</el-button>
-        <el-button type="primary" plain @click="dialogTableVisible = true">查看发票信息</el-button>
+        <el-button v-if="data.electronicInvoice" type="primary" plain @click="dialogTableVisible = true">查看发票信息</el-button>
         <el-button v-if="data.orderStatus == 10" type="primary" plain @click="showDialog('edit')">修改地址</el-button>
         <el-button v-if="data.orderStatus == 10" type="primary" @click="payOrder">付款</el-button>
         <el-button v-if="data.orderStatus == 30" type="primary" @click="confirmOrder">确认收货</el-button>
@@ -30,8 +30,20 @@
         <p class="title">商品清单/结算信息</p>
         <div class="item-list">
           <p v-if="data.consigneeInfo.consigneeName" class="consignee"><span>收货人：</span><span>{{ data.consigneeInfo.consigneeName }}</span></p>
-          <p v-if="data.consigneeInfo.consigneeProvince" class="consignee"><span>所在地区：</span><span>{{ data.consigneeInfo.consigneeProvince + data.consigneeInfo.consigneeCity + data.consigneeInfo.consigneeCounty }}</span></p>
-          <p v-if="data.consigneeInfo.consigneeAddr" class="consignee"><span>详细地址：</span><span>{{ data.consigneeInfo.consigneeAddr }}</span></p>
+          <div :class="{'reverse':data.consigneeInfo.reverseFlag}">
+            <p v-if="data.consigneeInfo.consigneeProvince" class="consignee"><span>所在地区：</span><span>
+              {{
+                getAddress(
+                  data.consigneeInfo.consigneeCountry,
+                  data.consigneeInfo.consigneeProvince,
+                  data.consigneeInfo.consigneeCity,
+                  data.consigneeInfo.consigneeCounty,
+                  true
+                )
+              }}</span></p>
+            <p v-if="data.consigneeInfo.consigneeAddr" class="consignee mb-10"><span>详细地址：</span><span>{{ data.consigneeInfo.consigneeAddr }}</span></p>
+
+          </div>
           <p v-if="data.consigneeInfo.consigneePhoneHead" class="consignee"><span>手机号码：</span><span>{{ data.consigneeInfo.consigneePhoneHead }} {{ data.consigneeInfo.consigneePhone }}</span></p>
           <p v-if="data.consigneeInfo.consigneeTelHead" class="consignee"><span>固定电话：</span><span v-if="data.consigneeInfo.consigneeTelHead">{{ data.consigneeInfo.consigneeTelHead }}-{{ data.consigneeInfo.consigneeTel }}</span></p>
           <p v-if="data.consigneeInfo.consigneeZipCode" class="consignee"><span>邮政编码：</span><span>{{ data.consigneeInfo.consigneeZipCode }}</span></p>
@@ -158,6 +170,7 @@ import SvgIcon from '@/components/SvgIcon'
 import AddressForm from '@/views/components/addressForm' // 收货人地址弹窗
 import Receipt from '@/views/components/receipt' // 修改发票弹窗
 import ProductList from '@/views/components/productList'
+import { getAddressName } from '@/utils/address'
 
 export default {
   components: {
@@ -227,6 +240,11 @@ export default {
       }
     }
   },
+  computed: {
+    getAddress: function() {
+      return getAddressName
+    }
+  },
   created() {
     this.getDetail()
   },
@@ -250,14 +268,18 @@ export default {
         }
         // 支付流程控制进度条 ORDER_SUBMIT(订单提交),PAYMENT_PROCESS(支付流程),DELIVERY_PROCESS(发货流程),TRADE_SUCCESS(交易成功)
         if (this.data.orderProcessNodes && this.data.orderProcessNodes.indexOf('DELIVERY_PROCESS') !== -1) {
-          this.datalist.push(this.stepsList[1])
-        } else if (this.data.orderProcessNodes && this.data.orderProcessNodes.indexOf('PAYMENT_PROCESS') !== -1) {
-          this.datalist.push(this.stepsList[1])
-        } else if (this.data.orderProcessNodes && this.data.orderProcessNodes.indexOf('TRADE_SUCCESS') !== -1) {
-          this.datalist.push(this.stepsList[2])
-        } else if (this.data.orderStatus === 40) {
-          this.datalist.push(this.stepsList[1])
-          this.active = this.datalist.length
+          if (this.data.orderStatus === 40) {
+            this.datalist.push(this.stepsList[1])
+            this.active = this.datalist.length
+          } else if (this.data.orderStatus === 30) {
+            this.datalist.push(this.stepsList[1])
+          } else {
+            this.datalist.push(this.stepsList[0], this.stepsList[1])
+          }
+        } else {
+          if (this.data.orderStatus < 50) {
+            this.datalist.push(this.stepsList[2])
+          }
         }
         this.current = { orderId: this.data.orderId, ...this.data.consigneeInfo }
         this.sumTotal(this.data.goodsList)
@@ -284,15 +306,16 @@ export default {
     },
     // 修改地址弹窗 显示
     showDialog(status) {
+      console.log(this.current)
       const _this = this.$refs['addressDialog'] // 获取当前弹窗组件实例
       _this.dialogFormVisible = true // 修改弹窗 显示状态
       _this.dialogStatus = status // 修改弹窗 类型 create:创建 | edit:编辑
       _this.formType = status
     },
     // 地址弹窗确认事件
-    confirmDialog(data, addFormData, status) {
+    confirmDialog(data) {
       this.current = data
-      console.log('编辑完收货地址后信息处理', data)
+      this.data.consigneeInfo = data
     },
     // 确认收货
     confirmOrder() {
@@ -369,13 +392,13 @@ export default {
         'q': Math.floor((date.getMonth() + 3) / 3), // 季度
         'S': date.getMilliseconds() // 毫秒
       }
-      const dateTime = `${o.Y}-${this.toDou(o.M)}-${this.toDou(o.d)}  ${this.toDou(o.h)}:${this.toDou(o.m)}:${this.toDou(o.s)}`
+      const dateTime = `${o.Y}-${this.toDou(o.M)}-${this.toDou(o.d)}  ${this.toDou(o.h)}:${this.toDou(o.m)}`
       return dateTime
     },
     timeDown(leftTime) {
       clearInterval(this.setIntID)
       if (leftTime <= 0) {
-        return '0时0分0秒'
+        return '0时0分'
       }
       this.setIntID = setInterval(() => {
         leftTime--
@@ -388,21 +411,19 @@ export default {
         this.minute = this.toDou(parseInt((leftTime / 60) % 60))
         this.seconds = this.toDou(parseInt(leftTime % 60))
         if (this.day >= 1) {
-          this.dataTime = `${this.day}天${this.hour}时${this.minute}分${this.seconds}秒`
+          this.dataTime = `${this.day}天${this.hour}时${this.minute}分`
         } else if (this.hour >= 1) {
-          this.dataTime = `${this.hour}时${this.minute}分${this.seconds}秒`
-        } else if (this.minute >= 1) {
-          this.dataTime = `${this.minute}分${this.seconds}秒`
-        } else if (this.seconds >= 1) {
-          this.dataTime = `${this.seconds}秒`
+          this.dataTime = `${this.hour}时${this.minute}分`
+        // } else if (this.minute >= 1) {
+        //   this.dataTime = `${this.minute}分`
+        // } else if (this.seconds >= 1) {
+        //   this.dataTime = `${this.seconds}秒`
         }
       }, 1000)
     },
     // 计算订单总数量
     sumTotal(data) {
-      data.forEach(item => {
-        this.inTotal = this.inTotal + item.quantity
-      })
+      this.inTotal = data.length
     }
   }
 }
@@ -526,6 +547,16 @@ ul,li{
   text-align: right;
   display: inline-block;
   margin-right: 10px;
+}
+.reverse{
+  display: flex;
+  flex-direction: column-reverse;
+}
+.reverse p{
+  margin: 0;
+}
+.reverse .mb-10{
+  margin-bottom: 10px;
 }
 </style>
 
