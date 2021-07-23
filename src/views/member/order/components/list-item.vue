@@ -106,10 +106,6 @@ export default {
     list: {
       type: Array,
       default: () => []
-    },
-    tabsindex: {
-      type: Number,
-      default: 0
     }
   },
   data() {
@@ -243,6 +239,7 @@ export default {
 }
 ul,li,i{
   list-style: none;
+  font-style: normal;
 }
 
 .col-9{

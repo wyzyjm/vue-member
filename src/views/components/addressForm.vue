@@ -315,6 +315,7 @@ export default {
 
     // 弹窗打开前
     handleOpen() {
+      this.addressKey = this.addressKey + 1
       if (this.addressFormProp && this.formType === 'edit') {
         const propData = JSON.parse(JSON.stringify(this.addressFormProp)) // 拷贝传过来的值
         console.log('编辑地址,子组件接收到值了', propData)
@@ -404,7 +405,7 @@ export default {
           console.info('响应结果--->', res)
           if (res.status !== 200) return
           this.dialogFormVisible = false // 关闭弹窗
-          this.$emit('confirm') // 派发父组件事件
+          this.$emit('confirm', data) // 派发父组件事件
         } catch (error) {
           console.log('失败', error)
         }

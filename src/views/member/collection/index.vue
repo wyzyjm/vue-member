@@ -200,13 +200,13 @@ export default {
       try {
         const { data: res } = await getCollectionList(data)
         console.log(res)
-        if (res.list.length === 0) return
+        // if (res.list.length === 0) return
         this.collectList = res.list // 设置列表
         this.total = res.page.totalCount // 收藏总数
         this.currentPage = res.page.currentPage // 当前页码
         this.pageSize = res.page.pageSize // 每页条数
 
-        this.isLoading = false
+        this.isLoading = false // 取消loading效果
       } catch (error) {
         console.log('请求失败', error)
       }
@@ -333,7 +333,7 @@ export default {
       const data = {
         memberBizId: '854299120902660096',
         collectionType: 'product',
-        collectionDataId: '852945602618646528'
+        collectionDataId: '852953242098786304'
       }
       try {
         const res = await addCollectionContent(data)

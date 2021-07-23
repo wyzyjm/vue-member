@@ -34,8 +34,6 @@
             v-if="list.length > 0"
             ref="listItem"
             :list="list"
-            :memberid="memberId"
-            :tabsindex="tabsIndex"
           />
           <p v-else class="text-center">您还没有相关订单哦~</p>
         </el-tab-pane>
