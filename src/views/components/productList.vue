@@ -1,14 +1,13 @@
 <template>
   <div class="app-container">
-    <div class="title">
+    <div v-if="showBack" class="title">
       商品信息
-      <template v-if="showBack">
+      <template>
         <span
           style="flex: 1; text-align: right; font-size: 10px"
           class="text-blue"
           @click="$router.push('/cart/')"
-          >&laquo;修改购买商品</span
-        >
+        >&laquo;修改购买商品</span>
       </template>
     </div>
 
@@ -17,7 +16,7 @@
         <template slot-scope="{ row }">
           <div class="product">
             <div class="productImg">
-              <custom-img :src="row.skuImg"></custom-img>
+              <custom-img :src="row.skuImg" />
             </div>
             <div class="productInfo">
               <p class="title">
@@ -25,9 +24,9 @@
               </p>
               <p class="text-grey spec">
                 <span
-                  class="specItem"
                   v-for="(item, index) in row.skuSpec"
                   :key="index"
+                  class="specItem"
                 >
                   {{ item.specName }} : {{ item.specValue }}；
                 </span>
@@ -59,22 +58,22 @@ export default {
   props: {
     currencySymbol: {
       type: String,
-      default: true,
+      default: true
     },
     productList: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     showBack: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   components: {},
   data() {
-    return {};
-  },
-};
+    return {}
+  }
+}
 </script>
 <style scoped>
 .product {
