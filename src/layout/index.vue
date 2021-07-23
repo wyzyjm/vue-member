@@ -7,10 +7,8 @@
         <navbar />
       </div> -->
       
-      <div >   headerLayout                    
-      </div>
+      
       <app-main />
-      <div>di</div>
     <!-- </div> -->
   </div>
 </template>

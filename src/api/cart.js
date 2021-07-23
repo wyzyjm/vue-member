@@ -27,6 +27,14 @@ export function cartDel(params) {
     })
   }
 
+  export function updateSelected(data) {
+    return request({
+      url: '/fwebapi/order/shoppingCart/updateSelected',
+      method: 'post',
+      data,
+    })
+  }
+
 
   export function selectSettle(data) {
     return request({

@@ -16,7 +16,7 @@
         </div>
       </slot>
     </PageTitle>
-    <div>
+    <div v-loading="loading">
       <el-tabs
         class="tabs"
         @tab-click="handleClick"
@@ -33,7 +33,6 @@
           <ListItem
             v-if="list.length > 0"
             ref="listItem"
-            v-loading="loading"
             :list="list"
             :memberid="memberId"
             :tabsindex="tabsIndex"
@@ -133,13 +132,13 @@ export default {
       orderList(listQuery).then(res => {
         this.list = res.data.data.list
         this.pagination = res.data.data.pagination
-        this.loading = false
         this.initorderStatus()
       })
     },
     initorderStatus() {
       orderStatus().then(res => {
         this.orderCount = res.data.data
+        this.loading = false
       })
     },
     // tab事件

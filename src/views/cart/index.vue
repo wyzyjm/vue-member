@@ -9,6 +9,8 @@
 						:data="cartList"
 						class="productTable"
 						@selection-change="selectProductFun"
+						@select="selectData"
+						@select-all="selectData"
 					>
 						<el-table-column
 							type="selection"
@@ -75,10 +77,10 @@
 									
 								></el-input-number>
 
-								<span class="span-danger" v-if="scope.row.moq > scope.row.quantity">
+								<span class="span-danger" v-if="scope.row['moq'] &&(scope.row['moq'] > scope.row.quantity)">
 									最少起订量为{{scope.row.moq}}
 								</span>
-								<span class="span-danger" v-if="scope.row.stock<scope.row.quantity">
+								<span class="span-danger" v-if="scope.row['stock'] &&(scope.row['stock'] <scope.row.quantity)">
 									库存不足
 								</span>
 							</template>
@@ -265,7 +267,7 @@
 </template> 
 <script>
 import pageTitle from "../components/pageTitle";
-import {cartData,cartDel,cartUpdate,selectSettle} from "@/api/cart"
+import {cartData,cartDel,cartUpdate,updateSelected,selectSettle} from "@/api/cart"
 export default {
 	data() {
 		return {
@@ -392,6 +394,11 @@ export default {
 	},
 	mounted() {
 		this.renderData();
+	
+	
+	},
+	updated(){
+		//this.renderData();
 	},
 	methods: {
 		//初始化数据
@@ -400,15 +407,43 @@ export default {
 			this.cartList=[];
 			this.unvalidList=[]
 			 let res = await cartData()
-			 this.data = res.data ;
-			 this.data.totalPrice = 0;
-			this.data.shoppingCartList.forEach((e) => {
-				if (e.statusTip == 1) {
-					this.cartList.push(e);
-				} else {
-					this.unvalidList.push(e);
-				}
-			});
+			if(res.status == 200){
+				this.data = res.data ;
+				this.data.totalPrice = 0;
+				var _this = this;
+				this.data.shoppingCartList.forEach((e,i) => {
+					if (e.statusTip == 1) {
+						this.cartList.push(e);
+					} else {
+						this.unvalidList.push(e);
+					}
+						console.log(this.data.shoppingCartList[i].selected)
+					
+				});
+				this.$nextTick(()=> {
+					this.cartList.forEach((e,i) => {
+						console.log(e.selected,i)
+						if(e.selected==1){
+							console.log(e.selected,i)
+							this.$refs.cartList.toggleRowSelection(e, true);
+						}
+					})
+				});
+					
+				
+			}
+			 
+			
+	//默认select为1的勾选，选中
+	// this.$nextTick(() => {
+	// 		this.cartList.forEach((e,i) => {
+	// 		if(e.selected){
+						
+	// 					this.$refs.cartListRef.toggleRowSelection(e, true);
+	// 				}
+	// 		})
+	// 	})
+			
 		},
 		//删除
 		 removeProduct(obj) {
@@ -473,18 +508,49 @@ export default {
 			
 			
 		},
+		selectData(val,row){
+			let arr=[]
+			if(row){
+				arr.push(row)
+			}else{
+				if(val.length==0){
+					arr = this.cartList;
+				}else{
+					arr = val
+				}
+				
+			}
+			arr.forEach(e=>{
+				let select = val.find(n=>n.shoppingCartCode==e.shoppingCartCode)
+				if(select){
+					e.selected=1
+				}else{
+					e.selected=0
+				}
+			})
+			
+			this.updateStatu(arr)
+		},
 		//表格选择
 		selectProductFun(val) {
 			let list = val;
-			if(list.length>0){
-				list.forEach(item =>{
-					item.selected = 1
-				})
-			}
+			// if(list.length>0){
+			// 	list.forEach(item =>{
+			// 		item.selected = 1
+			// 	})
+			// }
 			this.selectProduct = list;
 			//出去不可点击的
 			let cartListLength = 0;
-			this.cartList.forEach((item) =>{
+			let dataCartList = this.cartList;
+			this.cartList.forEach((item,i) =>{
+
+				//取消选中的数据select值为0
+				// if(!this.selectProduct[i]){
+				// 	dataCartList[i].selected = 0;
+				// }else{
+				// 	dataCartList[i].selected = 1;
+				// }
 				if(!item['disabled']){
 					cartListLength ++
 				}
@@ -492,45 +558,42 @@ export default {
 			this.isIndeterminate =
 				val.length > 0 && val.length < cartListLength;
 			this.checkAll = val.length === cartListLength;
-			this.updateStatu(val)
+			
 			this.totalPrice()
 			
 		},
 		//状态的请求
 		async updateStatu(obj){
-			let arr = obj;
-			let arrJson =[]
-			for(let i = 0;i<arr.length;i++){
-
-					let  shoppingCartCode =this.delstr(arr[i].shoppingCartCode)
-					let  skuId = this.delstr(arr[i].skuId)
-						let json ={
-						buyAmount: arr[i].quantity,
-						selected: arr[i].selected,
-						shoppingCartId:shoppingCartCode,
-						skuId: skuId
-						
-						}
-						//arrJson.push(json)
-						
-					let res = await cartUpdate(json);
-				
+			let arrJson = []
+			obj.forEach(e=>{
+				arrJson.push({
+					selected: e.selected,
+					shoppingCartId:this.delstr(e.shoppingCartCode),
+					skuId: this.delstr(e.skuId)
+				})
+			})
+			
+			let res = await updateSelected(arrJson);
+			if(res.code == 200){
+				//修改成功
 			}
-		
 				
 		}
 		,
 		//全选
 		selectAllFun(val) {
+			console.log(val)
 			if (val) {
 				this.cartList.forEach((e) => {
 					if(!e['disabled']){
-						this.$refs.cartList.toggleRowSelection(e, "selected");
+						this.$refs.cartList.toggleRowSelection(e, true);
 					}
 					
 				});
+				this.selectData(this.cartList)
 			} else {
 				this.$refs.cartList.clearSelection();
+				this.selectData([])
 			}
 			this.isIndeterminate = false;
 		},
@@ -551,7 +614,7 @@ export default {
 	 async	changeQuantity(currentValue,oldValue,item){
 		 let obj = item.row;
 		 let timer =null;
-		 if(obj.quantity<obj.moq && currentValue < oldValue){
+		 if((obj['moq'])&&(obj.quantity<obj['moq'] && currentValue < oldValue)){
 			 
 			timer = setTimeout(() =>{
 				this.$message({ 
@@ -563,7 +626,7 @@ export default {
 			},0)
 			
 			return false
-		 }else if(obj.stock < obj.quantity && currentValue > oldValue){
+		 }else if((obj['stock'])&&(obj['stock'] < obj.quantity && currentValue > oldValue)){
 			 	
 				timer = setTimeout(() =>{
 					this.$message({ 

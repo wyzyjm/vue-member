@@ -3,7 +3,7 @@
     <PageTitle :pagetitle="title">
     <!-- <slot slot="slot">搜索</slot> -->
     </PageTitle>
-    <div v-if="isShow">
+    <div v-if="isShow" v-loading="loading">
       <div v-if="data" class="content">
         <!-- 头像 -->
         <div class="block user">
@@ -122,6 +122,7 @@ export default {
   data() {
     return {
       bizId: '',
+      loading: true,
       title: '我的资料',
       vicpWarpShow: false,
       modifyShow: false,
@@ -142,12 +143,13 @@ export default {
   methods: {
     async getMemberDetail() {
       const data = {
-        bizId: '852198699132313600' // '854299120902660096',
+        // bizId: '854299120902660096'
+        bizId: '852198699132313600'
       }
       const detailData = await memberDetail(data)
       this.data = detailData.data
       this.bizId = this.data.user.memberId
-      console.log(detailData)
+      this.loading = false
     },
     cropSuccess(resData) {
       this.vicpWarpShow = false
