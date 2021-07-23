@@ -13,16 +13,16 @@ import request from '@/utils/request'
     }
  */
 const getCollectionList = (data) => {
-    return request({
-        url: "/fwebapi/member/collection/findPageList",
-        method: "POST",
-        data,
-        params: {
-            tenantId: 1600018169,
-            instance: "qinhui20210610",
-            appId: 143150160001
-        }
-    })
+  return request({
+    url: '/fwebapi/member/collection/findPageList',
+    method: 'POST',
+    data,
+    params: {
+      tenantId: 1600018169,
+      instance: 'qinhui20210610',
+      appId: 143150160001
+    }
+  })
 }
 
 /**
@@ -44,16 +44,16 @@ const getCollectionList = (data) => {
     }
  */
 const addCollectionContent = (data) => {
-    return request({
-        url: "/fwebapi/member/collection/insert",
-        method: "POST",
-        data,
-        params: {
-            tenantId: 1600018169,
-            instance: "qinhui20210610",
-            appId: 143150160001
-        }
-    })
+  return request({
+    url: '/fwebapi/member/collection/insert',
+    method: 'POST',
+    data,
+    params: {
+      tenantId: 1600018169,
+      instance: 'qinhui20210610',
+      appId: 143150160001
+    }
+  })
 }
 
 /**
@@ -64,20 +64,20 @@ const addCollectionContent = (data) => {
     }
  */
 const deleteCollectionContent = (data) => {
-    return request({
-        url: "/fwebapi/member/collection/deleteByList",
-        method: "POST",
-        data,
-        params: {
-            tenantId: 1600018169,
-            instance: "qinhui20210610",
-            appId: 143150160001
-        }
-    })
+  return request({
+    url: '/fwebapi/member/collection/deleteByList',
+    method: 'POST',
+    data,
+    params: {
+      tenantId: 1600018169,
+      instance: 'qinhui20210610',
+      appId: 143150160001
+    }
+  })
 }
 
 export {
-    getCollectionList, // 获取
-    addCollectionContent, // 添加
-    deleteCollectionContent // 删除
+  getCollectionList, // 获取
+  addCollectionContent, // 添加
+  deleteCollectionContent // 删除
 }

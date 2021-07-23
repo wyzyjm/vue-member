@@ -95,8 +95,8 @@
       <p class="title">商品清单/结算信息</p>
       <div class="product-list">
         <ProductList
-          :productList="data.goodsList"
-          :currencySymbol="data.currencySymbol"
+          :product-list="data.goodsList"
+          :currency-symbol="data.currencySymbol"
         />
         <div class="message-board">
           <div>
@@ -115,8 +115,8 @@
 
     <AddressForm
       ref="addressDialog"
+      :address-form-prop="current"
       @confirm="confirmDialog"
-      :addressFormProp="current"
     />
 
     <!-- 查看发票信息 -->
@@ -144,7 +144,7 @@
 
     <Receipt
       ref="receiptDialog"
-      :saveLibray="receiptSaveLibray"
+      :save-libray="receiptSaveLibray"
       @formData="receiptConfirmDialog"
     />
   </div>
@@ -290,9 +290,8 @@ export default {
       _this.formType = status
     },
     // 地址弹窗确认事件
-    confirmDialog(data) {
+    confirmDialog(data, addFormData, status) {
       this.current = data
-      this.data.consigneeInfo = data
       console.log('编辑完收货地址后信息处理', data)
     },
     // 确认收货
