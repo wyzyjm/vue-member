@@ -91,9 +91,9 @@
           </el-popover>
         </div>
       </li>
-      <li v-if="data.orderStatus > 20" class="detail-item">
+      <li v-if="data.orderStatus > 20 && data.logisticsInfo" class="detail-item">
         <p class="title">物流信息</p>
-        <div v-if="data.logisticsInfo" class="item-list">
+        <div class="item-list">
           <p class="consignee"><span>配送方式：</span><span>{{ data.logisticsInfo.distribution }}</span></p>
           <p class="consignee" :datatype="data.logisticsInfo.courierCompanyCode"><span>快递公司：</span><span>{{ data.logisticsInfo.courierCompany }}</span></p>
           <p class="consignee"><span>运单号：</span><span>{{ data.logisticsInfo.trackingNumber }}</span></p>
