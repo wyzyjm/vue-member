@@ -13,8 +13,8 @@
             @click="vicpWarpShow = true"
           />
           <div class="username">
+            <p class="font-w">{{ data.user.userName }}</p>
             <p class="member-order"><SvgIcon name="icon-huiyuan" class="icon" />{{ data.user.memberLevel }}</p>
-            <p>{{ data.user.userName }}</p>
           </div>
         </div>
         <!-- 基础信息 -->
@@ -202,6 +202,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.font-w{
+  font-weight: 700
+}
 .content{
   padding:40px 0 0 130px;
   width: 70%;
@@ -212,6 +215,7 @@ export default {
   margin-bottom: 50px;
   position: relative;
   .username{
+    padding-top: 20px;
     text-align: center;
     p{
       text-align: left;
@@ -241,14 +245,21 @@ export default {
   align-items: center;
 }
 .icon{
+  color: #333;
   font-size: 20px;
   display: inline-block;
   margin-right: 10px;
+  margin-top: -3px;
 }
 .item{
   display: flex;
   justify-content: space-between;
+  color:rgb(153, 153, 153);
+  >p{
+    display: flex;
+  }
   span{
+    width: 200px;
     margin-right: 30px;
   }
   span:nth-child(1){
