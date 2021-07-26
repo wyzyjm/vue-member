@@ -193,10 +193,6 @@ export default {
       type: Boolean,
       default: true
     },
-    bizID: {
-      type: String,
-      default: ''
-    },
     modifyType: {
       type: String,
       default: ''
@@ -208,7 +204,6 @@ export default {
   },
   data() {
     return {
-      bizId: this.bizID,
       // 编辑项目
       editItem: {
         0: {
@@ -284,11 +279,11 @@ export default {
     async onSubmit() {
       let subdata = {}
       if (this.modifyType === 'name') {
-        subdata = { bizId: this.bizId, name: this.form.name }
+        subdata = { name: this.form.name }
       } else if (this.modifyType === 'nickName') {
-        subdata = { bizId: this.bizId, nickname: this.form.name }
+        subdata = { nickname: this.form.name }
       } else if (this.modifyType === 'checkbox') {
-        subdata = { bizId: this.bizId, eg: [
+        subdata = { eg: [
           {
             key: this.modifyType,
             value: this.form.type
@@ -296,7 +291,7 @@ export default {
         ]
         }
       } else {
-        subdata = { bizId: this.bizId, eg: [
+        subdata = { eg: [
           {
             key: this.modifyType,
             value: this.form.modifyData
@@ -427,11 +422,6 @@ export default {
         -webkit-transform: rotate(-45deg);
         -ms-transform: rotate(-45deg);
         transform: rotate(-45deg);
-    }
-    .vicp-icon4:hover {
-        // -webkit-transform: rotate(90deg);
-        // -ms-transform: rotate(90deg);
-        // transform: rotate(90deg);
     }
     .modify-cont{
         padding: 50px;

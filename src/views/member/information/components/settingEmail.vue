@@ -72,7 +72,6 @@ export default {
   },
   data() {
     return {
-      bizId: this.setdata.bizId,
       propData: this.setdata,
       isType: this.setdata.emailType,
       active: 0,
@@ -150,7 +149,6 @@ export default {
         if (valid) {
           if (formName === 'dynamicValidateForm') { // 修改邮箱
             const data = {
-              bizId: this.bizId,
               bizType: this.propData.type,
               email: this.dynamicValidateForm.email,
               verifyCode: this.dynamicValidateForm.yzm
@@ -184,7 +182,6 @@ export default {
         if (valid) {
           if (this.propData.emailType === 2) {
             const data = {
-              bizId: this.bizId,
               bizType: this.propData.type,
               verifyCode: this.dynamicValidateForm.yzm
             }
@@ -198,7 +195,6 @@ export default {
           } else if (this.propData.emailType === 0) {
             //  修改邮箱提交
             const data = {
-              bizId: this.bizId,
               bizType: this.propData.type,
               email: this.dynamicValidateForm.email,
               verifyCode: this.dynamicValidateForm.yzm
@@ -248,7 +244,6 @@ export default {
         this.queryData()
       } else {
         data = {
-          bizId: this.bizId,
           bizType: this.propData.type,
           verifyCode: this.dynamicValidateForm.yzm
         }
@@ -279,7 +274,6 @@ export default {
         }
       } else {
         data = {
-          bizId: this.bizId,
           bizType: this.propData.type
         }
       }

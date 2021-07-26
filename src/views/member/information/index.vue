@@ -84,7 +84,6 @@
         />
         <modify
           v-show="modifyShow"
-          :bizID="bizId"
           :selfDefining="selfDefining"
           :modifyType="modifyType"
           @close="close"
@@ -121,7 +120,6 @@ export default {
   },
   data() {
     return {
-      bizId: '',
       avatar: '',
       loading: true,
       title: '我的资料',
@@ -141,14 +139,9 @@ export default {
   },
   methods: {
     async getMemberDetail() {
-      const data = {
-        // bizId: '854299120902660096'
-        bizId: '864808182405980160'
-      }
-      const detailData = await memberDetail(data)
+      const detailData = await memberDetail()
       this.data = detailData.data
       this.avatar = 'https://pre-omo-oss-image.site.cn/' + this.data.user.avatar
-      this.bizId = this.data.user.memberId
       this.loading = false
     },
     cropSuccess(resData) {
@@ -177,7 +170,6 @@ export default {
     // 设置手机
     updatePhone(type) {
       this.dataList = {
-        bizId: this.bizId,
         type: 'mobile',
         phoneType: type,
         phone: this.data.user.phone,
@@ -189,7 +181,6 @@ export default {
     // 重置密码
     updatePwd(pwd) {
       this.dataList = {
-        bizId: this.bizId,
         type: 'pwd',
         oldPassword: pwd
       }
@@ -199,7 +190,6 @@ export default {
     // 设置邮箱
     updateEmail(type) {
       this.dataList = {
-        bizId: this.bizId,
         type: 'email',
         emailType: type,
         email: this.data.user.email

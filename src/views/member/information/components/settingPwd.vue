@@ -82,7 +82,6 @@ export default {
       }
     }
     return {
-      bizId: this.setdata.bizId,
       propData: this.setdata,
       active: 0,
       modifyType: true,
@@ -126,7 +125,6 @@ export default {
         if (valid) {
           const newPwd = md5(this.ruleForm.pass)
           const data = {
-            bizId: this.bizId,
             oldPassword: this.propData.oldPassword,
             newPassword: newPwd
           }

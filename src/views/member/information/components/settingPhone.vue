@@ -134,7 +134,6 @@ export default {
       }
     }
     return {
-      bizId: this.setdata.bizId,
       propData: this.setdata,
       active: 0,
       phoneType: this.setdata.phoneType,
@@ -225,7 +224,6 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const data = {
-            bizId: this.bizId,
             bizType: this.propData.type,
             mobilePrefix: this.formLabelAlign.consigneePhoneHead, // 手机号前缀
             mobile: this.formLabelAlign.consigneePhone, // 手机号
@@ -252,7 +250,6 @@ export default {
         if (valid) {
           if (this.propData.phoneType === 2) {
             const data = {
-              bizId: this.bizId,
               bizType: this.propData.type,
               verifyCode: this.formLabelAlign.phoneYzm
             }
@@ -281,7 +278,6 @@ export default {
         this.submitForm('formLabelAlign')
       } else {
         data = {
-          bizId: this.bizId,
           bizType: this.propData.type,
           verifyCode: this.formLabelAlign.phoneYzm
         }
@@ -353,7 +349,6 @@ export default {
         }
       } else {
         data = {
-          bizId: this.bizId,
           bizType: this.propData.type
         }
       }

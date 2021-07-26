@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { updateMember } from '@/api/member'
+// import { updateMember } from '@/api/member'
 
 export default {
   props: {
@@ -74,10 +74,9 @@ export default {
     // 保存头像
     async onSubmit() {
       if (this.imageUrl) {
-        const data = {
-          bizId: '864808182405980160',
-          headImage: this.imageUrl
-        }
+        // const data = {
+        //   headImage: this.imageUrl
+        // }
         // const res = await updateMember(data)
         // if (res.status !== 200) return
         // this.$parent.avatar = this.dialogImageUrl
