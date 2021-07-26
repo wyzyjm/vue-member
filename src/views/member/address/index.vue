@@ -23,14 +23,21 @@
     <!-- 新增+ 提示 结束 -->
 
     <!-- 收货地址列表 开始 -->
+
+    <!-- 无收货地址 -->
+    <div v-if="logisticsInfoList.length === 0" class="no-content-tip">
+      还没有任何收货地址~
+    </div>
     <el-card
       v-for="(item, index) in logisticsInfoList"
+      v-else
       :key="item.id + index"
+      v-loading="isLoading"
       class="mb15"
       :body-style="cardBody"
     >
       <!-- 每个卡片信息区 -->
-      <ul v-loading="isLoading">
+      <ul>
         <!-- 收货人 -->
         <li>
           <span class="attrName text-grey"> 收货人: </span>
@@ -121,7 +128,7 @@ import { getAddressName } from '@/utils/address'
 
 import {
   getAddressList,
-  addAddressList,
+  // addAddressList,
   setAddressList,
   deleteAddressList
 } from '@/api/address' // 购物车api
@@ -181,7 +188,6 @@ export default {
       }
       try {
         const res = await setAddressList(params) // 设为默认
-        // console.log(res);
         if (!res.data) return
         this.getList() // 重新获取收货地址列表
       } catch (error) {
@@ -258,33 +264,6 @@ export default {
       this.current = {} // 清空当前值
       this.getList() // 重新获取收货地址列表
     }
-
-    // 新增收货地址
-    // async addAddress() {
-    //   var num = 3;
-    //   const data = {
-    //     consigneeCountry: "中国",
-    //     consigneeAddr: "详细地址",
-    //     consigneeProvince: "河南省",
-    //     consigneeCity: "郑州市",
-
-    //     consigneeCounty: "县",
-    //     consigneeName: `我是第${num}个收货人`,
-    //     consigneePhone: "18336908347",
-    //     consigneePhoneHead: "0086",
-    //     consigneeTel: "6769038",
-    //     consigneeTelHead: "8633",
-    //     consigneeZipCode: "453600",
-    //     receiverCode: "新增",
-    //   };
-    //   try {
-    //     const { status } = await addAddressList(data);
-    //     if (status !== 200) return;
-    //     this.getList(); // 重新获取列表
-    //   } catch (error) {
-    //     console.log("新增失败", error);
-    //   }
-    // },
   }
 }
 </script>
@@ -305,6 +284,13 @@ li {
   margin-bottom: 15px;
 }
 .address-container {
+  .no-content-tip {
+    min-height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #606266;
+  }
   li {
     display: flex;
     flex-wrap: wrap;

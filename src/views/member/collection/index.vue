@@ -219,7 +219,6 @@ export default {
       }
       try {
         const { status } = await deleteCollectionContent(data)
-        // console.log(res);
         if (status !== 200) return
         this.getCollectList(this.currentPage, this.pageSize)
       } catch (error) {
@@ -291,9 +290,9 @@ export default {
        * 2. 如果有, 就找到 点击id 所在位置,从数组中删除
        * 3. 如果没有, 就向数组中添加点击的id
        * */
-      if (this.selectList.some((v) => v == id)) {
+      if (this.selectList.some((v) => v === id)) {
         this.selectList.map((c, i) => {
-          if (c == id) {
+          if (c === id) {
             this.selectList.splice(i, 1)
           }
         })
@@ -316,33 +315,25 @@ export default {
       this.selectList = [] // 清空选择
       this.allChecked = false // 取消全选状态
       this.isBatch = false // 取消批量
-    },
+    }
 
     // 添加收藏
-    async addCollectionFn() {
-      // 852945602618646528
-      // 852953242098786304
-      // 852968746842644480
-      // 854294742711721984
-      // 854336192438657024
-      // 854345646085300224
-      // 854399327782625280
-      // 854400995769245696
-      // 854401691063214080
-      // 854402193578582016
-      const data = {
-        memberBizId: '854299120902660096',
-        collectionType: 'product',
-        collectionDataId: '852953242098786304'
-      }
-      try {
-        const res = await addCollectionContent(data)
-        console.log(res)
-        this.getCollectList()
-      } catch (error) {
-        console.log(error)
-      }
-    }
+    // async addCollectionFn() {
+    //   // 852945602618646528
+    //   // 852953242098786304
+    //   const data = {
+    //     memberBizId: '854299120902660096',
+    //     collectionType: 'product',
+    //     collectionDataId: '852953242098786304'
+    //   }
+    //   try {
+    //     const res = await addCollectionContent(data)
+    //     console.log(res)
+    //     this.getCollectList()
+    //   } catch (error) {
+    //     console.log(error)
+    //   }
+    // }
   }
 }
 </script>
