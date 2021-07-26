@@ -39,6 +39,7 @@
         </el-tab-pane>
       </el-tabs>
       <el-pagination
+        v-if="pagination.totalCount"
         background
         class="page"
         layout="prev, pager, next, jumper"
@@ -167,6 +168,7 @@ export default {
 <style lang="scss" scoped>
 .text-center{
   text-align: center;
+  line-height: 300px;
 }
   .search{
     width: 300px;
@@ -182,6 +184,9 @@ export default {
 .item {
   margin-top: 10px;
   line-height: 23px;
+}
+.tabs{
+  min-height: 300px;
 }
 </style>
 <style lang='scss'>

@@ -11,7 +11,7 @@
         <el-button id="orderNum" type="text" :data-clipboard-text="data.orderNumber" @click="copy">复制</el-button>
       </div>
       <div
-        v-if="data.orderStatus == 10"
+        v-if="data.orderStatus == 10 && data.forever === 0"
         class="col-danger"
       ><SvgIcon name="icon-shijian" />剩余{{ dataTime }}</div>
       <div>订单状态：<span class="font-20" :class="{'col-danger': data.orderStatus < 50, 'col-success': data.orderStatus === 50}">{{ statePayment[data.orderStatus].type }}</span></div>
