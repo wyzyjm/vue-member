@@ -181,6 +181,7 @@
 									:step="1"
 									step-strictly
 									size="small"
+									disabled='true'
 									
 								></el-input-number>
 							</template>
