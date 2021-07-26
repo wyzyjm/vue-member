@@ -143,7 +143,7 @@ export default {
     async getMemberDetail() {
       const data = {
         // bizId: '854299120902660096'
-        bizId: '852198699132313600'
+        bizId: '864808182405980160'
       }
       const detailData = await memberDetail(data)
       this.data = detailData.data

@@ -75,7 +75,7 @@ export default {
     async onSubmit() {
       if (this.imageUrl) {
         const data = {
-          bizId: '852198699132313600',
+          bizId: '864808182405980160',
           headImage: this.imageUrl
         }
         // const res = await updateMember(data)
