@@ -5,6 +5,9 @@
       <el-form-item label="货品bizId" prop="cargoId">
         <el-input v-model="ruleForm.cargoId" placeholder="请输入货品ID"></el-input>
       </el-form-item>
+      <el-form-item label="货品appId" prop="appId">
+        <el-input v-model="ruleForm.appId" placeholder="请输入货品appID"></el-input>
+      </el-form-item>
       <el-form-item label="购买数量" prop="buyAmount">
         <el-input v-model="ruleForm.buyAmount" type='number' placeholder="请输入购买数量"></el-input>
       </el-form-item>
@@ -26,6 +29,7 @@ import {addCarts} from '@/api/menu'
         ruleForm: {
           cargoId:'854418768679460864',
           buyAmount: 3,
+          appId:143150160001
         
         },
         rules: {
@@ -35,6 +39,9 @@ import {addCarts} from '@/api/menu'
           ],
           buyAmount: [
             { required: true, message: '购买数量', trigger: 'blur' }
+          ],
+           appId: [
+            { required: true, message: '购买appId', trigger: 'blur' }
           ],
           
         }

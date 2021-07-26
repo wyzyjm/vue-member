@@ -43,10 +43,7 @@ export default {
 					title: "自行增加数据",
 					path: "/jsonHtml",
 				},
-				{
-					title: "百度",
-					path: "http://baidu.com",
-				},
+				
 			],
 
 		};
@@ -61,7 +58,8 @@ export default {
 		},
 	},
 	created(){
-		this.menuList()
+		//动态表单注释
+		//this.menuList()
 	},
 	methods: {
 		async menuList(){
