@@ -156,7 +156,7 @@ export default {
         cancelButtonText: '取消'
       }).then(() => {
         confirmOrder({ orderId: id }).then(res => {
-          if (res.data.data.code !== '0') return
+          if (res.data.code !== '0') return
           location.reload()
         })
       }).catch(() => {
@@ -172,7 +172,7 @@ export default {
         cancelButtonText: '取消'
       }).then(() => {
         cancelOrder({ orderId: id }).then(res => {
-          if (res.data.data.code !== '0') return
+          if (res.data.code !== '0') return
           location.reload()
         })
       }).catch(() => {

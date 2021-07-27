@@ -414,13 +414,13 @@ export default {
         this.minute = this.toDou(parseInt((leftTime / 60) % 60))
         this.seconds = this.toDou(parseInt(leftTime % 60))
         if (this.day >= 1) {
-          this.dataTime = `${this.day}天${this.hour}时${this.minute}分`
+          this.dataTime = `${this.day}天${this.hour}时${this.minute}分${this.seconds}秒`
         } else if (this.hour >= 1) {
-          this.dataTime = `${this.hour}时${this.minute}分`
-        // } else if (this.minute >= 1) {
-        //   this.dataTime = `${this.minute}分`
-        // } else if (this.seconds >= 1) {
-        //   this.dataTime = `${this.seconds}秒`
+          this.dataTime = `${this.hour}时${this.minute}分${this.seconds}秒`
+        } else if (this.minute >= 1) {
+          this.dataTime = `${this.minute}分${this.seconds}秒`
+        } else if (this.seconds >= 1) {
+          this.dataTime = `${this.seconds}秒`
         }
       }, 1000)
     },
