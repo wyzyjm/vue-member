@@ -20,7 +20,7 @@
         <el-button v-if="data.electronicInvoice" type="primary" plain @click="dialogTableVisible = true">查看发票信息</el-button>
         <el-button v-if="data.orderStatus == 10" type="primary" plain @click="showDialog('edit')">修改地址</el-button>
         <el-button v-if="data.orderStatus == 10" type="primary" @click="payOrder">付款</el-button>
-        <el-button v-if="data.orderStatus == 30" type="primary" @click="confirmOrder">确认收货</el-button>
+        <el-button v-if="data.orderStatus == 40" type="primary" @click="confirmOrder">确认收货</el-button>
       </div>
     </div>
 
@@ -54,6 +54,7 @@
         <div class="item-list">
           <span class="pr-10">支付方式：{{ data.payInfo.paymentTypeName ? data.payInfo.paymentTypeName : '' }}</span>
           <el-popover
+            v-if="data.payInfo.paymentTypeId !== 7"
             placement="bottom"
             width="260"
             trigger="click"
@@ -138,8 +139,8 @@
         <p v-if="data.electronicInvoice.invoiceType === 2" class="invoice-item"><span>纳税人识别号</span><span>{{ data.electronicInvoice.taxNum }}</span></p>
         <p class="invoice-item"><span>发票内容</span><span>{{ data.electronicInvoice.invoiceContent }}</span></p>
         <p class="invoice-item"><span>收票人手机</span><span>{{ data.electronicInvoice.takerPhone }}</span></p>
-        <p class="invoice-item"><span>收票人邮箱</span><span>{{ data.electronicInvoice.takerEmail }}</span></p>
-        <p v-if="data.orderStatus > 40" class="invoice-item"><span>电子发票</span><a class="el-button--text" target="_blank" :href="data.electronicInvoice.invoiceDownLinks[0]" :download="data.electronicInvoice.invoiceTitle">点击下载</a></p>
+        <p v-if="data.electronicInvoice.takerEmail" class="invoice-item"><span>收票人邮箱</span><span>{{ data.electronicInvoice.takerEmail }}</span></p>
+        <p v-if="data.orderStatus > 40 && data.electronicInvoice.invoiceDownLinks" class="invoice-item"><span>电子发票</span><a class="el-button--text" target="_blank" :href="data.electronicInvoice.invoiceDownLinks[0]" :download="data.electronicInvoice.invoiceTitle">点击下载</a></p>
       </div>
       <div slot="footer">
         <!-- 取消 -->
@@ -273,6 +274,8 @@ export default {
             this.active = this.datalist.length
           } else if (this.data.orderStatus === 30) {
             this.datalist.push(this.stepsList[1])
+          } else if (this.data.orderStatus === 50 || this.data.orderStatus === 60 || this.data.payInfo && this.data.payInfo.paymentTypeId === 7) {
+            this.datalist.push()
           } else {
             this.datalist.push(this.stepsList[0], this.stepsList[1])
           }
@@ -411,13 +414,13 @@ export default {
         this.minute = this.toDou(parseInt((leftTime / 60) % 60))
         this.seconds = this.toDou(parseInt(leftTime % 60))
         if (this.day >= 1) {
-          this.dataTime = `${this.day}天${this.hour}时${this.minute}分`
+          this.dataTime = `${this.day}天${this.hour}时${this.minute}分${this.seconds}秒`
         } else if (this.hour >= 1) {
-          this.dataTime = `${this.hour}时${this.minute}分`
-        // } else if (this.minute >= 1) {
-        //   this.dataTime = `${this.minute}分`
-        // } else if (this.seconds >= 1) {
-        //   this.dataTime = `${this.seconds}秒`
+          this.dataTime = `${this.hour}时${this.minute}分${this.seconds}秒`
+        } else if (this.minute >= 1) {
+          this.dataTime = `${this.minute}分${this.seconds}秒`
+        } else if (this.seconds >= 1) {
+          this.dataTime = `${this.seconds}秒`
         }
       }, 1000)
     },

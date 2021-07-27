@@ -1,5 +1,4 @@
-/* eslint-disable vue/require-default-prop */
-/* eslint-disable vue/require-default-prop */
+
 <template>
   <el-dialog
     center
@@ -195,6 +194,7 @@ export default {
       },
       // 收货地址表单 校验规则
       addrFormRules: {
+
         // 国家
         consigneeCountry: [{
           required: true,
@@ -266,14 +266,12 @@ export default {
           },
           trigger: 'blur'
         }],
-
         // 邮编
         consigneeZipCode: [{
           required: false,
           validator: (rule, value, callback) => {
-            if (!value) {
-              return callback(new Error('请输入邮政编码'))
-            } else if (!/^\d{3,12}$/.test(value)) {
+            if (!value) return callback() // 为空不校验
+            if (!/^\d{3,12}$/.test(value)) {
               return callback(new Error('请输入正确的邮政编码'))
             } else {
               callback()
@@ -281,6 +279,7 @@ export default {
           },
           trigger: 'blur'
         }]
+
       },
       // 省市区数据
       frontData: {
@@ -443,7 +442,7 @@ export default {
 
     // 获取焦点, 清空内容
     phoneFocus(e, isPhoneInput) {
-      console.log(e, isPhoneInput)
+      if (e.target.value.indexOf('*') === -1 || /^[0-9]*$/.test(e.target.value)) return // 不包含* , 或者全数字校验通过
       e.target.value = '' // 清空输入框的值
       if (isPhoneInput) {
         this.addrForm.consigneePhone = '' // 手机
