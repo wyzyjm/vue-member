@@ -47,8 +47,10 @@ export function cartDel(params) {
 
   export function cartAdd(data) {
     return request({
-      url:'/fwebapi/order/shoppingCart/add',
+      url:'/fwebapi/order/shoppingCart/add?appid=143150160001',
       method: 'post',
+      headers:{'appid':143150160001},
+
       data,
     })
   }
