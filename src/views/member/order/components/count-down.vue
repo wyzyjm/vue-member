@@ -39,6 +39,10 @@ export default {
     createtime: {
       type: String,
       default: ''
+    },
+    systemtime: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -50,7 +54,7 @@ export default {
   created() {
     var ssss = [
       {
-        time: this.createtime / 1000 + Number(this.counttime) - new Date() / 1000
+        time: (Number(this.createtime) / 1000) + Number(this.counttime) - Number(this.systemtime) / 1000
       }
     ]
     ssss.map((obj) => {

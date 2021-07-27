@@ -54,39 +54,39 @@
         <div class="item-list">
           <span class="pr-10">支付方式：{{ data.payInfo.paymentTypeName ? data.payInfo.paymentTypeName : '' }}</span>
           <el-popover
-            v-if="data.payInfo.paymentTypeId !== 7"
+            v-if="data.orderStatus > 10 && data.payInfo.paymentTypeId !== 7"
             placement="bottom"
             width="260"
             trigger="click"
           >
             <!-- 微信、支付宝、paypal -->
             <div v-if="data.payInfo.paymentTypeId === 1 || data.payInfo.paymentTypeId === 2 || data.payInfo.paymentTypeId === 3" class="slot-content">
-              <p>交易号：{{ data.payInfo.payOnline.tradeNo }}</p>
+              <p class="payInfo-item"><span>交易号：</span><span>{{ data.payInfo.payOnline.tradeNo }}</span></p>
             </div>
             <!-- Bank Transfer 银行转账 -->
             <div v-if="data.payInfo.paymentTypeId === 4" class="slot-content">
-              <p>Bank Transaction No.：{{ data.payInfo.bankTransfer.tradeNo }}</p>
-              <p>Send money：{{ data.payInfo.bankTransfer.money }}</p>
-              <p>Currency：{{ data.payInfo.bankTransfer.currency }}</p>
-              <p>Contents：{{ data.payInfo.bankTransfer.content }}</p>
+              <p class="payInfo-item"><span>Bank Transaction No.：</span><span>{{ data.payInfo.bankTransfer.tradeNo }}</span></p>
+              <p class="payInfo-item"><span>Send money：</span><span>{{ data.payInfo.bankTransfer.money }}</span></p>
+              <p class="payInfo-item"><span>Currency：</span><span>{{ data.payInfo.bankTransfer.currency }}</span></p>
+              <p class="payInfo-item"><span>Contents：</span><span>{{ data.payInfo.bankTransfer.content }}</span></p>
             </div>
             <!-- Western Union 西联> -->
             <div v-if="data.payInfo.paymentTypeId === 5" class="slot-content">
-              <p>First Name：{{ data.payInfo.westernUnion.firstName }}</p>
-              <p>Last Name：{{ data.payInfo.westernUnion.lastName }}</p>
-              <p>Send money：{{ data.payInfo.westernUnion.money }}</p>
-              <p>MTCN# No.：{{ data.payInfo.westernUnion.mtcnNo }}</p>
-              <p>Currency：{{ data.payInfo.westernUnion.currency }}</p>
-              <p>Contents：{{ data.payInfo.westernUnion.content }}</p>
+              <p class="payInfo-item"><span>First Name：</span><span>{{ data.payInfo.westernUnion.firstName }}</span></p>
+              <p class="payInfo-item"><span>Last Name：</span><span>{{ data.payInfo.westernUnion.lastName }}</span></p>
+              <p class="payInfo-item"><span>Send money：</span><span>{{ data.payInfo.westernUnion.money }}</span></p>
+              <p class="payInfo-item"><span>MTCN# No.：</span><span>{{ data.payInfo.westernUnion.mtcnNo }}</span></p>
+              <p class="payInfo-item"><span>Currency：</span><span>{{ data.payInfo.westernUnion.currency }}</span></p>
+              <p class="payInfo-item"><span>Contents：</span><span>{{ data.payInfo.westernUnion.content }}</span></p>
             </div>
             <!-- Money Gram 速汇金> -->
             <div v-if="data.payInfo.paymentTypeId === 6" class="slot-content">
-              <p>First Name：{{ data.payInfo.moneyGram.firstName }}</p>
-              <p>Last Name：{{ data.payInfo.moneyGram.lastName }}</p>
-              <p>Send money：{{ data.payInfo.moneyGram.money }}</p>
-              <p>MTCN# No.：{{ data.payInfo.moneyGram.mtcnNo }}</p>
-              <p>Currency：{{ data.payInfo.moneyGram.currency }}</p>
-              <p>Contents：{{ data.payInfo.moneyGram.content }}</p>
+              <p class="payInfo-item"><span>First Name：</span><span>{{ data.payInfo.moneyGram.firstName }}</span></p>
+              <p class="payInfo-item"><span>Last Name：</span><span>{{ data.payInfo.moneyGram.lastName }}</span></p>
+              <p class="payInfo-item"><span>Send money：</span><span>{{ data.payInfo.moneyGram.money }}</span></p>
+              <p class="payInfo-item"><span>MTCN# No.：</span><span>{{ data.payInfo.moneyGram.mtcnNo }}</span></p>
+              <p class="payInfo-item"><span>Currency：</span><span>{{ data.payInfo.moneyGram.currency }}</span></p>
+              <p class="payInfo-item"><span>Contents：</span><span>{{ data.payInfo.moneyGram.content }}</span></p>
             </div>
             <el-button slot="reference" type="text">支付信息<SvgIcon name="icon-xia" /></el-button>
           </el-popover>
@@ -113,8 +113,8 @@
         />
         <div class="message-board">
           <div>
-            <p>给卖家留言：</p>
-            <p id="sellerMsg">{{ data.sellerMsg }}</p>
+            <p v-if="data.sellerMsg">给卖家留言：</p>
+            <p v-if="data.sellerMsg" id="sellerMsg">{{ data.sellerMsg }}</p>
           </div>
           <div class="message-pay">
             <p>共 <span class="col-danger font-20">{{ inTotal }}</span> 件商品</p>
@@ -400,7 +400,7 @@ export default {
     },
     timeDown(leftTime) {
       clearInterval(this.setIntID)
-      leftTime = leftTime - new Date() / 1000
+      leftTime = leftTime - this.data.systemTime / 1000
       if (leftTime <= 0) {
         this.dataTime = '0秒'
         return
@@ -424,7 +424,6 @@ export default {
         } else if (this.seconds >= 1) {
           this.dataTime = `${this.seconds}秒`
         } else {
-          location.reload()
           this.dataTime = `0秒`
         }
       }, 1000)
@@ -565,6 +564,17 @@ ul,li{
 }
 .reverse .mb-10{
   margin-bottom: 10px;
+}
+.payInfo-item{
+  display: flex;
+  flex-direction: row;
+}
+.payInfo-item span{
+  width: 50%;
+}
+.payInfo-item span:nth-child(1){
+  width: 30%;
+  text-align: right;
 }
 </style>
 
