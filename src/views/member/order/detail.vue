@@ -265,7 +265,7 @@ export default {
         console.log(this.datalist)
         // 待付款状态下开启倒计时
         if (this.data.orderStatus === 10) {
-          this.timeDown(this.data.failureTime)
+          this.timeDown(this.data.createTime / 1000 + Number(this.data.failureTime))
         }
         // 支付流程控制进度条 ORDER_SUBMIT(订单提交),PAYMENT_PROCESS(支付流程),DELIVERY_PROCESS(发货流程),TRADE_SUCCESS(交易成功)
         if (this.data.orderProcessNodes && this.data.orderProcessNodes.indexOf('DELIVERY_PROCESS') !== -1) {
@@ -400,12 +400,14 @@ export default {
     },
     timeDown(leftTime) {
       clearInterval(this.setIntID)
+      leftTime = leftTime - new Date() / 1000
       if (leftTime <= 0) {
-        return '0时0分'
+        this.dataTime = '0秒'
+        return
       }
       this.setIntID = setInterval(() => {
         leftTime--
-        if (leftTime === 0) {
+        if (leftTime <= 0) {
           clearInterval(this.setIntID)
           return
         }
@@ -421,6 +423,9 @@ export default {
           this.dataTime = `${this.minute}分${this.seconds}秒`
         } else if (this.seconds >= 1) {
           this.dataTime = `${this.seconds}秒`
+        } else {
+          location.reload()
+          this.dataTime = `0秒`
         }
       }, 1000)
     },

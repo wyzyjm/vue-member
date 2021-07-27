@@ -60,7 +60,7 @@
             <div class="operate">
               <div v-if="data.orderStatus == 10">
                 <!-- 1、永久有效    0、不是永久有效 -->
-                <CountDown v-if="data.forever === 0" class="p-y col-danger" :counttime="data.failureTime" />
+                <CountDown v-if="data.forever === 0" class="p-y col-danger" :counttime="data.failureTime" :createtime="data.createTime" />
                 <el-button type="primary" @click="paymentOrder(data)">付款</el-button>
               </div>
               <el-button v-if="data.orderStatus == 40" type="primary" @click.prevent="confirmReceipt(data.id)">确认收货</el-button>
