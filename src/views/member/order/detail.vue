@@ -274,7 +274,7 @@ export default {
             this.active = this.datalist.length
           } else if (this.data.orderStatus === 30) {
             this.datalist.push(this.stepsList[1])
-          } else if (this.data.orderStatus === 60 || this.data.payInfo && this.data.payInfo.paymentTypeId === 7) {
+          } else if (this.data.orderStatus === 50 || this.data.orderStatus === 60 || this.data.payInfo && this.data.payInfo.paymentTypeId === 7) {
             this.datalist.push()
           } else {
             this.datalist.push(this.stepsList[0], this.stepsList[1])
