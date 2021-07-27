@@ -5,7 +5,7 @@ import { getToken } from '@/utils/auth'
 
 let baseurl = ''
 if (process.env.NODE_ENV == 'development') {
-  baseurl = 'http://qinhui20210610.p.make.test-dcloud.portal1.portal.yun300.cn/nportal/';
+  baseurl = 'http://20210622144830.p.make.test-dcloud.portal1.portal.yun300.cn/nportal/';
 }
 else if (process.env.NODE_ENV == 'production') {
   baseurl = '/nportal/';
