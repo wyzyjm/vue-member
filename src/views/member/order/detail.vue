@@ -20,7 +20,7 @@
         <el-button v-if="data.electronicInvoice" type="primary" plain @click="dialogTableVisible = true">查看发票信息</el-button>
         <el-button v-if="data.orderStatus == 10" type="primary" plain @click="showDialog('edit')">修改地址</el-button>
         <el-button v-if="data.orderStatus == 10" type="primary" @click="payOrder">付款</el-button>
-        <el-button v-if="data.orderStatus == 30" type="primary" @click="confirmOrder">确认收货</el-button>
+        <el-button v-if="data.orderStatus == 40" type="primary" @click="confirmOrder">确认收货</el-button>
       </div>
     </div>
 
