@@ -289,8 +289,8 @@ export default {
           { required: true, message: "请输入汇款金额", trigger: "blur" },
           {
             min: 1,
-            max: 50,
-            message: "长度在 1 到 50 个字符",
+            max: 15,
+            message: "长度在 1 到 15 个字符",
             trigger: "blur",
           },
         ],
@@ -298,8 +298,8 @@ export default {
           { required: true, message: "请输入MTCN#号", trigger: "blur" },
           {
             min: 1,
-            max: 50,
-            message: "长度在 1 到 50 个字符",
+            max: 30,
+            message: "长度在 1 到 30 个字符",
             trigger: "blur",
           },
         ],
@@ -448,7 +448,11 @@ export default {
         if (res.status === 200) {
           this.loading = false;
           if (this.$route.query.payCode == "Wechat") {
-            this.codeTimer = res.data.qrEffectiveTime;
+
+            let codeTimer =  res
+            // .data.createDate / 1000 + Number(res.data.qrEffectiveTime) - res.data.serverTime / 1000
+
+            this.codeTimer = parseInt(res.data.qrEffectiveTime);
             this.$refs.qrcode.innerHTML = "";
             let qrcode = new QRCode("qrcode", {
               width: 300, // 二维码宽度

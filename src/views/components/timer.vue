@@ -12,6 +12,7 @@ export default {
   },
   mounted() {
     this.count = this.endTime
+    console.log('dd',this.endTime)
     let time = setInterval(() => {
       if (this.flag == true) {
         clearInterval(time);
@@ -24,7 +25,7 @@ export default {
   },
   props: {
     endTime: {
-      type: String
+      type: Number
     }
   },
   methods: {

@@ -383,6 +383,7 @@ export default {
           receiverCode: this.receiverCode, // id
           reverseFlag: this.isReverse ? 1 : 0 // 是否反转
         }
+        console.log(data)
         // 编辑订单地址
         if (this.orderId) {
           data.orderId = this.orderId // 订单id
@@ -401,10 +402,11 @@ export default {
               res = this.orderId ? await editOrderAddress(data) : await eidtAddressList(data)
               break
           }
-          console.info('响应结果--->', res)
+          console.info('响应结果--->', res.data)
           if (res.status !== 200) return
           this.dialogFormVisible = false // 关闭弹窗
           this.$emit('confirm', data) // 派发父组件事件
+          this.$emit('getAddrId',res.data.data)//订单结算派发事件传addressId
         } catch (error) {
           console.log('失败', error)
         }

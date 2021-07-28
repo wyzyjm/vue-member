@@ -28,73 +28,75 @@
           </p>
 
           <div v-else class="address-group">
-            <div
-              v-for="(item, index) in logisticsInfoList"
-              :key="item.id"
-              :class="['address-item', { active: item.active }]"
-              @click="choseAddress(index)"
-            >
-              <span class="name">{{ item.consigneeName }}</span>
-              <div class="more">
-                <!-- <span>{{ item.consigneeCountry }}</span>
+            <template v-if="logisticsInfoList.length > 0">
+              <div
+                v-for="(item, index) in logisticsInfoList"
+                :key="item.id"
+                :class="['address-item', { active: item.active }]"
+                @click="choseAddress(index)"
+              >
+                <span class="name">{{ item.consigneeName }}</span>
+                <div class="more">
+                  <!-- <span>{{ item.consigneeCountry }}</span>
               <span>{{ item.consigneeProvince }}</span>
               <span>{{ item.consigneeCity }}</span> -->
-                <template v-if="item.reverseFlag">
-                  <span>{{ item.consigneeAddr }}</span>
-                  <span>
-                    {{
-                      getAddress(
-                        item.consigneeCountry,
-                        item.consigneeProvince,
-                        item.consigneeCity,
-                        item.consigneeCounty,
-                        true
-                      )
-                    }}</span
-                  >
-                </template>
-                <template>
-                  <span>
-                    {{
-                      getAddress(
-                        item.consigneeCountry,
-                        item.consigneeProvince,
-                        item.consigneeCity,
-                        item.consigneeCounty,
-                        true
-                      )
-                    }}</span
-                  >
-                  <span>{{ item.consigneeAddr }}</span>
-                </template>
+                  <template v-if="item.reverseFlag">
+                    <span>{{ item.consigneeAddr }}</span>
+                    <span>
+                      {{
+                        getAddress(
+                          item.consigneeCountry,
+                          item.consigneeProvince,
+                          item.consigneeCity,
+                          item.consigneeCounty,
+                          true
+                        )
+                      }}</span
+                    >
+                  </template>
+                  <template>
+                    <span>
+                      {{
+                        getAddress(
+                          item.consigneeCountry,
+                          item.consigneeProvince,
+                          item.consigneeCity,
+                          item.consigneeCounty,
+                          true
+                        )
+                      }}</span
+                    >
+                    <span>{{ item.consigneeAddr }}</span>
+                  </template>
 
-                <span>{{ item.consigneePhone }}</span>
+                  <span>{{ item.consigneePhone }}</span>
+                </div>
+                <span v-if="item.isDefault" class="default-address-icon"
+                  >默认地址</span
+                >
+                <div class="address-btns">
+                  <el-button
+                    v-if="!item.isDefault"
+                    type="text"
+                    size="mini"
+                    @click.stop="setDefault(item.id)"
+                    >设为默认</el-button
+                  >
+                  <el-button
+                    type="text"
+                    size="mini"
+                    @click.stop="eidtAddress(item)"
+                    >编辑</el-button
+                  >
+                  <el-button
+                    type="text"
+                    size="mini"
+                    @click.stop="deleteAddress(item)"
+                    >删除</el-button
+                  >
+                </div>
               </div>
-              <span v-if="item.isDefault" class="default-address-icon"
-                >默认地址</span
-              >
-              <div class="address-btns">
-                <el-button
-                  v-if="!item.isDefault"
-                  type="text"
-                  size="mini"
-                  @click.stop="setDefault(item.id)"
-                  >设为默认</el-button
-                >
-                <el-button
-                  type="text"
-                  size="mini"
-                  @click.stop="eidtAddress(item)"
-                  >编辑</el-button
-                >
-                <el-button
-                  type="text"
-                  size="mini"
-                  @click.stop="deleteAddress(item)"
-                  >删除</el-button
-                >
-              </div>
-            </div>
+            </template>
           </div>
         </div>
         <p
@@ -201,28 +203,27 @@
         寄送至：
         <template v-if="addressInfo.reverseFlag">
           {{ addressInfo.consigneeAddr }}
-        {{
-          getAddress(
-            addressInfo.consigneeCountry,
-            addressInfo.consigneeProvince,
-            addressInfo.consigneeCity,
-            addressInfo.consigneeCounty,
-            true
-          )
-        }}
-        
+          {{
+            getAddress(
+              addressInfo.consigneeCountry,
+              addressInfo.consigneeProvince,
+              addressInfo.consigneeCity,
+              addressInfo.consigneeCounty,
+              true
+            )
+          }}
         </template>
         <template v-else>
           {{
-          getAddress(
-            addressInfo.consigneeCountry,
-            addressInfo.consigneeProvince,
-            addressInfo.consigneeCity,
-            addressInfo.consigneeCounty,
-            true
-          )
-        }}
-        {{ addressInfo.consigneeAddr }}
+            getAddress(
+              addressInfo.consigneeCountry,
+              addressInfo.consigneeProvince,
+              addressInfo.consigneeCity,
+              addressInfo.consigneeCounty,
+              true
+            )
+          }}
+          {{ addressInfo.consigneeAddr }}
         </template>
       </div>
       <div>
@@ -249,6 +250,7 @@
       ref="address"
       :addressFormProp="current"
       @confirm="confirmDialog"
+      @getAddrId="getAddressId"
       @addressFormDialogClose="addressFormDialogClose"
     ></address-form>
 
@@ -374,6 +376,7 @@ export default {
       remarkAttrs: [],
       receiptList: [],
       receiptIndex: null,
+      newAddressId: null,
     };
   },
   components: {
@@ -411,15 +414,38 @@ export default {
         if (res.status !== 200) return;
         // console.log(res);
         this.logisticsInfoList = res.data.addressList;
-
-        for (let i = 0; i < this.logisticsInfoList.length; i++) {
-          if (i == 0) {
-            this.logisticsInfoList[i].active = true;
-          } else {
-            this.logisticsInfoList[i].active = false;
+        if (this.newAddressId !== null) {
+          let newIndex = null;
+          for (let i = 0; i < this.logisticsInfoList.length; i++) {
+            if (this.logisticsInfoList[i].id == this.newAddressId) {
+              newIndex = i;
+              this.addressInfo = this.logisticsInfoList[i];
+            } 
+          }
+          this.choseAddress(newIndex)
+          
+        }
+        if (this.addressInfo.id === undefined) {
+          // for (let i = 0; i < this.logisticsInfoList.length; i++) {
+          //   if (i == 0) {
+          //     this.logisticsInfoList[i].active = true;
+          //   } else {
+          //     this.logisticsInfoList[i].active = false;
+          //   }
+          // }
+          this.addressInfo = this.logisticsInfoList[0];
+          this.choseAddress(0);
+        } else {
+          for (let i = 0; i < this.logisticsInfoList.length; i++) {
+            if (this.addressInfo.id == this.logisticsInfoList[i].id) {
+              this.choseAddress(i);
+            }
           }
         }
-        this.addressInfo = this.logisticsInfoList[0];
+
+        // this.choseAddress(newIndex)
+        console.log("addressInfo", this.addressInfo);
+        console.log("newlist--", this.logisticsInfoList);
         //商品清单
         this.getProductList();
         //获取支付方式，配送方式
@@ -482,6 +508,9 @@ export default {
           const res = await deleteAddressList(params);
           // console.log(res);
           if (res.status !== 200) return;
+          if(item.id==this.addressInfo.id){
+            this.addressInfo = {}
+          }
           this.getList(); // 重新获取收货地址列表
         } catch (error) {
           console.log("删除失败", error);
@@ -513,13 +542,21 @@ export default {
     },
     // 收货地址弹窗
     openAddress(type) {
-      if (status === "create" && this.logisticsInfoList.length === 10)
-        return this.$message({
+      if (type === "create" && this.logisticsInfoList.length === 10) {
+        this.$message({
           message: "抱歉，地址信息最多可创建10条，请删除一条在创建吧!",
           type: "warning",
         });
+        return;
+      }
+
       this.$refs.address.dialogFormVisible = true;
       this.$refs.address.dialogStatus = type;
+    },
+    async getAddressId(id) {
+      this.newAddressId = id;
+      // this.logisticsInfoList = await getAddressList();
+      console.log(this.logisticsInfoList);
     },
     //展开收起地址
     showAddress() {
@@ -615,6 +652,7 @@ export default {
       }
     },
     choseAddress(index) {
+      this.newAddressId = null;
       for (let i = 0; i < this.logisticsInfoList.length; i++) {
         this.logisticsInfoList[i].active = false;
       }

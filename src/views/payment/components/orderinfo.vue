@@ -4,8 +4,7 @@
       <span class="info">
         订单提交成功，请尽快付款！
         <!-- 订单号：{{ orderInfo.orderNo }} -->
-        </span
-      >
+      </span>
       <span class="right"
         >应付金额：<strong class="text-danger" style="font-size: 24px"
           >{{ orderInfo.currencySymbol }}{{ orderInfo.amount }}
@@ -19,76 +18,74 @@
           请您在
           <span class="order-timer text-danger">
             <timer
-              :endTime="orderInfo.failureTime"
+              :endTime="parseInt(freshTime)"
               @timeEnd="
                 $router.push({ path: '/order/list', query: { type: 0 } })
               "
+              v-if="parseInt(freshTime) > 0"
             ></timer>
           </span>
           内完成支付，否则订单会被自动取消
         </div>
       </template>
     </div>
-    <el-collapse accordion style="margin-top:20px">
+    <el-collapse accordion style="margin-top: 20px">
       <el-collapse-item v-for="item in orderItemList" :key="item.orderId">
         <template slot="title">
-          订单号：<span style="font-weight:700;margin-right:30px">{{ item.orderNo }} </span>
-          <template v-if="orderItemList.length>1">
-          支付金额：<span class="text-danger">{{orderInfo.currencySymbol}}{{
-            item.payableTotalAmount
-          }}</span>
+          订单号：<span style="font-weight: 700; margin-right: 30px"
+            >{{ item.orderNo }}
+          </span>
+          <template v-if="orderItemList.length > 1">
+            支付金额：<span class="text-danger"
+              >{{ orderInfo.currencySymbol }}{{ item.payableTotalAmount }}</span
+            >
           </template>
-          <span class="text-blue" style="flex:1;text-align:right;">订单详情</span>
+          <span class="text-blue" style="flex: 1; text-align: right"
+            >订单详情</span
+          >
         </template>
         <p>
           <template v-if="orderDetail.reverseFlag">
-<span
-            >收货地址：{{ orderDetail.consigneeAddr }}{{
-              getAddress(
-                orderDetail.consigneeCountry,
-                orderDetail.consigneeProvince,
-                orderDetail.consigneeCity,
-                orderDetail.consigneeCounty,
-                true
-              )
-            }}
-            
-          </span>
+            <span
+              >收货地址：{{ orderDetail.consigneeAddr
+              }}{{
+                getAddress(
+                  orderDetail.consigneeCountry,
+                  orderDetail.consigneeProvince,
+                  orderDetail.consigneeCity,
+                  orderDetail.consigneeCounty,
+                  true
+                )
+              }}
+            </span>
           </template>
           <template v-else>
-<span
-            >收货地址：
-            {{
-              getAddress(
-                orderDetail.consigneeCountry,
-                orderDetail.consigneeProvince,
-                orderDetail.consigneeCity,
-                orderDetail.consigneeCounty,
-                true
-              )
-            }}
-            {{ orderDetail.consigneeAddr }}
-            
-          </span>
+            <span
+              >收货地址：
+              {{
+                getAddress(
+                  orderDetail.consigneeCountry,
+                  orderDetail.consigneeProvince,
+                  orderDetail.consigneeCity,
+                  orderDetail.consigneeCounty,
+                  true
+                )
+              }}
+              {{ orderDetail.consigneeAddr }}
+            </span>
           </template>
-          
 
           <span>收货人：{{ orderDetail.consigneeName }}</span>
           <span>{{ orderDetail.consigneePhone }}</span>
         </p>
-         <div>
-        <span class="product-name-title">商品名称：</span>
-        <div class="product-name-list">
-          <span v-for="name in item.productName" :key="name">{{
-            name
-          }}</span>
+        <div>
+          <span class="product-name-title">商品名称：</span>
+          <div class="product-name-list">
+            <span v-for="name in item.productName" :key="name">{{ name }}</span>
+          </div>
         </div>
-         </div>
       </el-collapse-item>
-      
     </el-collapse>
-
-    
   </div>
 </template>
 <script >
@@ -104,6 +101,7 @@ export default {
       // orderDetail:{},
       orderTimeCount: 0,
       // endTime:'121061'
+      freshTime: 0,
     };
   },
   props: ["orderInfo", "orderDetail", "orderItemList"],
@@ -124,13 +122,10 @@ export default {
     timer,
   },
   mounted() {
-    // let datajson = { timer: 3365, date: 2344 };
-    this.orderTimeCount = this.orderInfo.failureTime;
-    if (this.orderTimeCount > 0) {
-      this.orderTimer = setInterval(() => {
-        this.orderTimeCount--;
-      }, 1000);
-    }
+    this.freshTime =
+      this.orderInfo.createTime / 1000 +
+      Number(this.orderInfo.failureTime) -
+      this.orderInfo.serverTime / 1000;
   },
   filters: {
     format(val) {
