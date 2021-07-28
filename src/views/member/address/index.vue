@@ -72,13 +72,13 @@
         <li v-if="item.consigneePhone">
           <span class="attrName text-grey"> 手机: </span>
           <span class="attrValue">
-            {{ item.consigneePhoneHead }} {{ item.consigneePhone }}</span>
+            {{ '+'+item.consigneePhoneHead.split('+')[1] }} {{ item.consigneePhone }}</span>
         </li>
         <!-- 固定电话 -->
         <li v-if="item.consigneeTel">
           <span class="attrName text-grey"> 固定电话: </span>
           <span class="attrValue">
-            {{ item.consigneeTelHead }} - {{ item.consigneeTel }}
+            {{ '+'+item.consigneeTelHead.split('+')[1] }} - {{ item.consigneeTel }}
           </span>
         </li>
         <!-- 邮编 -->
