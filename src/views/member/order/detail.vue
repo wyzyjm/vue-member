@@ -398,6 +398,7 @@ export default {
       const dateTime = `${o.Y}-${this.toDou(o.M)}-${this.toDou(o.d)}  ${this.toDou(o.h)}:${this.toDou(o.m)}`
       return dateTime
     },
+    // 倒计时
     timeDown(leftTime) {
       clearInterval(this.setIntID)
       leftTime = leftTime - this.data.systemTime / 1000
@@ -409,6 +410,7 @@ export default {
         leftTime--
         if (leftTime <= 0) {
           clearInterval(this.setIntID)
+          location.reload()
           return
         }
         this.day = parseInt(leftTime / (24 * 60 * 60))
@@ -573,7 +575,7 @@ ul,li{
   width: 50%;
 }
 .payInfo-item span:nth-child(1){
-  width: 30%;
+  width: 42%;
   text-align: right;
 }
 </style>
