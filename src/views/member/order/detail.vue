@@ -575,7 +575,7 @@ ul,li{
   width: 50%;
 }
 .payInfo-item span:nth-child(1){
-  width: 30%;
+  width: 42%;
   text-align: right;
 }
 </style>
