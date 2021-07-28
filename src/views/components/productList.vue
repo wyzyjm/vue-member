@@ -96,6 +96,13 @@ export default {
 .productInfo {
   padding-left: 100px;
 }
+.productInfo p{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
 .el-table th {
   background: rgba(242, 242, 242, 1);
 }
