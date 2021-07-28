@@ -66,7 +66,7 @@
                   v-for="(item, index) in frontData.phoneCode"
                   :key="index"
                   :label="item.dialCode"
-                  :value="item.dialCode"
+                  :value="(item.iso2 + item.dialCode)"
                 >
                   <span> {{ item.dialCode }} {{ item.name }}</span>
                 </el-option>
@@ -96,7 +96,7 @@
                   v-for="(item, index) in frontData.phoneCode"
                   :key="index"
                   :label="item.dialCode"
-                  :value="item.dialCode"
+                  :value="(item.iso2 + item.dialCode)"
                 >
                   <span> {{ item.dialCode }} {{ item.name }}</span>
                 </el-option>
@@ -160,7 +160,6 @@ export default {
     addressFormProp: {
       type: Object,
       required: false,
-      // eslint-disable-next-line vue/require-valid-default-prop
       default: () => {
         return {}
       }
@@ -294,6 +293,8 @@ export default {
   created() {
     this.frontData.conuntryOptions = getCountryData() // 设置国家下拉数据
     this.frontData.addressData = [] // 省市区下拉数据为空
+
+    console.log(this.frontData.phoneCode)
   },
   // 方法
   methods: {
@@ -358,7 +359,7 @@ export default {
         if (!valid) return
         if (!this.addrForm.consigneeTel && !this.addrForm.consigneePhone) { return (this.errorMsg = true) } // 手机号和电话号都没有
         this.errorMsg = false
-
+        console.log(this.addrForm)
         const copyData = JSON.parse(JSON.stringify(this.addrForm)) // 拷贝
         const data = {
           consigneeCountry: copyData.consigneeCountry, // 国家
@@ -406,7 +407,7 @@ export default {
           if (res.status !== 200) return
           this.dialogFormVisible = false // 关闭弹窗
           this.$emit('confirm', data) // 派发父组件事件
-          this.$emit('getAddrId',res.data.data)//订单结算派发事件传addressId
+          this.$emit('getAddrId', res.data.data)// 订单结算派发事件传addressId
         } catch (error) {
           console.log('失败', error)
         }
