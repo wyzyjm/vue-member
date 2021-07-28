@@ -428,9 +428,7 @@ export default {
 				});
 				this.$nextTick(()=> {
 					this.cartList.forEach((e,i) => {
-						console.log(e.selected,i)
-						if(e.selected==1){
-							console.log(e.selected,i)
+						if(e.selected==1 && this.$refs.cartList){
 							this.$refs.cartList.toggleRowSelection(e, true);
 						}
 					})

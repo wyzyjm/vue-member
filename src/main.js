@@ -23,7 +23,8 @@ Vue.component('custom-img', CustomImg)
 
 fetch(window.location.origin+'/tenant.json')
   .then(function(response) {
-    return response.json();
+    //return response.json();
+    return response.body;
   })
   .then(function(result) {
     Vue.prototype.$tenantInfo = result;

@@ -6,6 +6,7 @@ import { getToken } from '@/utils/auth'
 let baseurl = ''
 if (process.env.NODE_ENV == 'development') {
   baseurl = 'http://20210622144830.p.make.test-dcloud.portal1.portal.yun300.cn/nportal/';
+  //baseurl = 'http://172.22.146.56:8888/';
 }
 else if (process.env.NODE_ENV == 'production') {
   baseurl = '/nportal/';
@@ -20,11 +21,12 @@ const service = axios.create({
   timeout: 5000 // request timeout
 })
 service.defaults.headers.post['Content-Type'] = 'application/json'
-service.defaults.headers.post['tenantId'] = 1600018169
-service.defaults.headers.get['tenantId'] = 1600018169
-service.defaults.headers.post['instance'] = 'qinhui20210610'
-service.defaults.headers.get['instance'] = 'qinhui20210610'
-service.defaults.headers.post['appId'] = 143150160001
+// service.defaults.headers.post['tenantId'] = 1600018169
+// service.defaults.headers.get['tenantId'] = 1600018169
+// service.defaults.headers.post['instance'] = 'qinhui20210610'
+// service.defaults.headers.get['instance'] = 'qinhui20210610'
+// service.defaults.headers.post['appId'] = 143150160001
+
 // request interceptor
 service.interceptors.request.use(
   config => {
