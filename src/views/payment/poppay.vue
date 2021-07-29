@@ -448,8 +448,7 @@ export default {
         if (res.status === 200) {
           this.loading = false;
           if (this.$route.query.payCode == "Wechat") {
-
-            let codeTimer =  res
+            let codeTimer = res;
             // .data.createDate / 1000 + Number(res.data.qrEffectiveTime) - res.data.serverTime / 1000
 
             this.codeTimer = parseInt(res.data.qrEffectiveTime);
@@ -640,11 +639,14 @@ export default {
 }
 .oreveiver-list {
   width: 500px;
+  display: flex;
+  flex-direction: row;
   margin: 10px auto;
+  flex-wrap: wrap;
 }
 .oreceiver-item {
   width: 50%;
-  float: left;
+  display: flex;
   line-height: 30px;
 }
 .oreceiver-item .item-title {
@@ -652,9 +654,24 @@ export default {
   width: 120px;
   text-align: right;
   padding-right: 10px;
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 .bank-info .item-title {
   width: 150px;
+}
+.item-title + span {
+  /* width: 180px; */
+  display: inline-block;
+  vertical-align: top;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-all;
+  margin-top: 5px;;
+  line-height: 20px;
 }
 .bank-info {
   width: 670px;
