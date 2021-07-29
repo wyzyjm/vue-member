@@ -227,6 +227,7 @@
         </template>
       </div>
       <div>
+        <!-- {{addressInfo}} -->
         收货人：{{ addressInfo.consigneeName }} {{ addressInfo.consigneePhone }}
       </div>
     </div>
@@ -414,6 +415,7 @@ export default {
         if (res.status !== 200) return;
         // console.log(res);
         this.logisticsInfoList = res.data.addressList;
+        console.log("newaddressId"+this.newAddressId)
         if (this.newAddressId !== null) {
           let newIndex = null;
           for (let i = 0; i < this.logisticsInfoList.length; i++) {
@@ -423,23 +425,17 @@ export default {
             } 
           }
           this.choseAddress(newIndex)
-          
         }
         if (this.addressInfo.id === undefined) {
-          // for (let i = 0; i < this.logisticsInfoList.length; i++) {
-          //   if (i == 0) {
-          //     this.logisticsInfoList[i].active = true;
-          //   } else {
-          //     this.logisticsInfoList[i].active = false;
-          //   }
-          // }
           this.addressInfo = this.logisticsInfoList[0];
           this.choseAddress(0);
         } else {
           for (let i = 0; i < this.logisticsInfoList.length; i++) {
             if (this.addressInfo.id == this.logisticsInfoList[i].id) {
+              this.addressInfo = this.logisticsInfoList[i]
               this.choseAddress(i);
             }
+            
           }
         }
 
@@ -554,9 +550,8 @@ export default {
       this.$refs.address.dialogStatus = type;
     },
     async getAddressId(id) {
-      this.newAddressId = id;
-      // this.logisticsInfoList = await getAddressList();
-      console.log(this.logisticsInfoList);
+      this.newAddressId = id===undefined?null:id;
+      
     },
     //展开收起地址
     showAddress() {
