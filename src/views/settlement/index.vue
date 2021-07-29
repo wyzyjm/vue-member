@@ -68,8 +68,20 @@
                     >
                     <span>{{ item.consigneeAddr }}</span>
                   </template>
-
-                  <span>{{ item.consigneePhone }}</span>
+                  <template v-if="item.consigneePhone !== ''">
+                    <span
+                      >+{{ item.consigneePhoneHead.split("+")[1] }}-{{
+                        item.consigneePhone
+                      }}</span
+                    >
+                  </template>
+                  <template v-else>
+                    <span
+                      >+{{ item.consigneeTelHead.split("+")[1] }}-{{
+                        item.consigneeTel
+                      }}</span
+                    >
+                  </template>
                 </div>
                 <span v-if="item.isDefault" class="default-address-icon"
                   >默认地址</span
@@ -227,8 +239,19 @@
         </template>
       </div>
       <div>
-        <!-- {{addressInfo}} -->
-        收货人：{{ addressInfo.consigneeName }} {{ addressInfo.consigneePhone }}
+        收货人：{{ addressInfo.consigneeName }}
+        <template v-if="addressInfo.consigneePhone !== ''">
+          <template v-if="addressInfo.consigneePhoneHead != undefined">
+            +{{ addressInfo.consigneePhoneHead.split("+")[1] }}-{{
+              addressInfo.consigneePhone
+            }}
+          </template>
+        </template>
+        <template v-else>
+          <template v-if="addressInfo.consigneePhoneHead != undefined">
+            +{{ (addressInfo.consigneeTelHead).split("+")[1] }}-{{ addressInfo.consigneeTel }}
+          </template>
+        </template>
       </div>
     </div>
     <div class="trade-btn">
@@ -415,16 +438,16 @@ export default {
         if (res.status !== 200) return;
         // console.log(res);
         this.logisticsInfoList = res.data.addressList;
-        console.log("newaddressId"+this.newAddressId)
+        console.log("newaddressId" + this.newAddressId);
         if (this.newAddressId !== null) {
           let newIndex = null;
           for (let i = 0; i < this.logisticsInfoList.length; i++) {
             if (this.logisticsInfoList[i].id == this.newAddressId) {
               newIndex = i;
               this.addressInfo = this.logisticsInfoList[i];
-            } 
+            }
           }
-          this.choseAddress(newIndex)
+          this.choseAddress(newIndex);
         }
         if (this.addressInfo.id === undefined) {
           this.addressInfo = this.logisticsInfoList[0];
@@ -432,10 +455,9 @@ export default {
         } else {
           for (let i = 0; i < this.logisticsInfoList.length; i++) {
             if (this.addressInfo.id == this.logisticsInfoList[i].id) {
-              this.addressInfo = this.logisticsInfoList[i]
+              this.addressInfo = this.logisticsInfoList[i];
               this.choseAddress(i);
             }
-            
           }
         }
 
@@ -446,6 +468,7 @@ export default {
         this.getProductList();
         //获取支付方式，配送方式
         this.getPayMode(this.addressInfo.id);
+        console.log(typeof this.addressInfo.consigneePhoneHead);
       } catch (error) {
         console.log("获取收货地址失败", error);
       }
@@ -504,8 +527,8 @@ export default {
           const res = await deleteAddressList(params);
           // console.log(res);
           if (res.status !== 200) return;
-          if(item.id==this.addressInfo.id){
-            this.addressInfo = {}
+          if (item.id == this.addressInfo.id) {
+            this.addressInfo = {};
           }
           this.getList(); // 重新获取收货地址列表
         } catch (error) {
@@ -550,8 +573,7 @@ export default {
       this.$refs.address.dialogStatus = type;
     },
     async getAddressId(id) {
-      this.newAddressId = id===undefined?null:id;
-      
+      this.newAddressId = id === undefined ? null : id;
     },
     //展开收起地址
     showAddress() {
@@ -765,6 +787,7 @@ export default {
         params.orderSplitResponseVOList = volist;
 
         params.freight = totalFreight;
+        
         addOrder(params).then((res) => {
           if (res.status === 200) {
             if (

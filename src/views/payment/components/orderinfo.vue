@@ -75,8 +75,26 @@
             </span>
           </template>
 
-          <span>收货人：{{ orderDetail.consigneeName }}</span>
-          <span>{{ orderDetail.consigneePhone }}</span>
+          <span style="margin-right:10px">收货人：{{ orderDetail.consigneeName }}</span>
+          
+          <template v-if="orderDetail.consigneePhone !== ''">
+            <template v-if="orderDetail.consigneePhoneHead !== undefined">
+              <span
+                >+{{ orderDetail.consigneePhoneHead.split("+")[1] }}-{{
+                  orderDetail.consigneePhone
+                }}</span
+              >
+            </template>
+          </template>
+          <template v-else>
+            <template v-if="orderDetail.consigneeTelHead !== undefined">
+              <span
+                >+{{ orderDetail.consigneeTelHead.split("+")[1] }}-{{
+                  orderDetail.consigneeTel
+                }}</span
+              >
+            </template>
+          </template>
         </p>
         <div>
           <span class="product-name-title">商品名称：</span>
