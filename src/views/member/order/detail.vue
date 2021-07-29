@@ -45,7 +45,7 @@
 
           </div>
           <p v-if="data.consigneeInfo.consigneePhone" class="consignee"><span>手机号码：</span><span>{{ data.consigneeInfo.consigneePhoneHead.substring(data.consigneeInfo.consigneePhoneHead.lastIndexOf("+")) }} {{ data.consigneeInfo.consigneePhone }}</span></p>
-          <p v-if="data.consigneeInfo.consigneeTel" class="consignee"><span>固定电话：</span><span v-if="data.consigneeInfo.consigneeTelHead">{{ data.consigneeInfo.consigneeTelHead.substring(data.consigneeInfo.consigneeTelHead.lastIndexOf("+")) }}-{{ data.consigneeInfo.consigneeTel }}</span></p>
+          <p v-if="data.consigneeInfo.consigneeTel" class="consignee"><span>固定电话：</span><span>{{ data.consigneeInfo.consigneeTelHead.substring(data.consigneeInfo.consigneeTelHead.lastIndexOf("+")) }}-{{ data.consigneeInfo.consigneeTel }}</span></p>
           <p v-if="data.consigneeInfo.consigneeZipCode" class="consignee"><span>邮政编码：</span><span>{{ data.consigneeInfo.consigneeZipCode }}</span></p>
         </div>
       </li>
@@ -294,6 +294,7 @@ export default {
       this.dialogTableVisible = false
       const _this = this.$refs['receiptDialog']
       _this.dialogVisible = true
+      _this.form.invoiceId = this.data.electronicInvoice.invoiceId
     },
     // 发票弹出确认事件
     receiptConfirmDialog(status) {
@@ -523,7 +524,6 @@ ul,li{
 }
 .consignee{
   display: flex;
-  max-width: 50%;
 }
 .consignee span{
   width: 100px;
@@ -532,6 +532,7 @@ ul,li{
 }
 .consignee span:nth-child(2){
   width: calc(100% - 110px);
+  max-width: 400px;
   text-align: left;
   overflow: hidden;
     text-overflow: ellipsis;
@@ -586,6 +587,7 @@ ul,li{
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  word-break: break-all;
 }
 .payInfo-item span:nth-child(1){
   width: 42%;
