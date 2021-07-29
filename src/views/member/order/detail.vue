@@ -157,7 +157,7 @@
 
     <Receipt
       ref="receiptDialog"
-      :save-libray="receiptSaveLibray"
+      :invoiceId="data.electronicInvoice!=undefined?data.electronicInvoice.invoiceId:''"
       @formData="receiptConfirmDialog"
     />
   </div>

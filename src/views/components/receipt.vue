@@ -46,7 +46,7 @@
                   v-for="(item, index) in frontData.phoneCode"
                   :key="index"
                   :label="item.dialCode"
-                  :value="`${item.dialCode},${item.iso2}`"
+                  :value="`${item.iso2}${item.dialCode}`"
                 >
                   <span> {{ item.dialCode }} {{ item.name }}</span>
                 </el-option>
@@ -86,6 +86,20 @@ export default {
       type: Boolean,
       default: true,
     },
+    invoiceId:{
+      type:String,
+      default:''
+    }
+
+  },
+computed:{
+    getPhonePrefix(){
+      if(this.form.phonePrefix&&this.form.phonePrefix.split("+").length==2){
+        return "+"+this.form.phonePrefix.split("+")[1]
+      }else{
+        return ''
+      }
+    }
   },
 
   data() {
@@ -215,6 +229,10 @@ export default {
     },
   },
   mounted() {
+     if(this.invoiceId!=''){
+      this.form.invoiceId = this.invoiceId
+    }
+
     if (this.form.invoiceId === "") {
       getSettle().then((res) => {
         if (res.status === 200) {
