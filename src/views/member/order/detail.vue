@@ -44,8 +44,8 @@
             <p v-if="data.consigneeInfo.consigneeAddr" class="consignee mb-10"><span>详细地址：</span><span>{{ data.consigneeInfo.consigneeAddr }}</span></p>
 
           </div>
-          <p v-if="data.consigneeInfo.consigneePhoneHead" class="consignee"><span>手机号码：</span><span>{{ data.consigneeInfo.consigneePhoneHead }} {{ data.consigneeInfo.consigneePhone }}</span></p>
-          <p v-if="data.consigneeInfo.consigneeTelHead" class="consignee"><span>固定电话：</span><span v-if="data.consigneeInfo.consigneeTelHead">{{ data.consigneeInfo.consigneeTelHead }}-{{ data.consigneeInfo.consigneeTel }}</span></p>
+          <p v-if="data.consigneeInfo.consigneePhone" class="consignee"><span>手机号码：</span><span>{{ data.consigneeInfo.consigneePhoneHead.substring(data.consigneeInfo.consigneePhoneHead.lastIndexOf("+")) }} {{ data.consigneeInfo.consigneePhone }}</span></p>
+          <p v-if="data.consigneeInfo.consigneeTel" class="consignee"><span>固定电话：</span><span>{{ data.consigneeInfo.consigneeTelHead.substring(data.consigneeInfo.consigneeTelHead.lastIndexOf("+")) }}-{{ data.consigneeInfo.consigneeTel }}</span></p>
           <p v-if="data.consigneeInfo.consigneeZipCode" class="consignee"><span>邮政编码：</span><span>{{ data.consigneeInfo.consigneeZipCode }}</span></p>
         </div>
       </li>
@@ -138,7 +138,7 @@
         <p class="invoice-item"><span>发票抬头</span><span>{{ data.electronicInvoice.invoiceTitle }}</span></p>
         <p v-if="data.electronicInvoice.invoiceType === 2" class="invoice-item"><span>纳税人识别号</span><span>{{ data.electronicInvoice.taxNum }}</span></p>
         <p class="invoice-item"><span>发票内容</span><span>{{ data.electronicInvoice.invoiceContent }}</span></p>
-        <p class="invoice-item"><span>收票人手机</span><span>{{ data.electronicInvoice.takerPhone }}</span></p>
+        <p class="invoice-item"><span>收票人手机</span><span>{{ data.electronicInvoice.takerPhoneHead.substring(data.electronicInvoice.takerPhoneHead.lastIndexOf("+")) }} {{ data.electronicInvoice.takerPhone }}</span></p>
         <p v-if="data.electronicInvoice.takerEmail" class="invoice-item"><span>收票人邮箱</span><span>{{ data.electronicInvoice.takerEmail }}</span></p>
         <p v-if="data.orderStatus > 40 && data.electronicInvoice.invoiceDownLinks" class="invoice-item"><span>电子发票</span><a class="el-button--text" target="_blank" :href="data.electronicInvoice.invoiceDownLinks[0]" :download="data.electronicInvoice.invoiceTitle">点击下载</a></p>
       </div>
@@ -294,6 +294,7 @@ export default {
       this.dialogTableVisible = false
       const _this = this.$refs['receiptDialog']
       _this.dialogVisible = true
+      _this.form.invoiceId = this.data.electronicInvoice.invoiceId
     },
     // 发票弹出确认事件
     receiptConfirmDialog(status) {
@@ -531,17 +532,25 @@ ul,li{
 }
 .consignee span:nth-child(2){
   width: calc(100% - 110px);
+  max-width: 400px;
   text-align: left;
+  overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 .message-board{
   display: flex;
   justify-content: space-between;
 }
-.message-board textarea{
+#sellerMsg{
   width: 500px;
-  height: 100px;
-  resize: vertical;
-  border: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
 }
 .message-pay{
   text-align: right;
@@ -573,10 +582,17 @@ ul,li{
 }
 .payInfo-item span{
   width: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-all;
 }
 .payInfo-item span:nth-child(1){
   width: 42%;
   text-align: right;
+  margin-right: 10px;
 }
 </style>
 
