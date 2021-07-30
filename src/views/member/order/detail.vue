@@ -61,7 +61,7 @@
           >
             <!-- 微信、支付宝、paypal -->
             <div v-if="data.payInfo.paymentTypeId === 1 || data.payInfo.paymentTypeId === 2 || data.payInfo.paymentTypeId === 3" class="slot-content">
-              <p class="payInfo-item"><span>交易号：</span><span>{{ data.payInfo.payOnline.tradeNo }}</span></p>
+              <p class="payInfo-item"><span>交易号：</span><span>{{ JSON.parse(data.payInfo.payOnline.tradeNo).tradeNo }}</span></p>
             </div>
             <!-- Bank Transfer 银行转账 -->
             <div v-if="data.payInfo.paymentTypeId === 4" class="slot-content">
