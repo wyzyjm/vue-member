@@ -775,14 +775,15 @@ export default {
           params.continueSettleFlag = true;
         }
         let shoppingCartList = [];
-        let totalFreight = null;
+        let totalFreight = 0;
         let volist = this.productlist;
         for (let i = 0; i < this.productlist.length; i++) {
           shoppingCartList.push(...this.productlist[i].shoppingCartList);
-          totalFreight = +this.productlist[i].freightPrice;
+          totalFreight += this.productlist[i].freightPrice;
           volist[i].remark = this.remarkAttrs[i].value;
           volist[i].electronicInvoice = this.receiptList[i].receiptInfo;
         }
+        
         params.shoppingCartList = shoppingCartList;
         params.orderSplitResponseVOList = volist;
 
