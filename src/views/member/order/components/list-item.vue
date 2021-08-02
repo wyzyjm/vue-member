@@ -302,6 +302,7 @@ ul,li,i{
     vertical-align: middle;
     border-right:1px solid rgba(222, 222, 224, 1);
     border-bottom:1px solid rgba(222, 222, 224, 1);
+    word-break: break-all;
   }
   >div:nth-child(1){
     width: 520px;
