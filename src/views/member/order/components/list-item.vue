@@ -51,11 +51,11 @@
             <div><span>{{ data.consigneeName }}</span></div>
             <div class="actual-payment">
               <p>{{ data.currencySymbol }}{{ data.sumPayable }}</p>
-              <p class="col-9 border-bottom p-y m-y">含运费{{ data.currencySymbol }}{{ data.freight }}</p>
-              <p class="col-9">{{ data.paymentTypeName }}</p>
+              <p class="col-9 border-bottom p-y m-y text-overflow">含运费{{ data.currencySymbol }}{{ data.freight }}</p>
+              <p class="col-9 text-overflow">{{ data.paymentTypeName }}</p>
             </div>
             <div :class="{'col-danger':data.orderStatus != 50}">
-              <span>{{ statePayment[data.orderStatus].type }}</span>
+              <span class="text-overflow">{{ statePayment[data.orderStatus].type }}</span>
             </div>
             <div class="operate">
               <div v-if="data.orderStatus == 10">
@@ -359,6 +359,14 @@ ul,li,i{
   }
   .el-button+.el-button{
     margin-left: 0;
+  }
+  .text-overflow{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-all;
   }
 }
 </style>

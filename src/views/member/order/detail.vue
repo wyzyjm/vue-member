@@ -140,17 +140,17 @@
         <p class="invoice-item"><span>发票内容</span><span>{{ data.electronicInvoice.invoiceContent }}</span></p>
         <p class="invoice-item"><span>收票人手机</span><span>{{ data.electronicInvoice.takerPhoneHead.substring(data.electronicInvoice.takerPhoneHead.lastIndexOf("+")) }} {{ data.electronicInvoice.takerPhone }}</span></p>
         <p v-if="data.electronicInvoice.takerEmail" class="invoice-item"><span>收票人邮箱</span><span>{{ data.electronicInvoice.takerEmail }}</span></p>
-        <p v-if="data.orderStatus > 40 && data.electronicInvoice.invoiceDownLinks" class="invoice-item d-flex">
+        <p v-if="data.orderStatus > 40 && data.electronicInvoice.invoiceDownLinks" class="invoice-item-last">
           <span>电子发票</span>
-          <span class="el-button--text invoice-download" @click="invoiceDownload">下载</span>
-          <!-- <a
-            v-for="(item, index) in invoiceDownLinks"
-            :key="index"
-            class="el-button--text"
-            target="_blank"
-            :href="item"
-            :download="item"
-          >点击下载</a> -->
+          <span class="invoice-list">
+            <a
+              v-for="(item, index) in data.electronicInvoice.invoiceDownLinks"
+              :key="index"
+              :href="item"
+              target="_blank"
+              class="el-button--text invoice-view"
+            >{{ item }}</a>
+          </span>
         </p>
       </div>
       <div slot="footer">
@@ -334,8 +334,8 @@ export default {
     },
     // 地址弹窗确认事件
     confirmDialog(data) {
-      this.current = data
-      this.data.consigneeInfo = data
+      this.loading = true
+      location.reload()
     },
     // 确认收货
     confirmOrder() {
@@ -583,15 +583,32 @@ ul,li{
 .message-pay{
   text-align: right;
 }
-.invoice{
-  min-height: 150px;
-  margin-left: 22%;
-  line-height: 2.5;
+.invoice-item, .invoice-item-last{
+  display: flex;
+  margin-bottom: 30px;
+}
+.invoice-item span{
+  width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-all;
 }
 .invoice-item span:nth-child(1){
-  width: 120px;
+  width: 220px;
   text-align: right;
-  display: inline-block;
+  margin-right: 10px;
+}
+.invoice-item-last span{
+  width: 200px;
+}
+.invoice-item-last span:nth-child(1){
+  width: 220px;
+  max-height: 150px;
+  overflow-y: auto;
+  text-align: right;
   margin-right: 10px;
 }
 .reverse{
@@ -622,17 +639,18 @@ ul,li{
   text-align: right;
   margin-right: 10px;
 }
-.d-flex{
-  display: flex;
-}
-.invoice-download{
-  color: #1989fa;
+.invoice-list{
   overflow-y: auto;
+  max-height: 120px;
+}
+.invoice-view{
+  color: #1989fa;
+  margin-bottom: 15px;
+  overflow-y: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: initial;
-  word-break: break-all;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 }
 </style>
 
