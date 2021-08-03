@@ -16,5 +16,12 @@ export function getList(data) {
       data
     })
   }
-
+  
+  export function getHeaderFoot(params) {
+    return request({
+      url: window.location.origin+'/get_partial',
+      method: 'get',
+      params
+    })
+  }
   

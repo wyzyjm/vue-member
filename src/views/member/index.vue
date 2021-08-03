@@ -10,7 +10,7 @@
 </template>
 <script>
 import sidebar from "./sidebar";
-import {getList} from '@/api/menu'
+import {getHeaderFoot,getList}  from '@/api/menu'
 export default {
 	data() {
 		return {
@@ -45,6 +45,7 @@ export default {
 				},
 				
 			],
+			
 
 		};
 	},
@@ -59,7 +60,9 @@ export default {
 	},
 	created(){
 		//动态表单注释
-		//this.menuList()
+		this.menuList()
+		
+		
 	},
 	methods: {
 		async menuList(){
@@ -69,7 +72,7 @@ export default {
 				this.dataList.length = 0;
 				 res.data.forEach((item) =>{
 					 
-					 if(item.isMenu){
+					 if(item.isMenu == 1){
 						 let path = item.linkAddress.replace(/\/?sys/g,'')
 						 this.dataList.push({title:item.name,path:path,motherHeadId:item.motherHeadId,motherFootId:item.motherFootId})
 					 }
@@ -77,8 +80,41 @@ export default {
 				 })
 
 				 this.dataList.push({title:'自行增加数据',path:'/jsonHtml',motherHeadId:null,motherFootId:null})
+				 //动态头和脚
+				this.headerEdit()
+				this.footerEdit()
 			}
-		}
+		},
+		async headerEdit(){
+			let sURL = this.$route.path;
+			let dHeadr ='';
+			this.dataList.forEach((item) => {
+				if(sURL == item.path){
+					dHeadr = item.motherHeadId
+					
+				}
+			})
+			let res = await getHeaderFoot({'tpl':dHeadr})
+			if(res){
+					document.getElementById('headers').innerHTML = res
+			}
+			
+			
+			
+		},
+		async footerEdit(){
+		let sURL = this.$route.path;
+		let dFooter = '';
+		this.dataList.forEach((item) => {
+			if(sURL == item.path){
+				dFooter = item.motherFootId
+			}
+		})
+		let resFoot = await getHeaderFoot({'tpl':dFooter})
+		document.getElementById('footers').innerHTML = resFoot
+		
+		
+	},
 		
 	},
 	components: {
