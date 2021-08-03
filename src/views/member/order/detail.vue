@@ -140,7 +140,18 @@
         <p class="invoice-item"><span>发票内容</span><span>{{ data.electronicInvoice.invoiceContent }}</span></p>
         <p class="invoice-item"><span>收票人手机</span><span>{{ data.electronicInvoice.takerPhoneHead.substring(data.electronicInvoice.takerPhoneHead.lastIndexOf("+")) }} {{ data.electronicInvoice.takerPhone }}</span></p>
         <p v-if="data.electronicInvoice.takerEmail" class="invoice-item"><span>收票人邮箱</span><span>{{ data.electronicInvoice.takerEmail }}</span></p>
-        <p v-if="data.orderStatus > 40 && data.electronicInvoice.invoiceDownLinks" class="invoice-item"><span>电子发票</span><a class="el-button--text" target="_blank" :href="data.electronicInvoice.invoiceDownLinks[0]" :download="data.electronicInvoice.invoiceTitle">点击下载</a></p>
+        <p v-if="data.orderStatus > 40 && data.electronicInvoice.invoiceDownLinks" class="invoice-item d-flex">
+          <span>电子发票</span>
+          <span class="el-button--text invoice-download" @click="invoiceDownload">下载</span>
+          <!-- <a
+            v-for="(item, index) in invoiceDownLinks"
+            :key="index"
+            class="el-button--text"
+            target="_blank"
+            :href="item"
+            :download="item"
+          >点击下载</a> -->
+        </p>
       </div>
       <div slot="footer">
         <!-- 取消 -->
@@ -199,6 +210,7 @@ export default {
       seconds: '',
       dataTime: '',
       datalist: [],
+      invoiceDownLinks: [],
       inTotal: 0,
       // 订单状态
       statePayment: {
@@ -284,6 +296,10 @@ export default {
             this.datalist.push(this.stepsList[2])
           }
         }
+        // if (this.data.electronicInvoice.invoiceDownLinks) {
+        //   const subInvoice = this.data.electronicInvoice.invoiceDownLinks.replace(/(\n)/, ',')
+        //   this.invoiceDownLinks.push(subInvoice)
+        // }
         this.current = { orderId: this.data.orderId, ...this.data.consigneeInfo }
         this.sumTotal(this.data.goodsList)
         this.loading = false
@@ -434,6 +450,18 @@ export default {
     // 计算订单总数量
     sumTotal(data) {
       this.inTotal = data.length
+    },
+    invoiceDownload() {
+      const files = this.data.electronicInvoice.invoiceDownLinks ? this.data.electronicInvoice.invoiceDownLinks : [] // 所有文件
+      files.forEach(url => {
+        const aHtml = document.createElement('a') // 创建a标签
+        const e = document.createEvent('MouseEvents') // 创建鼠标事件对象
+        e.initEvent('click', false, false) // 初始化事件对象
+        aHtml.target = '_blank'
+        aHtml.href = url // 设置下载地址
+        aHtml.download = '' // 设置下载文件名
+        aHtml.dispatchEvent(e)
+      })
     }
   }
 }
@@ -593,6 +621,18 @@ ul,li{
   width: 42%;
   text-align: right;
   margin-right: 10px;
+}
+.d-flex{
+  display: flex;
+}
+.invoice-download{
+  color: #1989fa;
+  overflow-y: auto;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: initial;
+  word-break: break-all;
 }
 </style>
 
