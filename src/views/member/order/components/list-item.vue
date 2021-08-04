@@ -16,7 +16,7 @@
         :key="data.id"
         class="order"
       >
-        <div class="col-9 order-id">
+        <div class="color-9 order-id">
           <span>下单时间：{{ formatDate(data.createTime) }}</span><span class="ml-20">订单号：{{ data.orderNumber }}</span>
         </div>
         <ul class="order-list">
@@ -32,7 +32,7 @@
                   <Custom-img :src="item.skuImg" class="goods-img" />
                   <div class="goods-title">
                     <p>{{ item.skuName }}</p>
-                    <p class="col-9">
+                    <p class="color-9">
                       <span
                         v-for="skuSpec in item.skuSpec"
                         :key="skuSpec.specId"
@@ -51,8 +51,8 @@
             <div><span>{{ data.consigneeName }}</span></div>
             <div class="actual-payment">
               <p>{{ data.currencySymbol }}{{ data.sumPayable }}</p>
-              <p class="col-9 border-bottom p-y m-y text-overflow">含运费{{ data.currencySymbol }}{{ data.freight }}</p>
-              <p class="col-9 text-overflow">{{ data.paymentTypeName }}</p>
+              <p class="color-9 border-bottom p-y m-y text-overflow">含运费{{ data.currencySymbol }}{{ data.freight }}</p>
+              <p class="color-9 text-overflow">{{ data.paymentTypeName }}</p>
             </div>
             <div :class="{'col-danger':data.orderStatus != 50}">
               <span class="text-overflow">{{ statePayment[data.orderStatus].type }}</span>
@@ -242,7 +242,7 @@ ul,li,i{
   font-style: normal;
 }
 
-.col-9{
+.color-9{
   color: #999999;
 }
 .col-danger{
