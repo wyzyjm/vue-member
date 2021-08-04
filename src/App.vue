@@ -91,7 +91,7 @@ export default {
 			let resFoot = await getHeaderFoot({'tpl':dFooter})	
 		if(resFoot){
 			var footers = document.getElementById('footers')
-			footers.innerHTML = res;
+			footers.innerHTML = footers;
 			footers.setAttribute('data-tmplid',dFooter)
 		}
 		
