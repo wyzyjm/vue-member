@@ -46,7 +46,7 @@ export default {
 		let sURL = this.$route.path;
 		let dHeadr ='';
 		this.dataList.forEach((item) => {
-			if(sURL == item.path){
+			if(sURL == item.path || (sURL == '/'&&item.path =='/information')){
 				dHeadr = item.motherHeadId
 				
 			}
@@ -66,7 +66,7 @@ export default {
 		let sURL = this.$route.path;
 		let dFooter = '';
 		this.dataList.forEach((item) => {
-			if(sURL == item.path){
+			if(sURL == item.path || (sURL == '/'&&item.path =='/information')){
 				dFooter = item.motherFootId
 			}
 		})
