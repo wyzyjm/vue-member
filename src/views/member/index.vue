@@ -61,7 +61,13 @@ export default {
 	created(){
 		//动态表单注释
 		this.menuList()
-		
+		window['headerFooter'] = () => {
+        this.headerEdit()
+        this.footerEdit()
+     }
+	 window['menuList'] = () => {
+        this.menuList()
+     }
 		
 	},
 	methods: {
@@ -80,6 +86,7 @@ export default {
 				 })
 
 				 this.dataList.push({title:'自行增加数据',path:'/jsonHtml',motherHeadId:null,motherFootId:null})
+				  localStorage.setItem('dataList',JSON.stringify(this.dataList))
 				 //动态头和脚
 				this.headerEdit()
 				this.footerEdit()
@@ -94,10 +101,15 @@ export default {
 					
 				}
 			})
-			let res = await getHeaderFoot({'tpl':dHeadr})
-			if(res){
-					document.getElementById('headers').innerHTML = res
+			if(dHeadr){
+				let res = await getHeaderFoot({'tpl':dHeadr})
+				if(res){
+					let headers = document.getElementById('headers')
+					headers.innerHTML = res
+					headers.setAttribute('data-tmplid',dHeadr)
+				}	
 			}
+			
 			
 			
 			
@@ -110,8 +122,15 @@ export default {
 				dFooter = item.motherFootId
 			}
 		})
-		let resFoot = await getHeaderFoot({'tpl':dFooter})
-		document.getElementById('footers').innerHTML = resFoot
+		if(dFooter){
+			let resFoot = await getHeaderFoot({'tpl':dFooter})
+			if(dFooter){
+				let footers =  document.getElementById('footers')
+				footers.innerHTML = resFoot
+				footers.setAttribute('data-tmplid',dFooter)
+			}
+		}
+		
 		
 		
 	},

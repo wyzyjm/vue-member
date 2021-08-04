@@ -36,9 +36,22 @@ import i18n from '@/i18n/index'
 Vue.use(ElementUI, { enlocale })
 
 Vue.use(ElementUI)
-
+//动态尾部
+router.afterEach((to,from)=>{
+  if(window.headerEdit){
+    window.headerEdit()
+  }
+   
+  
+ })
 Vue.config.productionTip = false
-
+router.afterEach((to,from)=>{
+  if(window.headerFooter){
+    window.headerFooter()
+  }
+   
+  
+ })
 new Vue({
   el: '#app',
   router,
