@@ -1,0 +1,5 @@
+const Mock = require('mockjs')
+
+
+export const mockOrderPayInit = Mock.mock({"data":{"orderId":"872535551862824960","userId":"864808182405980160","userName":"测试账号","amount":750.00,"currencySymbol":"C$","createTime":1628070287000,"failureTime":"0","payType":0,"payList":[{"id":"869217045473714176","payType":3,"payName":"Paypal","payCode":"Paypal"}],"orderDetail":{"id":"870304739062898688","consigneeName":"国外收货地址1","consigneeCountry":"ALB","consigneeProvince":"EL","consigneeCity":"","consigneeCounty":"","consigneeAddr":"阿尔-爱尔街道地址1","consigneePhoneHead":"AF+93","consigneePhone":"139****0803","consigneeTelHead":"","consigneeTel":"","reverseFlag":1},"orderItemList":[{"orderId":"872535551862824960","orderNo":"20210804174446915300","payableTotalAmount":750.00,"productName":["liangpd02 头像小鸡"]}],"serverTime":1628070286729},"status":200,"msg":"success"})
+export const mockPayResult = Mock.mock({"data":{"orderNumberList":["20210804174446915300"],"currencySymbol":"$","sumPayable":7660.00,"isSuccess":true,"memberId":"864808182405980160"},"status":200,"msg":"success"})

@@ -139,8 +139,12 @@ export default {
   },
   methods: {
     async getMemberDetail() {
-      const detailData = await memberDetail()
+      let params = {}
+      params.bizId = '869665673673498624'
+      const detailData = await memberDetail(params)
+      
       this.data = detailData.data
+      console.log(this.data)
       this.avatar = 'https://pre-omo-oss-image.site.cn/' + this.data.user.avatar
       this.loading = false
     },

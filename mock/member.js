@@ -1,0 +1,5 @@
+const Mock = require('mockjs')
+
+export const mockMemberDetail = Mock.mock({"data":{"user":{"memberId":"869665673673498624","memberLevel":"普通会员","userName":"cad","nickName":"","name":"","avatar":"","phoneHead":"+86,CN","phone":"15802254871","email":"","pwd":"ced21ca7e686057d99f2ee00a6dd586f"},"customList":[{"attrId":"862661175637762049","attrName":"单行文本11","attrValue":"sssss","attrType":"txt","attrDetailType":"text","description":"你好你2联系","optionsData":[],"required":true},{"attrId":"862662944824549377","attrName":"单行手机13","attrValue":"15802254871","attrType":"txt","attrDetailType":"mobile","description":"地址你好","optionsData":[],"required":true},{"attrId":"862689786038116353","attrName":"图片24","attrValue":"[]","attrType":"image","attrDetailType":"","description":"你好你好","optionsData":[],"required":false},{"attrId":"862689819600936961","attrName":"附件集253223","attrValue":"0","attrType":"file","attrDetailType":"","description":"就是个附件集","optionsData":[],"required":false}]},"status":200,"msg":"success"})
+
+

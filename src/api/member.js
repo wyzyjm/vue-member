@@ -1,11 +1,19 @@
 import request from '@/utils/request'
-
+import {mockMemberDetail} from '../../mock/member'
+import { isDesignMode } from '@/utils/index'
+console.log(mockMemberDetail)
 export function memberDetail(params) {
-  return request({
-    url: '/fwebapi/member/detail/getMemberDetail',
-    method: 'get',
-    params
-  })
+  if (!isDesignMode()) {
+    return request({
+      url: '/fwebapi/member/detail/getMemberDetail',
+      method: 'get',
+      params
+    })
+  } else {
+    return new Promise(function(resolve,reject){
+      resolve(mockMemberDetail)
+    }) 
+  }
 }
 export function updateMember(data) {
   return request({
