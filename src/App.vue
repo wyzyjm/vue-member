@@ -15,9 +15,19 @@ export default {
   },
   created(){
     this.getMenu()
-	   window['headerEdit'] = () => {
-        this.headerEdit()
-        this.footerEdit()
+	   window['headFooterEdit'] = (hf,tempId) => {
+		if(hf&&hf.indexOf("head") != -1){
+			this.headerEdit(tempId)
+		}else{
+			this.headerEdit()
+		}
+		if(hf&&hf.indexOf("footer") != -1){
+			this.footerEdit(tempId)
+		}else{
+			this.footerEdit()
+		}
+        
+        
      }
   },
   methods:{
@@ -41,16 +51,18 @@ export default {
             
 			}
         },
-	async headerEdit(){
-    console.log(this.$route.path)
+	async headerEdit(tempId){
 		let sURL = this.$route.path;
-		let dHeadr ='';
-		this.dataList.forEach((item) => {
-			if(sURL == item.path || (sURL == '/'&&item.path =='/information')){
-				dHeadr = item.motherHeadId
-				
-			}
-		})
+		let dHeadr =tempId;
+		if(!tempId){
+			this.dataList.forEach((item) => {
+				if(sURL == item.path || (sURL == '/'&&item.path =='/information')){
+					dHeadr = item.motherHeadId
+					
+				}
+			})
+		}
+		
 		if(dHeadr){
 			let res = await getHeaderFoot({'tpl':dHeadr})
 			if(res){
@@ -62,14 +74,17 @@ export default {
 		}
 	},
 		       
-	async footerEdit(){
+	async footerEdit(tempId){
 		let sURL = this.$route.path;
-		let dFooter = '';
-		this.dataList.forEach((item) => {
-			if(sURL == item.path || (sURL == '/'&&item.path =='/information')){
-				dFooter = item.motherFootId
-			}
-		})
+		let dFooter = tempId;
+		if(!tempId){
+			this.dataList.forEach((item) => {
+				if(sURL == item.path || (sURL == '/'&&item.path =='/information')){
+					dFooter = item.motherFootId
+				}
+			})
+		}
+		
 
 		if(dFooter){
 			

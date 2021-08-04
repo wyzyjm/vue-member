@@ -37,17 +37,11 @@ Vue.use(ElementUI, { enlocale })
 
 Vue.use(ElementUI)
 //动态尾部
-router.afterEach((to,from)=>{
-  if(window.headerEdit){
-    window.headerEdit()
-  }
-   
-  
- })
+
 Vue.config.productionTip = false
 router.afterEach((to,from)=>{
-  if(window.headerFooter){
-    window.headerFooter()
+  if(window.headFooterEdit){
+    window.headFooterEdit()
   }
    
   
