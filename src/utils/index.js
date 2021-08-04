@@ -144,9 +144,9 @@ var getParentWindow = function () {
 export function isDesignMode(){
   // return true
   if(!(getParentWindow().$LAB != null && typeof getParentWindow().$LAB == "object")){
-    return true;
+    return false;
   }else{
-    return false
+    return true
   }
   
 }
