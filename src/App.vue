@@ -44,7 +44,8 @@ export default {
                      }
 					 
 				 })
-
+				this.dataList.push({title:'自行增加数据',path:'/jsonHtml',motherHeadId:null,motherFootId:null})
+					
         		localStorage.setItem('dataList',JSON.stringify(this.dataList))
 				this.headerEdit()
 				 this.footerEdit()
@@ -101,8 +102,4 @@ export default {
   }
 }
 </script>
-<style>
-html,body{
-	height: auto;
-}
-</style>
+
