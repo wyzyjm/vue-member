@@ -1,11 +1,20 @@
 import request from '@/utils/request'
+import { mockSkuItemData,mockPayModeInfo } from '../../mock/settlement'
+import { isDesignMode } from '@/utils/index'
 
 export function payModeInitInfo(data) {
-  return request({
-    url: '/fwebapi/order/payMode/initInfo',
-    method: 'post',
-    data
-  })
+  if (!isDesignMode()) {
+    return request({
+      url: '/fwebapi/order/payMode/initInfo',
+      method: 'post',
+      data
+    })
+  } else {
+    return new Promise(function (resolve, reject) {
+      resolve(mockPayModeInfo)
+    })
+  }
+
 }
 
 export function addUpdateInvoice(data) {
@@ -49,14 +58,22 @@ export function getSettleById(params) {
     params
   })
 }
-//通过发票id查询发票
+//商品清单
 export function skuItem(data) {
-  return request({
-    url: '/fwebapi/order/shoppingCart/skuItemNew',
-    method: 'post',
-    data
-  })
+  if (!isDesignMode()) {
+    return request({
+      url: '/fwebapi/order/shoppingCart/skuItemNew',
+      method: 'post',
+      data
+    })
+  } else {
+    return new Promise(function (resolve, reject) {
+      resolve(mockSkuItemData)
+    })
+  }
 }
+
+
 
 
 

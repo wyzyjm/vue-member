@@ -131,3 +131,22 @@ export function emailValidate(val) {
     return true;
   }
 }
+//获取父级窗口
+var getParentWindow = function () {
+  try {
+      return parent;
+  } catch (e) {
+      return window;
+  }
+}
+//是否是前台环境
+
+export function isDesignMode(){
+  // return true
+  if(!(getParentWindow().$LAB != null && typeof getParentWindow().$LAB == "object")){
+    return true;
+  }else{
+    return false
+  }
+  
+}

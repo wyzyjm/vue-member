@@ -249,7 +249,9 @@
         </template>
         <template v-else>
           <template v-if="addressInfo.consigneePhoneHead != undefined">
-            +{{ (addressInfo.consigneeTelHead).split("+")[1] }}-{{ addressInfo.consigneeTel }}
+            +{{ addressInfo.consigneeTelHead.split("+")[1] }}-{{
+              addressInfo.consigneeTel
+            }}
           </template>
         </template>
       </div>
@@ -331,7 +333,7 @@ import {
 } from "@/api/address"; // 收货地址api
 
 import { getAddressName } from "@/utils/address";
-
+import { isDesignMode } from '@/utils/index'
 export default {
   data() {
     return {
@@ -415,20 +417,26 @@ export default {
     },
   },
   mounted() {
-    if (
-      this.$route.query.skuId == undefined &&
-      this.$route.query.shoppingCartIds == undefined
-    ) {
-      this.$router.push("/cart");
-    } else {
-      if (this.$route.query.formData == undefined) {
-        this.hasFormJson = false;
+    
+      if (
+        this.$route.query.skuId == undefined &&
+        this.$route.query.shoppingCartIds == undefined
+      ) {
+        if (!isDesignMode()) {
+        this.$router.push("/cart");
+        }else{
+          this.getList();
+        }
       } else {
-        this.hasFormJson = true;
+        if (this.$route.query.formData == undefined) {
+          this.hasFormJson = false;
+        } else {
+          this.hasFormJson = true;
+        }
+        //获取收货地址
+        this.getList();
       }
-      //获取收货地址
-      this.getList();
-    }
+    
   },
   methods: {
     // 获取地址列表
@@ -783,12 +791,12 @@ export default {
           volist[i].remark = this.remarkAttrs[i].value;
           volist[i].electronicInvoice = this.receiptList[i].receiptInfo;
         }
-        
+
         params.shoppingCartList = shoppingCartList;
         params.orderSplitResponseVOList = volist;
 
         params.freight = totalFreight;
-        
+
         addOrder(params).then((res) => {
           if (res.status === 200) {
             if (

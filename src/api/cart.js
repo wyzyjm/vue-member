@@ -1,21 +1,28 @@
 import request from '@/utils/request'
+import mockOrderListData from '../../mock/cart'
+import { isDesignMode } from '@/utils/index'
+
 
 export function cartData(params) {
+  if (!isDesignMode()) {
     return request({
       url: '/fwebapi/order/shoppingCart/findList',
       method: 'get',
       params
     })
+  } else {
+    return mockOrderListData
   }
+
+}
+
 
 
 export function cartDel(params) {
     return request({
       url: '/fwebapi/order/shoppingCart/deleteBatch',
       method: 'get',
-     
       params,
-       
     })
   }
 

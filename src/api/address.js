@@ -1,12 +1,21 @@
 import request from '@/utils/request'
+import mockAddressData from '../../mock/address'
+import { isDesignMode } from '@/utils/index'
 
+console.log(mockAddressData)
 // 获取 收货地址列表
-const getAddressList = () => {
-  return request({
-    url: '/fwebapi/order/address/list',
-    method: 'POST'
-  })
+export function getAddressList() {
+  if (!isDesignMode()) {
+    return request({
+      url: '/fwebapi/order/address/list',
+      method: 'POST'
+    })
+  } else {
+    return mockAddressData
+  }
+
 }
+
 
 // 新增 国家地区传参
 /**
@@ -110,7 +119,7 @@ const editOrderAddress = (data) => {
   })
 }
 export {
-  getAddressList, // 列表
+  
   addAddressList, // 新增
   setAddressList, // 设为默认
   deleteAddressList, // 删除

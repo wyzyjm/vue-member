@@ -1,76 +1,19 @@
 const Mock = require('mockjs')
 
-const data = Mock.mock({
-    data: {    
-        "orderStatus": 1,
-        "paymentTypeName": "货到付款",
-        "totalAmount": 1210.0,
-        // 订单日志
-        "logList": [{
-            time: 123456849879564,
-            content: "订单创建成功！"
-        }],
-        "order": {
-            "id": 87,
-            "currencySymbol": "￥",
-            "orderNumber": 202105111500398400,
-            "consigneeName": "收货人",
-            "consigneeProvince": "北京市",
-            "consigneeCity": "北京市",
-            "consigneeCounty": "大兴区",
-            "consigneeAddr": "北京市北京市大兴区北京市大兴区地盛西路数码庄园",
-            "consigneeZipCode": 453600,
-            "consigneeTel": 6769038,
-            "consigneeTelHead": 0373,
-            "consigneePhoneHead": "0086",
-             "consigneePhone" : 18635496258,
-            "logName": "菜鸟物流",
-            "waybill": 23782468326843435,
-            "quantity": 11,
-            "sumPayable": 2420.0,
-            "orderProductSkuList|3": [{
-                "productId": 144,
-                "skuId": 271,
-                "skuName": "货品名称",
-                "skuImg": "/repository/image / 1 f6fa47f - d790 - 4907 - 95 cc - 1 c06f290f71b.jpg",
-                "skuPrice": 110.0,
-                "quantity": 11,
-                "aggregateAmount": 1210.0,
-                "skuSpec": [{
-                    "specName": "内存",
-                    "specValue": "8+256g"
-                }],
-                "productUrl": "/product/144. html"
-            }],
-            "LogsList": [{
-                "remark": "订单创建",
-                "createTime": 1623122346000
-            }],
-            "invoice" : {    
-              "id" : 1234,
-              "invoiceTitle":1,
-              "taxpayerNum":"纳税人识别号",
-              "invoiceContent" :"发票内容",
-              "takerPhone":"+8613500402886",
-              "takerEmail":"zhongqi@300.cn",
-              "invoiceDownLink":"电子发票下载链接"
-        
-            },
-            "sellerMsg" : "给卖家的留言"
-        }
-    }
-})
+export const orderDetailData = Mock.mock(
+  {"data":{"code":"0","data":{"order":{"orderId":"872157705348767744","memberId":"864808182405980160","orderNumber":"20210803164320969331","orderStatus":60,"currencySymbol":"¥","totalAmount":358.00,"freight":0.00,"sumPayable":358.00,"orderProcessNodes":"ORDER_SUBMIT,PAYMENT_PROCESS,TRADE_SUCCESS","sellerMsg":"","createTime":1627980201000,"systemTime":1627980982815,"consigneeInfo":{"consigneeName":"liangboping002dds22211","consigneePhoneHead":"CN+86","consigneePhone":"17780634551","consigneeTelHead":"CN+86","consigneeTel":"17780634551","consigneeZipCode":"1000000","consigneeCountry":"1","consigneeProvince":"51","consigneeCity":"1","consigneeCounty":"4","consigneeAddr":"fdsgdasd21ewde32ew","defaultFlag":0,"reverseFlag":0},"orderStatusDetailList":[{"time":1627980201000,"content":"提交订单"},{"time":1627980201000,"content":"待付款"},{"time":1627980764000,"content":"交易关闭"}],"goodsList":[{"productId":"871787891821961216","skuId":"871787892010704896","skuName":"liangpd02","skuImg":"shop/20210622144830/cms/image/63a473d2-402d-40b2-b5a6-d248ab75afe0.jpg","skuPrice":26.00,"quantity":3,"subtotal":78.00,"skuSpec":[{"specId":"869271630558846976","specName":"文字规格","specValue":"头像"},{"specId":"869271630558846977","specName":"图片规则","specValue":"小猪"}]},{"productId":"871787891821961216","skuId":"871787891951984640","skuName":"liangpd02","skuImg":"shop/20210622144830/cms/image/239e0f9e-917d-4a16-a17d-21e6e3fd7fac.jpg","skuPrice":250.00,"quantity":1,"subtotal":250.00,"skuSpec":[{"specId":"869271630558846976","specName":"文字规格","specValue":"头像"},{"specId":"869271630558846977","specName":"图片规则","specValue":"小鸡"}]},{"productId":"871786543248367616","skuId":"871786543248367616","skuName":"liangpd01","skuImg":"shop/20210622144830/cms/image/b1dce1d8-5d36-4934-b3b9-9f1eae86f06b.jpg","skuPrice":10.00,"quantity":3,"subtotal":30.00,"skuSpec":[]}]}}},"status":200,"msg":"success"}
+)
 
-module.exports = [
-  {
-    url: '/vue-admin-template/detail/data',
-    type: 'get',
-    response: config => {
-      const list = data.data
-      return {
-        code: 20000,
-        data: list
-      }
-    }
-  }
-]
+// module.exports = [
+//   {
+//     url: '/vue-admin-template/detail/data',
+//     type: 'get',
+//     response: config => {
+//       const list = data.data
+//       return {
+//         code: 20000,
+//         data: list
+//       }
+//     }
+//   }
+// ]

@@ -408,6 +408,7 @@ export default {
 			this.cartList=[];
 			this.unvalidList=[]
 			 let res = await cartData()
+			 console.log("cart data",res)
 			if(res.status == 200){
 				this.data = res.data ;
 				this.data.totalPrice = 0;
