@@ -10,7 +10,7 @@
 </template>
 <script>
 import sidebar from "./sidebar";
-import {getHeaderFoot,getList}  from '@/api/menu'
+
 export default {
 	data() {
 		return {
@@ -61,79 +61,14 @@ export default {
 	created(){
 		//动态表单注释
 		this.menuList()
-		window['headerFooter'] = () => {
-        this.headerEdit()
-        this.footerEdit()
-     }
-	 window['menuList'] = () => {
-        this.menuList()
-     }
+		
 		
 	},
 	methods: {
 		async menuList(){
-		    let res = await getList()
-		
-			if(res.code == 200 && res.data.length>0){
-				this.dataList.length = 0;
-				 res.data.forEach((item) =>{
-					 
-					 if(item.isMenu == 1){
-						 let path = item.linkAddress.replace(/\/?sys/g,'')
-						 this.dataList.push({title:item.name,path:path,motherHeadId:item.motherHeadId,motherFootId:item.motherFootId})
-					 }
-					 
-				 })
-
-				 this.dataList.push({title:'自行增加数据',path:'/jsonHtml',motherHeadId:null,motherFootId:null})
-				  localStorage.setItem('dataList',JSON.stringify(this.dataList))
-				 //动态头和脚
-				this.headerEdit()
-				this.footerEdit()
-			}
+			 this.dataList = JSON.parse(localStorage.getItem('dataList'));
 		},
-		async headerEdit(){
-			let sURL = this.$route.path;
-			let dHeadr ='';
-			this.dataList.forEach((item) => {
-				if(sURL == item.path){
-					dHeadr = item.motherHeadId
-					
-				}
-			})
-			if(dHeadr){
-				let res = await getHeaderFoot({'tpl':dHeadr})
-				if(res){
-					let headers = document.getElementById('headers')
-					headers.innerHTML = res
-					headers.setAttribute('data-tmplid',dHeadr)
-				}	
-			}
-			
-			
-			
-			
-		},
-		async footerEdit(){
-		let sURL = this.$route.path;
-		let dFooter = '';
-		this.dataList.forEach((item) => {
-			if(sURL == item.path){
-				dFooter = item.motherFootId
-			}
-		})
-		if(dFooter){
-			let resFoot = await getHeaderFoot({'tpl':dFooter})
-			if(dFooter){
-				let footers =  document.getElementById('footers')
-				footers.innerHTML = resFoot
-				footers.setAttribute('data-tmplid',dFooter)
-			}
-		}
 		
-		
-		
-	},
 		
 	},
 	components: {
