@@ -472,6 +472,11 @@ ul,li{
   padding: 0;
   margin: 0;
 }
+p{
+  padding: 0;
+  margin: 0;
+  margin: 15px 0;
+}
 .font-20{
   font-size: 20px;
 }
@@ -510,6 +515,9 @@ ul,li{
   display: flex;
   justify-content: space-between;
 }
+/* .detail p{
+  margin-bottom: 1rem;
+} */
 .detail-item{
   flex: 1;
 }
