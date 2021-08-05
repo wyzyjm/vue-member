@@ -10,7 +10,8 @@ export default {
   name: 'App',
   data(){
 	  return{
-		  dataList:[]
+		  dataList:[],
+		  dataSource:[]
 	  }
   },
   created(){
@@ -36,64 +37,78 @@ export default {
 		
 			if(res.code == 200 && res.data.length>0){
                 this.dataList.length = 0
+				this.dataSource = res.data;
 				 res.data.forEach((item) =>{
 					 
                      if(item.isMenu==1){
-                         let path = item.linkAddress.replace(/\/?sys/g,'')
-                       this.dataList.push({title:item.name,path:path,motherHeadId:item.motherHeadId,motherFootId:item.motherFootId})  
+                         item.linkAddress = item.linkAddress.replace(/\/?sys/g,'')
+                       this.dataList.push(item)  
                      }
 					 
 				 })
 				this.dataList.push({title:'自行增加数据',path:'/jsonHtml',motherHeadId:null,motherFootId:null})
-					
         		localStorage.setItem('dataList',JSON.stringify(this.dataList))
+        		localStorage.setItem('dataSource',JSON.stringify(this.dataSource))
 				this.headerEdit()
 				 this.footerEdit()
             
 			}
         },
 	async headerEdit(tempId){
-		let sURL = this.$route.path;
-		let dHeadr =tempId;
-		if(!tempId){
-			this.dataList.forEach((item) => {
-				if(sURL == item.path || (sURL == '/'&&item.path =='/information')){
-					dHeadr = item.motherHeadId
-					
-				}
-			})
-		}
+		let tpl = this.setHeadFoot('header',tempId)
 		
-		if(dHeadr){
-			let res = await getHeaderFoot({'tpl':dHeadr})
+		if(tpl){
+			let res = await getHeaderFoot({'tpl':tpl})
 			if(res){
 				var headers = document.getElementById('headers')
 					headers.innerHTML = res;
-					headers.setAttribute('data-tmplid',dHeadr)
+					headers.setAttribute('data-tmplid',tpl)
 					
 			}
 		}
 	},
-		       
-	async footerEdit(tempId){
+	setHeadFoot(str,tempId){
 		let sURL = this.$route.path;
+		let tpl = '';
+		let dHeadr =tempId;
 		let dFooter = tempId;
 		if(!tempId){
-			this.dataList.forEach((item) => {
-				if(sURL == item.path || (sURL == '/'&&item.path =='/information')){
-					dFooter = item.motherFootId
+			this.dataSource.forEach((item) => {
+			
+				item.linkAddress = item.linkAddress.replace(/\/?sys/g,'')
+				if(sURL == item.linkAddress || (sURL == '/'&&item.linkAddress =='/information')){
+					dHeadr = item.motherHeadId;
+					dFooter = item.motherFootId;
+					window.currentPage = item
 				}
 			})
-		}
-		
-
-		if(dFooter){
+			//跳转第三方链接没有header默认插入返回菜单列表第一条数据
+			if(!dHeadr&&this.dataSource.length>0){
+				dHeadr = this.dataSource[0].motherHeadId
+			}
+			if(!dFooter&&this.dataSource.length>0){
+				dFooter = this.dataSource[0].motherFootId;
+			}
 			
-			let resFoot = await getHeaderFoot({'tpl':dFooter})	
+		}
+
+		if(str.indexOf('header')!=-1){
+			tpl = dHeadr
+		}
+		if(str.indexOf('footer')!=-1){
+			tpl = dFooter
+		}
+		return tpl
+	},    
+	async footerEdit(tempId){
+		let tpl = this.setHeadFoot('footer',tempId)
+		if(tpl){
+			
+			let resFoot = await getHeaderFoot({'tpl':tpl})	
 		if(resFoot){
 			var footers = document.getElementById('footers')
 			footers.innerHTML = resFoot;
-			footers.setAttribute('data-tmplid',dFooter)
+			footers.setAttribute('data-tmplid',tpl)
 		}
 		
 		
