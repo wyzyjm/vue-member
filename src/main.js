@@ -39,13 +39,14 @@ Vue.use(ElementUI)
 //动态尾部
 
 Vue.config.productionTip = false
-router.afterEach((to,from)=>{
+
+
+ router.beforeEach((to, from, next) => {
   if(window.headFooterEdit){
     window.headFooterEdit()
   }
-   
-  
- })
+  next()
+})
 new Vue({
   el: '#app',
   router,
