@@ -210,7 +210,7 @@
               addressInfo.consigneeProvince,
               addressInfo.consigneeCity,
               addressInfo.consigneeCounty,
-              true
+              addressInfo.reverseFlag
             )
           }}
         </template>
@@ -221,7 +221,7 @@
               addressInfo.consigneeProvince,
               addressInfo.consigneeCity,
               addressInfo.consigneeCounty,
-              true
+              addressInfo.reverseFlag
             )
           }}
           {{ addressInfo.consigneeAddr }}

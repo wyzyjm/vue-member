@@ -38,7 +38,7 @@
                   data.consigneeInfo.consigneeProvince,
                   data.consigneeInfo.consigneeCity,
                   data.consigneeInfo.consigneeCounty,
-                  true
+                  data.consigneeInfo.reverseFlag
                 )
               }}</span></p>
             <p v-if="data.consigneeInfo.consigneeAddr" class="consignee mb-10"><span>详细地址：</span><span>{{ data.consigneeInfo.consigneeAddr }}</span></p>

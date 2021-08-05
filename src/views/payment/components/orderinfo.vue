@@ -54,7 +54,7 @@
                   orderDetail.consigneeProvince,
                   orderDetail.consigneeCity,
                   orderDetail.consigneeCounty,
-                  true
+                  orderDetail.reverseFlag
                 )
               }}
             </span>
@@ -68,7 +68,7 @@
                   orderDetail.consigneeProvince,
                   orderDetail.consigneeCity,
                   orderDetail.consigneeCounty,
-                  true
+                  orderDetail.reverseFlag
                 )
               }}
               {{ orderDetail.consigneeAddr }}
