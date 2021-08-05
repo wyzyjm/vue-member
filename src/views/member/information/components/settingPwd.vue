@@ -5,11 +5,11 @@
       :datalist="dataPwd"
     />
     <div v-show="submitedSuccess" class="step-icon">
-      <svg-icon name="icon-anquanzhuye" class="icon" />
+      <svg-icon name="icon-anquanzhuye" class="icon" setsize="150" />
       <p>请将密码设置为8-20位，并且由字母，数字和符号两种以上组合</p>
     </div>
     <div v-show="!submitedSuccess" class="step-icon">
-      <svg-icon name="icon-caozuochenggong" class="icon" />
+      <svg-icon name="icon-caozuochenggong" class="icon" setsize="150" />
       <p>设置完成！</p>
       <el-button
         type="primary"

@@ -5,14 +5,14 @@
       :datalist="dataPhone[phoneType].item"
     />
     <div v-show="submitedSuccess" class="step-icon">
-      <svg-icon name="icon-anquanzhuye" class="icon" />
+      <svg-icon name="icon-anquanzhuye" class="icon" setsize="150" />
       <p>
         <span v-if="propData.phoneType === 0">请绑定您的手机号码</span>
         <span v-else>为确认是您本人操作，请完成身份认证</span>
       </p>
     </div>
     <div v-show="!submitedSuccess" class="step-icon">
-      <svg-icon name="icon-caozuochenggong" class="icon" />
+      <svg-icon name="icon-caozuochenggong" class="icon" setsize="150" />
       <p>设置完成！</p>
       <el-button
         type="primary"

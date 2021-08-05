@@ -5,11 +5,11 @@
       :datalist="dataEmail[isType].list"
     />
     <div v-show="submitedSuccess" class="step-icon">
-      <svg-icon name="icon-anquanzhuye" class="icon" />
+      <svg-icon name="icon-anquanzhuye" class="icon" setsize="150" />
       <p>为确认是您本人操作，请完成身份认证</p>
     </div>
     <div v-show="!submitedSuccess" class="step-icon">
-      <svg-icon name="icon-caozuochenggong" class="icon" />
+      <svg-icon name="icon-caozuochenggong" class="icon" setsize="150" />
       <p>设置完成！</p>
       <el-button
         type="primary"
