@@ -5,14 +5,16 @@
         <template v-if="resultInfo.isSuccess">
           <svg-icon
             name="icon-caozuochenggong"
-            style="font-size: 60px; color: #1989fa"
+            style="color: #1989fa"
+            setsize="60"
           ></svg-icon>
           <p class="tips">购买成功，我们尽快为您处理！</p>
         </template>
         <template v-else>
            <svg-icon
             name="icon-zhifushibai"
-            style="font-size: 60px; color: #1989fa"
+            style="color: #1989fa"
+            setsize="60"
           ></svg-icon>
           <p class="tips">支付失败，支付遇到问题，请尝试重新支付！</p>
         </template>
