@@ -41,8 +41,8 @@ export default {
 				 res.data.forEach((item) =>{
 					 
                      if(item.isMenu==1){
-                         item.linkAddress = item.linkAddress.replace(/\/?sys/g,'')
-                       this.dataList.push(item)  
+                         let path = item.linkAddress.replace(/\/?sys/g,'')
+                        this.dataList.push({title:item.name,path:path,motherHeadId:item.motherHeadId,motherFootId:item.motherFootId})    
                      }
 					 
 				 })
@@ -79,6 +79,7 @@ export default {
 				if(sURL == item.linkAddress || (sURL == '/'&&item.linkAddress =='/information')){
 					dHeadr = item.motherHeadId;
 					dFooter = item.motherFootId;
+					console.log(item.name)
 					window.currentPage = item
 				}
 			})

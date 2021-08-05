@@ -41,11 +41,11 @@ Vue.use(ElementUI)
 Vue.config.productionTip = false
 
 
- router.beforeEach((to, from, next) => {
+ router.afterEach((to, from) => {
   if(window.headFooterEdit){
     window.headFooterEdit()
   }
-  next()
+  
 })
 new Vue({
   el: '#app',
