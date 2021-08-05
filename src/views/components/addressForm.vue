@@ -68,7 +68,8 @@
                   :label="item.dialCode"
                   :value="(item.iso2 + item.dialCode)"
                 >
-                  <span> {{ item.dialCode }} {{ item.name }}</span>
+                  <span style="float:left;padding-right:15px"> {{ item.dialCode }} </span>
+                  <span style="float: right; color: rgb(132, 146, 166); font-size: 13px;">{{ item.name }}</span>
                 </el-option>
               </el-select>
             </el-form-item>
@@ -98,7 +99,8 @@
                   :label="item.dialCode"
                   :value="(item.iso2 + item.dialCode)"
                 >
-                  <span> {{ item.dialCode }} {{ item.name }}</span>
+                  <span style="float:left;padding-right:15px"> {{ item.dialCode }} </span>
+                  <span style="float: right; color: rgb(132, 146, 166); font-size: 13px;">{{ item.name }}</span>
                 </el-option>
               </el-select>
             </el-form-item>
@@ -147,7 +149,7 @@ import {
 } from '@/api/address.js' // 接口
 import {
   countries
-} from '@/views/components/resource/phoneCodeCountries' // 手机区号
+} from '@/views/components/resource/phoneCodeCountries-zhCN' // 手机区号
 import {
   getCurrentData,
   addressFormateData,
