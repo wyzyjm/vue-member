@@ -116,37 +116,36 @@ export function param2Obj(url) {
   return obj
 }
 export function telValidate(inputVal) {
-  var telReg = /^\d{6,12}$/;
+  var telReg = /^\d{6,12}$/
   if (!telReg.test(inputVal)) {
-    return false;
+    return false
   } else {
-    return true;
+    return true
   }
 }
 export function emailValidate(val) {
-  var reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");
+  var reg = new RegExp('^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$')
   if (!reg.test(val)) {
-    return false;
+    return false
   } else {
-    return true;
-  }
-}
-//获取父级窗口
-var getParentWindow = function () {
-  try {
-      return parent;
-  } catch (e) {
-      return window;
-  }
-}
-//是否是前台环境
-
-export function isDesignMode(){
-  return true
-  if(!(getParentWindow().$LAB != null && typeof getParentWindow().$LAB == "object")){
-    return false;
-  }else{
     return true
   }
-  
+}
+// 获取父级窗口
+var getParentWindow = function() {
+  try {
+    return parent
+  } catch (e) {
+    return window
+  }
+}
+// 是否是前台环境
+
+export function isDesignMode() {
+  return false
+  if (!(getParentWindow().$LAB != null && typeof getParentWindow().$LAB === 'object')) {
+    return false
+  } else {
+    return true
+  }
 }

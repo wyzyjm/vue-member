@@ -57,7 +57,7 @@
                   item.consigneeProvince,
                   item.consigneeCity,
                   item.consigneeCounty,
-                  true
+                  item.reverseFlag
                 )
               }}
             </span>

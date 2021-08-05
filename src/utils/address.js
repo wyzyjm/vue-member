@@ -8,10 +8,10 @@ import addressData from '@/views/components/resource/locList_zh_CN'
  * @param {String | county}   区县code
  * @param {Boolean | isJoin}   结果是否拼接
  *
- * 1. @return  {Object | {a,b,c,d}}  分别对应: 国家, 省, 市, 区
- * 2. @return  {String | b + c + d } 分别对应: 省, 市, 区
+ * 1. @return  {Object | a + ' - ' + b + c + d}  分别对应: 国家, 省, 市, 区
+ * 2. @return  {String | b + c + d + ' - ' + a} 分别对应: 省, 市, 区, - 国家
  */
-const getAddressName = (country, province, city, county, isJoin) => {
+const getAddressName = (country, province, city, county, reverseFlag) => {
   if (!country) return // 没有国家编码不执行
   let a = '' // 国家
   let b = '' // 省
@@ -49,15 +49,10 @@ const getAddressName = (country, province, city, county, isJoin) => {
     }
   })
 
-  if (isJoin) {
-    return b + c + d
+  if (reverseFlag) {
+    return b + c + d + ' - ' + a
   } else {
-    return {
-      a,
-      b,
-      c,
-      d
-    }
+    return a + ' - ' + b + c + d
   }
 }
 

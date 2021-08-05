@@ -2,7 +2,7 @@
 <template>
   <el-dialog
     center
-    :title="formType === 'create' ? `新增收货地址` : `编辑收货地址`"
+    :title="formType === 'create' ? `新增收货地址` : `修改收货地址`"
     :visible.sync="dialogFormVisible"
     width="620px"
     @open="handleOpen"
