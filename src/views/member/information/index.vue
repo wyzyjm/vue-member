@@ -14,7 +14,7 @@
           />
           <div class="username">
             <p class="font-w">{{ data.user.userName }}</p>
-            <p class="member-order"><SvgIcon name="icon-huiyuan" class="icon" />{{ data.user.memberLevel }}</p>
+            <p class="member-order"><SvgIcon name="icon-huiyuan" class="icon" setsize="16" />{{ data.user.memberLevel }}</p>
           </div>
         </div>
         <!-- 基础信息 -->
@@ -121,7 +121,7 @@ export default {
   data() {
     return {
       avatar: '',
-      loading: true,
+      loading: false,
       title: '我的资料',
       vicpWarpShow: false,
       modifyShow: false,
@@ -139,12 +139,8 @@ export default {
   },
   methods: {
     async getMemberDetail() {
-      let params = {}
-      params.bizId = '869665673673498624'
-      const detailData = await memberDetail(params)
-      
+      const detailData = await memberDetail()
       this.data = detailData.data
-      console.log(this.data)
       this.avatar = 'https://pre-omo-oss-image.site.cn/' + this.data.user.avatar
       this.loading = false
     },
@@ -210,8 +206,9 @@ export default {
   font-weight: 700
 }
 .content{
-  padding:40px 0 0 130px;
+  padding:40px 0 0 0px;
   width: 70%;
+  margin: 0 auto;
 }
 .user{
   display: flex;

@@ -257,7 +257,7 @@
 		<div class="noData" v-else>
 			<div class="empty">
 				<div class="icon">
-					<svg-icon name="icon-qicheqianlian-"></svg-icon>
+					<svg-icon name="icon-qicheqianlian-" setsize="76"></svg-icon>
 				</div>
 				<p>购物车内暂时没有商品，登录后显示已加入的商品</p>
 				<el-button type="primary" size="small">登录</el-button>
