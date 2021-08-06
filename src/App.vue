@@ -11,7 +11,8 @@ export default {
   data(){
 	  return{
 		  dataList:[],
-		  dataSource:[]
+		  dataSource:[],
+		  
 	  }
   },
   created(){
@@ -46,7 +47,7 @@ export default {
                      }
 					 
 				 })
-				this.dataList.push({title:'自行增加数据',path:'/jsonHtml',motherHeadId:null,motherFootId:null})
+				//this.dataList.push({title:'自行增加数据',path:'/jsonHtml',motherHeadId:null,motherFootId:null})
         		localStorage.setItem('dataList',JSON.stringify(this.dataList))
         		localStorage.setItem('dataSource',JSON.stringify(this.dataSource))
 				this.headerEdit()
@@ -56,19 +57,26 @@ export default {
         },
 	async headerEdit(tempId){
 		let tpl = this.setHeadFoot('header',tempId)
-		
-		if(tpl){
-			let res = await getHeaderFoot({'tpl':tpl})
-			if(res){
-				var headers = document.getElementById('headers')
-					headers.innerHTML = res;
-					headers.setAttribute('data-tmplid',tpl)
-					
+		var headers = document.getElementById('headers')
+		let oldTpl = headers.getAttribute('data-tmplid')
+	
+		if(tpl && oldTpl == tpl){
+			return false
+		}else{
+			if(tpl){
+				let res = await getHeaderFoot({'tpl':tpl})
+				if(res){
+					//var headers = document.getElementById('headers')
+						headers.innerHTML = res;
+						headers.setAttribute('data-tmplid',tpl)
+						
+				}
 			}
 		}
+		
 	},
 	setHeadFoot(str,tempId){
-		let sURL = this.$route.path;
+		let sURL = window.atferTo? window.atferTo.path:'';
 		let tpl = '';
 		let dHeadr =tempId;
 		let dFooter = tempId;
@@ -79,15 +87,14 @@ export default {
 				if(sURL == item.linkAddress || (sURL == '/'&&item.linkAddress =='/information')){
 					dHeadr = item.motherHeadId;
 					dFooter = item.motherFootId;
-					console.log(item.name)
 					window.currentPage = item
 				}
 			})
-			//跳转第三方链接没有header默认插入返回菜单列表第一条数据
-			if(!dHeadr&&this.dataSource.length>0){
+			//本地路由存在，返回菜单列表没有的有header默认插入返回菜单列表第一条数据
+			if(!dHeadr&&this.dataSource.length>0&&sURL.length>0){
 				dHeadr = this.dataSource[0].motherHeadId
 			}
-			if(!dFooter&&this.dataSource.length>0){
+			if(!dFooter&&this.dataSource.length>0&&sURL.length>0){
 				dFooter = this.dataSource[0].motherFootId;
 			}
 			
@@ -103,11 +110,16 @@ export default {
 	},    
 	async footerEdit(tempId){
 		let tpl = this.setHeadFoot('footer',tempId)
+		var footers = document.getElementById('footers')
+		let oldTpl = footers.getAttribute('data-tmplid')
+		if(oldTpl == tpl){
+			return false
+		}
 		if(tpl){
 			
 			let resFoot = await getHeaderFoot({'tpl':tpl})	
 		if(resFoot){
-			var footers = document.getElementById('footers')
+			
 			footers.innerHTML = resFoot;
 			footers.setAttribute('data-tmplid',tpl)
 		}
