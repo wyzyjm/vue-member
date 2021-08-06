@@ -76,13 +76,16 @@
 									:class="{'is-disabledmin':scope.row.moq > scope.row.quantity ,'is-disabledmax': scope.row.stock<scope.row.quantity}"
 									
 								></el-input-number>
-
-								<span class="span-danger" v-if="scope.row['moq'] &&(scope.row['moq'] > scope.row.quantity)">
-									最少起订量为{{scope.row.moq}}
-								</span>
-								<span class="span-danger" v-if="scope.row['stock'] &&(scope.row['stock'] <scope.row.quantity)">
+								<span class="span-danger" v-if="scope.row['stock'] ||(scope.row['stock'] <scope.row.quantity)">
 									库存不足
 								</span>
+								<template v-else>
+									<span class="span-danger" v-if="scope.row['moq'] || (scope.row['moq'] > scope.row.quantity)">
+										最少起订量为{{scope.row.moq}}
+									</span>
+								</template>
+								
+								
 							</template>
 						</el-table-column>
 						<el-table-column
@@ -503,6 +506,7 @@ export default {
 			
 		},
 		selectData(val,row){
+			debugger
 			let arr=[]
 			if(row){
 				arr.push(row)
@@ -527,6 +531,7 @@ export default {
 		},
 		//表格选择
 		selectProductFun(val) {
+			debugger
 			let list = val;
 		
 			this.selectProduct = list;
@@ -655,7 +660,8 @@ export default {
              *  判断是否可回收
              */
             selectInit(row,index) {
-                if (row.moq > row.quantity || row.quantity > row.stock) {
+				debugger
+                if (row.moq > row.quantity || row.quantity > row.stock || !row.stock || !row.moq) {
 					this.cartList[index].disabled = 1
                     return false; //不可勾选
                 }else {
@@ -703,6 +709,7 @@ export default {
 			})
 			if(btnDis) return;
 			let res = await selectSettle(arr)
+		
 			switch (res.code){
 				case "10001":
 				this.$message({ 
@@ -734,8 +741,7 @@ export default {
 				message: '币种有变动'
 				});
 				break;
-			}
-			if(res.status == 200){
+				case "200":
 				this.renderData();
 				let dataIDs ='';
 				let appId='';
@@ -747,15 +753,20 @@ export default {
 					templateId += temp?temp:null + ','
 				})
 				this.$router.push({ path: '/settlement',query:{shoppingCartIds:dataIDs,appId:appId,templateId:templateId}})
+				break;
 			}
+			
 			
 			console.log(this.$router)
 		
 	},
 	//去除引号
 	delstr(ss){
-		let str = ss.replace(/^\"|\"$/g,'')
-		return str
+		if(ss){
+			let str = ss.replace(/^\"|\"$/g,'')
+			return str
+		}
+		
 	}
 		
 	},

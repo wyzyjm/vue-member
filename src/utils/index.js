@@ -142,7 +142,7 @@ var getParentWindow = function() {
 // 是否是前台环境
 
 export function isDesignMode() {
-  return true;
+  return false;
   if (!(getParentWindow().$LAB != null && typeof getParentWindow().$LAB === 'object')) {
     return false
   } else {
