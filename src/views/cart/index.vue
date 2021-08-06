@@ -76,11 +76,11 @@
 									:class="{'is-disabledmin':scope.row.moq > scope.row.quantity ,'is-disabledmax': scope.row.stock<scope.row.quantity}"
 									
 								></el-input-number>
-								<span class="span-danger" v-if="scope.row['stock'] ||(scope.row['stock'] <scope.row.quantity)">
+								<span class="span-danger" v-if="scope.row['stock'] == undefined ||(scope.row['stock'] <scope.row.quantity)">
 									库存不足
 								</span>
 								<template v-else>
-									<span class="span-danger" v-if="scope.row['moq'] || (scope.row['moq'] > scope.row.quantity)">
+									<span class="span-danger" v-if="scope.row['moq']== undefined || (scope.row['moq'] > scope.row.quantity)">
 										最少起订量为{{scope.row.moq}}
 									</span>
 								</template>
@@ -429,7 +429,9 @@ export default {
 						this.unvalidList.push(e);
 					}
 					
+					
 				});
+				console.log(this.cartList)
 				this.$nextTick(()=> {
 					this.cartList.forEach((e,i) => {
 						if(e.selected==1 && this.$refs.cartList){
@@ -660,7 +662,6 @@ export default {
              *  判断是否可回收
              */
             selectInit(row,index) {
-				debugger
                 if (row.moq > row.quantity || row.quantity > row.stock || !row.stock || !row.moq) {
 					this.cartList[index].disabled = 1
                     return false; //不可勾选

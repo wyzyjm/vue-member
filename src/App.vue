@@ -59,8 +59,8 @@ export default {
 		let tpl = this.setHeadFoot('header',tempId)
 		var headers = document.getElementById('headers')
 		let oldTpl = headers.getAttribute('data-tmplid')
-	
-		if(tpl && oldTpl == tpl){
+		
+		if(tpl != undefined && oldTpl == tpl){
 			return false
 		}else{
 			if(tpl){
