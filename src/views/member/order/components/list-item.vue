@@ -54,7 +54,7 @@
               <p class="color-9 border-bottom p-y m-y text-overflow">含运费{{ data.currencySymbol }}{{ data.freight }}</p>
               <p class="color-9 text-overflow">{{ data.paymentTypeName }}</p>
             </div>
-            <div :class="{'col-danger':data.orderStatus != 50}">
+            <div :class="{'col-danger':data.orderStatus < 50}">
               <span class="text-overflow">{{ statePayment[data.orderStatus].type }}</span>
             </div>
             <div class="operate">
