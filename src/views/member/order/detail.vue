@@ -16,7 +16,7 @@
       ><SvgIcon name="icon-shijian" />剩余{{ dataTime }}</div>
       <div>订单状态：<span class="font-20" :class="{'col-danger': data.orderStatus < 50, 'col-success': data.orderStatus === 50}">{{ statePayment[data.orderStatus].type }}</span></div>
       <div>
-        <el-button v-if="data.orderStatus == 10 || data.orderStatus == 20 " type="text" @click.prevent="cancelOrder">取消订单</el-button>
+        <el-button v-if="data.orderStatus == 10 " type="text" @click.prevent="cancelOrder">取消订单</el-button>
         <el-button v-if="data.electronicInvoice" type="primary" plain @click="dialogTableVisible = true">查看发票信息</el-button>
         <el-button v-if="data.orderStatus == 10" type="primary" plain @click="showDialog('edit')">修改地址</el-button>
         <el-button v-if="data.orderStatus == 10" type="primary" @click="payOrder">付款</el-button>
