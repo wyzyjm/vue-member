@@ -27,7 +27,7 @@
     <!-- 收货信息 -->
     <ul class="border detail">
       <li class="detail-item">
-        <p class="title">商品清单/结算信息</p>
+        <p class="title">收货人信息</p>
         <div class="item-list">
           <p v-if="data.consigneeInfo.consigneeName" class="consignee"><span>收货人：</span><span>{{ data.consigneeInfo.consigneeName }}</span></p>
           <div :class="{'reverse':data.consigneeInfo.reverseFlag}">
@@ -50,9 +50,9 @@
         </div>
       </li>
       <li v-if="data.payInfo" class="detail-item">
-        <p class="title">订单信息</p>
+        <p class="title">支付信息</p>
         <div class="item-list">
-          <span class="pr-10">支付方式：{{ data.payInfo.paymentTypeName ? data.payInfo.paymentTypeName : '' }}</span>
+          <span class="pr-10">支付方式：<i class="col-grey-6">{{ data.payInfo.paymentTypeName ? data.payInfo.paymentTypeName : '' }}</i></span>
           <el-popover
             v-if="data.orderStatus > 10 && data.payInfo.paymentTypeId !== 7"
             placement="bottom"
@@ -118,8 +118,8 @@
           </div>
           <div class="message-pay">
             <p>共 <span class="col-danger font-20">{{ inTotal }}</span> 件商品</p>
-            <p>商品总额：  {{ data.currencySymbol }} {{ data.totalAmount }}</p>
-            <p>运费总计：  {{ data.currencySymbol }} {{ data.freight ? data.freight : 0 }}</p>
+            <p class="col-grey-6">商品总额：  {{ data.currencySymbol }} {{ data.totalAmount }}</p>
+            <p class="col-grey-6">运费总计：  {{ data.currencySymbol }} {{ data.freight ? data.freight : 0 }}</p>
             <p class="col-danger font-20">实付金额： <span class="font-bold">{{ data.currencySymbol }} {{ data.sumPayable }}</span></p>
           </div>
         </div>
@@ -412,7 +412,7 @@ export default {
         'q': Math.floor((date.getMonth() + 3) / 3), // 季度
         'S': date.getMilliseconds() // 毫秒
       }
-      const dateTime = `${o.Y}-${this.toDou(o.M)}-${this.toDou(o.d)}  ${this.toDou(o.h)}:${this.toDou(o.m)}`
+      const dateTime = `${o.Y}-${this.toDou(o.M)}-${this.toDou(o.d)}  ${this.toDou(o.h)}:${this.toDou(o.m)}:${this.toDou(o.s)}`
       return dateTime
     },
     // 倒计时
@@ -468,10 +468,11 @@ export default {
 }
 </script>
 <style scoped>
-ul,li{
+ul,li,i{
   list-style: none;
   padding: 0;
   margin: 0;
+  font-style: normal;
 }
 p{
   padding: 0;
@@ -488,7 +489,13 @@ p{
   color: #F56C6C;
 }
 .col-success{
-  color:#67C23A
+  color:#67C23A;
+}
+.col-grey-9{
+  color:#999999;
+}
+.col-grey-6{
+  color:#666666;
 }
 .pr-10 {
   padding-right: 10px;
@@ -531,6 +538,7 @@ p{
   margin: 0 40px;
 }
 .item-list{
+  color: #999;
   height: 260px;
   padding: 10px;
   margin: 20px 10px;
@@ -568,6 +576,7 @@ p{
   line-height: 1.3;
 }
 .consignee span:nth-child(2){
+  color: #666;
   width: calc(100% - 110px);
   max-width: 400px;
   text-align: left;
@@ -588,6 +597,7 @@ p{
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
+  color: #999999;
 }
 .message-pay{
   text-align: right;
