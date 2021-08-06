@@ -421,6 +421,7 @@ export default {
       leftTime = leftTime - this.data.systemTime / 1000
       if (leftTime <= 0) {
         this.dataTime = '0秒'
+        location.reload()
         return
       }
       this.setIntID = setInterval(() => {
