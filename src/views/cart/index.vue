@@ -1,7 +1,7 @@
 <template>
 	<div class="app-container">
 		<page-title :pagetitle="title"> </page-title>
-		<div v-if="cartList.length > 0 || unvalidList.length > 0">
+		<div v-if="cartList.length > 0 || unvalidList.length > 0 || data.shoppingCartList.length>0">
 			<div class="cartList">
 				<div v-if="cartList.length > 0">
 					<el-table
