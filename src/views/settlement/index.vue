@@ -272,7 +272,7 @@
       <span>{{ msgContent }}</span>
       <span slot="footer" class="dialog-footer">
         <!-- 价格有变动时候 -->
-        <template v-if="msgCode === '10004'">
+        <template v-if="msgCode === '10004'||msgCode==='10005'">
           <el-button
             type="default"
             @click="$router.push('/cart')"
@@ -801,6 +801,22 @@ export default {
             ) {
               this.msgCode = res.data.code
               this.msgContent = res.data.msg
+              
+                if(res.data.code==='10001'){
+                  this.msgContent = "存在失效商品，不能结算哦！"
+                }else if(res.data.code==='10002'){
+                  this.msgContent = "存在未达到起订量的货品"
+                }else if(res.data.code==='10003'){
+                  this.msgContent = "商品库存不足，不能结算哦！"
+                }else if(res.data.code==='10004'){
+                  this.msgContent = "商品价格有变动，将以实际价格参与结算！"
+                }else if(res.data.code==='10005'){
+                  this.msgContent = "商品币种有变动，将以实际币种参与结算"
+                }else if(res.data.code==='10006'){
+                  this.msgContent = "运费价格有变动，请获取最新运费价格后再提交订单！"
+                }
+                
+
               this.messageVisible = true
               this.orderLoading = false
               this.orderDisabled = false
