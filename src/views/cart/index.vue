@@ -533,7 +533,6 @@ export default {
 		},
 		//表格选择
 		selectProductFun(val) {
-			debugger
 			let list = val;
 		
 			this.selectProduct = list;
@@ -711,7 +710,7 @@ export default {
 			if(btnDis) return;
 			let res = await selectSettle(arr)
 		
-			switch (res.code){
+			switch (res.data.code){
 				case "10001":
 				this.$message({ 
 				type: 'info',
