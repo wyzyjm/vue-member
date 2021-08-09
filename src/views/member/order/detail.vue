@@ -92,13 +92,13 @@
           </el-popover>
         </div>
       </li>
-      <li v-if="data.orderStatus > 20 && data.logisticsInfo" class="detail-item">
+      <li v-if="data.logisticsInfo" class="detail-item">
         <p class="title">物流信息</p>
         <div class="item-list">
-          <p class="consignee"><span>配送方式：</span><span>{{ data.logisticsInfo.distribution }}</span></p>
-          <p class="consignee" :datatype="data.logisticsInfo.courierCompanyCode"><span>快递公司：</span><span>{{ data.logisticsInfo.courierCompany }}</span></p>
-          <p class="consignee"><span>运单号：</span><span>{{ data.logisticsInfo.trackingNumber }}</span></p>
-          <p class="consignee"><span>物流查询：</span><a target="_blank" :href="data.logisticsInfo.queryUrl" class="el-button--text">{{ data.logisticsInfo.queryUrl }}</a></p>
+          <p v-if="data.logisticsInfo.distribution" class="consignee"><span>配送方式：</span><span>{{ data.logisticsInfo.distribution }}</span></p>
+          <p v-if="data.logisticsInfo.courierCompanyCode" class="consignee" :datatype="data.logisticsInfo.courierCompanyCode"><span>快递公司：</span><span>{{ data.logisticsInfo.courierCompany }}</span></p>
+          <p v-if="data.logisticsInfo.trackingNumber" class="consignee"><span>运单号：</span><span>{{ data.logisticsInfo.trackingNumber }}</span></p>
+          <p v-if="data.logisticsInfo.queryUrl" class="consignee"><span>物流查询：</span><a target="_blank" :href="data.logisticsInfo.queryUrl" class="el-button--text">{{ data.logisticsInfo.queryUrl }}</a></p>
         </div>
       </li>
     </ul>
