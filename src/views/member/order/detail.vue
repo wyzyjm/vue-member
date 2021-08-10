@@ -54,7 +54,7 @@
         <div class="item-list display-flex">
           <p class="pr-10">支付方式：<i class="col-grey-6">{{ data.payInfo.paymentTypeName ? data.payInfo.paymentTypeName : data.payInfo.payModeName }}</i></p>
           <el-popover
-            v-if="data.orderStatus > 10 && data.payInfo.paymentTypeId !== 7 && data.payInfo.paymentTypeName"
+            v-if="data.orderStatus > 10 && data.orderStatus < 60 && data.payInfo.paymentTypeId !== 7"
             placement="bottom"
             width="260"
             trigger="click"
@@ -518,7 +518,7 @@ p{
   margin: 30px 0;
 }
 .mt5{
-  margin-top: 3px;
+  margin-top: 5px;
 }
 .display-flex{
   display: flex;
