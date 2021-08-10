@@ -52,7 +52,7 @@
       <li v-if="data.payInfo" class="detail-item">
         <p class="title">支付信息</p>
         <div class="item-list">
-          <span class="pr-10">支付方式：<i class="col-grey-6">{{ data.payInfo.paymentTypeName ? data.payInfo.paymentTypeName : '' }}</i></span>
+          <p class="pr-10">支付方式：<i class="col-grey-6">{{ data.payInfo.paymentTypeName ? data.payInfo.paymentTypeName : data.payInfo.payModeName }}</i></p>
           <el-popover
             v-if="data.orderStatus > 10 && data.payInfo.paymentTypeId !== 7"
             placement="bottom"
