@@ -51,8 +51,8 @@
             <div><span>{{ data.consigneeName }}</span></div>
             <div class="actual-payment">
               <p>{{ data.currencySymbol }}{{ data.sumPayable }}</p>
-              <p class="color-9 p-y m-y text-overflow" :class="{'border-bottom': data.paymentTypeName }">含运费{{ data.currencySymbol }}{{ data.freight }}</p>
-              <p class="color-9 text-overflow">{{ data.paymentTypeName }}</p>
+              <p class="color-9 border-bottom p-y m-y text-overflow">含运费{{ data.currencySymbol }}{{ data.freight }}</p>
+              <p class="color-9 text-overflow">{{ data.paymentTypeName ? data.paymentTypeName : payModeType[data.payMode].type }}</p>
             </div>
             <div :class="{'col-danger':data.orderStatus < 50}">
               <span class="text-overflow">{{ statePayment[data.orderStatus].type }}</span>
@@ -135,6 +135,18 @@ export default {
         },
         60: {
           type: '已关闭'
+        }
+      },
+      // 支付状态
+      payModeType: {
+        0: {
+          type: '在线支付'
+        },
+        1: {
+          type: '线下支付'
+        },
+        2: {
+          type: '货到付款'
         }
       },
       reverse: true,
