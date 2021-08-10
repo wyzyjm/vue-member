@@ -51,10 +51,10 @@
       </li>
       <li v-if="data.payInfo" class="detail-item">
         <p class="title">支付信息</p>
-        <div class="item-list">
-          <span class="pr-10">支付方式：<i class="col-grey-6">{{ data.payInfo.paymentTypeName ? data.payInfo.paymentTypeName : '' }}</i></span>
+        <div class="item-list display-flex">
+          <p class="pr-10">支付方式：<i class="col-grey-6">{{ data.payInfo.paymentTypeName ? data.payInfo.paymentTypeName : data.payInfo.payModeName }}</i></p>
           <el-popover
-            v-if="data.orderStatus > 10 && data.payInfo.paymentTypeId !== 7"
+            v-if="data.orderStatus > 10 && data.orderStatus < 60 && data.payInfo.paymentTypeId !== 7"
             placement="bottom"
             width="260"
             trigger="click"
@@ -88,7 +88,7 @@
               <p class="payInfo-item"><span>Currency：</span><span>{{ data.payInfo.moneyGram.currency }}</span></p>
               <p class="payInfo-item"><span>Contents：</span><span>{{ data.payInfo.moneyGram.content }}</span></p>
             </div>
-            <el-button slot="reference" type="text">支付信息<SvgIcon name="icon-xia" /></el-button>
+            <el-button slot="reference" type="text" class="mt5">支付信息<SvgIcon name="icon-xia" /></el-button>
           </el-popover>
         </div>
       </li>
@@ -516,6 +516,12 @@ p{
   justify-content: space-between;
   align-items: center;
   margin: 30px 0;
+}
+.mt5{
+  margin-top: 5px;
+}
+.display-flex{
+  display: flex;
 }
 .detail{
   margin-bottom: 30px;
