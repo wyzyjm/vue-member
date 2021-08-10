@@ -51,7 +51,7 @@
             <div><span>{{ data.consigneeName }}</span></div>
             <div class="actual-payment">
               <p>{{ data.currencySymbol }}{{ data.sumPayable }}</p>
-              <p class="color-9 border-bottom p-y m-y text-overflow">含运费{{ data.currencySymbol }}{{ data.freight }}</p>
+              <p class="color-9 p-y m-y text-overflow" :class="{'border-bottom': data.paymentTypeName }">含运费{{ data.currencySymbol }}{{ data.freight }}</p>
               <p class="color-9 text-overflow">{{ data.paymentTypeName }}</p>
             </div>
             <div :class="{'col-danger':data.orderStatus < 50}">
