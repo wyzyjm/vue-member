@@ -805,7 +805,7 @@ export default {
                 if(res.data.code==='10001'){
                   this.msgContent = "存在失效商品，不能结算哦！"
                 }else if(res.data.code==='10002'){
-                  this.msgContent = "存在未达到起订量的货品"
+                  this.msgContent = "存在商品未达到最低起订量，不能结算哦！"
                 }else if(res.data.code==='10003'){
                   this.msgContent = "商品库存不足，不能结算哦！"
                 }else if(res.data.code==='10004'){
