@@ -37,6 +37,9 @@ import i18n from '@/i18n/index'
 Vue.use(ElementUI, { enlocale })
 
 Vue.use(ElementUI)
+import SlideVerify from 'vue-monoplasty-slide-verify';
+
+Vue.use(SlideVerify);
 //动态尾部
 
 Vue.config.productionTip = false

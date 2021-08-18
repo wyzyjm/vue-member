@@ -96,8 +96,15 @@ export const constantRoutes = [
                     component: () => import('@/views/member/cart/index'),
                     meta: { title: '我的购物车', icon: '' }
                 },
+               
                 
             ]
+        },
+        {
+            path: '/forgotpassword',
+            name: 'forgotpassword',
+            component: () => import('@/views/member/forgotpassword'),
+            meta: { title: '忘记密码', icon: '' }
         },
         {
             path: '/cart',

@@ -148,3 +148,12 @@ export function isDesignMode() {
     return true
   }
 }
+//密码设置为8-20位，并且由字母，数字和符号两种以上组合
+export function validatePassType(value){
+  let reg = /((?=.*[a-z])(?=.*\d)|(?=[a-z])(?=.*[#@!~%^&*])|(?=.*\d)(?=.*[#@!~%^&*]))[a-z\d#@!~%^&*]{8,16}/i
+  if(reg.test(value)){
+    return true;
+  }else{
+    return false;
+  }
+}
