@@ -16,19 +16,11 @@ import router from './router'
 import '../static/js/environment.js'
 // import '@/resource'
 
+import './utils/get-app-id'
+import './utils/get-tenent'
 
 import CustomImg from '@/components/CustomImg'
 Vue.component('custom-img', CustomImg)
-
-
-fetch(window.location.origin+'/tenant.json')
-  .then(function(response) {
-    //return response.json();
-    return response.body;
-  })
-  .then(function(result) {
-    Vue.prototype.$tenantInfo = result;
-  });
 
   
 import '@/icons' // icon

@@ -24,4 +24,11 @@ export function getList(data) {
       params
     })
   }
+  export function getAppByName(params) {
+    return request({
+      url: window.location.origin+'/producer/getAppByName',
+      method: 'get',
+      params
+    })
+  }
   

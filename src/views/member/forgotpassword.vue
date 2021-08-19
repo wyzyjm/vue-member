@@ -114,7 +114,7 @@
         <svg-icon name="icon-caozuochenggong" class="icon" setsize="60" />
         <p style="margin-top: 20px">找回密码成功</p>
         <div>
-          <el-button type="primary" style="width: 100%">重新登录</el-button>
+          <el-button type="primary" style="width: 100%" @click="goLogin">重新登录</el-button>
         </div>
       </div>
     </div>
@@ -335,7 +335,6 @@ export default {
       params.mobilePrefix = this.validateForm.prename;
       params.randomCaptcha = this.codeNum;
       params.uuid = this.uuid;
-
       generateCode(params).then((res) => {
         if (res.status == 200) {
           this.showTimer = true;
@@ -449,6 +448,9 @@ export default {
         }
       });
     },
+    goLogin(){
+      window.location.href=window.location.origin+'/login.html'
+    }
   },
 };
 </script>

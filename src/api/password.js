@@ -27,7 +27,7 @@ export function saveLoginPwdRSA(data) {
 //获取手机验证码
 export function generateCode(data) {
   return request({
-    url: '/fwebapi/member/detail/generateCaptcha',
+    url: '/fwebapi/member/detail/generateCaptcha?appId='+window.appMap.member,
     method: 'post',
     data
   })
