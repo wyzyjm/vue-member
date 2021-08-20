@@ -36,7 +36,7 @@ Vue.use(SlideVerify);
 
 Vue.config.productionTip = false
 
-
+//获取header,footer
  router.afterEach((to, from) => {
   if(window.headFooterEdit){
    window.atferTo = to
@@ -44,6 +44,29 @@ Vue.config.productionTip = false
   }
   
 })
+//读cookie里的token,判断路由跳转
+router.beforeEach((to,from,next)=>{
+  // let psession = ''
+  // console.log(document.cookie)
+  // let reg = new RegExp("(^| )"+"psession"+"=([^;]*)(;|$)")
+  // let res = document.cookie.match(reg)
+   
+  //  if(res===null){
+  //   // if(psession==''){
+  //     // psession = unescape(res[2])
+  //     // window.location.href = window.location.origin+'/sys/forgotpassword'
+      
+  //     next({path:'/forgotpassword'});
+    
+  //  }else{
+  //    next(to)
+  //  }
+   
+  next()
+  
+})
+
+
 
 fetch(window.location.origin + '/css/site.css').then(function (res) {
   // console.log(res.text())
@@ -146,6 +169,7 @@ function cssPorpsToObject(cssProps) {
 
   return obj
 }
+
 
 
 

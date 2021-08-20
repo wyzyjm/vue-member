@@ -32,10 +32,13 @@ service.defaults.headers.post['Content-Type'] = 'application/json'
 // request interceptor
 service.interceptors.request.use(
   config => {
+    axios.get(baseurl+'/fwebapi/member/checkToken').then((res)=>{
+      if(res.data.data.code!=='200'){
+        window.location = window.location.origin+'/login.html'
+      }
+    })
+    
    
-    if (store.getters.token) {
-      config.headers['X-Token'] = getToken()
-    }
     return config
   },
   error => {
