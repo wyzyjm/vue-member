@@ -1,7 +1,6 @@
 import request from '@/utils/request'
-import {mockMemberDetail} from '../../mock/member'
+import { mockMemberDetail } from '../../mock/member'
 import { isDesignMode } from '@/utils/index'
-console.log(mockMemberDetail)
 export function memberDetail(params) {
   if (!isDesignMode()) {
     return request({
@@ -10,9 +9,9 @@ export function memberDetail(params) {
       params
     })
   } else {
-    return new Promise(function(resolve,reject){
+    return new Promise(function(resolve, reject) {
       resolve(mockMemberDetail)
-    }) 
+    })
   }
 }
 export function updateMember(data) {
@@ -44,7 +43,7 @@ export function updatePwd(data) {
 // 获取验证码
 export function generateCode(data) {
   return request({
-    url: '/fwebapi/member/detail/generateCode',
+    url: '/fwebapi/member/detail/generateCode?appId=' + window.appMap.member,
     method: 'post',
     data
   })
