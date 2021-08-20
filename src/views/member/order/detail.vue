@@ -98,7 +98,7 @@
           <p v-if="data.logisticsInfo.distribution" class="consignee"><span>配送方式：</span><span>{{ data.logisticsInfo.distribution }}</span></p>
           <p v-if="data.logisticsInfo.courierCompanyCode" class="consignee" :datatype="data.logisticsInfo.courierCompanyCode"><span>快递公司：</span><span>{{ data.logisticsInfo.courierCompany }}</span></p>
           <p v-if="data.logisticsInfo.trackingNumber" class="consignee"><span>运单号：</span><span>{{ data.logisticsInfo.trackingNumber }}</span></p>
-          <p v-if="data.logisticsInfo.queryUrl" class="consignee"><span>物流查询：</span><a target="_blank" :href="data.logisticsInfo.queryUrl" class="el-button--text">{{ data.logisticsInfo.queryUrl }}</a></p>
+          <p v-if="data.logisticsInfo.queryUrl" v-show="false" class="consignee"><span>物流查询：</span><a target="_blank" :href="data.logisticsInfo.queryUrl" class="el-button--text">{{ data.logisticsInfo.queryUrl }}</a></p>
         </div>
       </li>
     </ul>
@@ -303,6 +303,9 @@ export default {
         this.current = { orderId: this.data.orderId, ...this.data.consigneeInfo }
         this.sumTotal(this.data.goodsList)
         this.loading = false
+      }).catch(error => {
+        this.loading = false
+        console.log('请求失败', error)
       })
     },
     // 修改发票弹窗
@@ -346,6 +349,8 @@ export default {
         confirmOrder({ orderId: this.data.orderId }).then(res => {
           if (res.data.code !== '0') return
           location.reload()
+        }).catch(error => {
+          console.log('请求失败', error)
         })
       }).catch(() => {
         this.$message({
@@ -363,6 +368,8 @@ export default {
         cancelOrder({ orderId: this.data.orderId }).then(res => {
           if (res.data.code !== '0') return
           location.reload()
+        }).catch(error => {
+          console.log('请求失败', error)
         })
       }).catch(() => {
         this.$message({

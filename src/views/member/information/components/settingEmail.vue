@@ -158,6 +158,8 @@ export default {
               if (res.data === 1) {
                 this.onSubmit()
               }
+            }).catch(error => {
+              console.log('请求失败', error)
             })
           }
         } else {
@@ -191,6 +193,8 @@ export default {
                 this.$message.success('解绑成功！')
                 this.goHome()
               }
+            }).catch(error => {
+              console.log('请求失败', error)
             })
           } else if (this.propData.emailType === 0) {
             //  修改邮箱提交
@@ -204,6 +208,8 @@ export default {
               if (res.data === 1) {
                 this.onSubmit()
               }
+            }).catch(error => {
+              console.log('请求失败', error)
             })
           } else {
             if (!this.isCheckYzm) {
@@ -258,6 +264,8 @@ export default {
           } else {
             this.$message('验证失败！')
           }
+        }).catch(error => {
+          console.log('请求失败', error)
         })
       }
     },
@@ -297,6 +305,8 @@ export default {
         } else {
           this.$message('发送失败，请稍后重试！')
         }
+      }).catch(error => {
+        console.log('请求失败', error)
       })
       // }
     },

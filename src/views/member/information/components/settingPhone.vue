@@ -234,6 +234,8 @@ export default {
             if (res.data === 1) {
               this.onSubmit()
             }
+          }).catch(error => {
+            console.log('请求失败', error)
           })
         } else {
           return false
@@ -258,6 +260,8 @@ export default {
               if (res.data === 1) {
                 this.goHome()
               }
+            }).catch(error => {
+              console.log('请求失败', error)
             })
           } else {
             this.checkCode()
@@ -294,6 +298,8 @@ export default {
           } else {
             this.$message('验证失败！')
           }
+        }).catch(error => {
+          console.log('请求失败', error)
         })
       }
     },
@@ -371,6 +377,8 @@ export default {
         } else {
           this.$message('发送失败，请稍后重试！')
         }
+      }).catch(error => {
+        console.log('请求失败', error)
       })
     },
     goHome() {

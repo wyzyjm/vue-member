@@ -133,6 +133,8 @@ export default {
             if (res.data === 1) {
               this.onSubmit()
             }
+          }).catch(error => {
+            console.log('请求失败', error)
           })
         } else {
           return false

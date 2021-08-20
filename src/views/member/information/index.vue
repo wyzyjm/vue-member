@@ -4,7 +4,7 @@
     <!-- <slot slot="slot">搜索</slot> -->
     </PageTitle>
     <div v-if="isShow" v-loading="loading">
-      <div v-if="data" class="content">
+      <div v-if="data && data.user" class="content">
         <!-- 头像 -->
         <div class="block user">
           <el-image
@@ -139,10 +139,15 @@ export default {
   },
   methods: {
     async getMemberDetail() {
-      const detailData = await memberDetail()
-      this.data = detailData.data
-      this.avatar = 'https://pre-omo-oss-image.site.cn/' + this.data.user.avatar
-      this.loading = false
+      try {
+        const detailData = await memberDetail()
+        this.data = detailData.data
+        this.avatar = 'https://pre-omo-oss-image.site.cn/' + this.data.user.avatar
+        this.loading = false
+      } catch (error) {
+        this.loading = false
+        console.log('请求失败', error)
+      }
     },
     cropSuccess(resData) {
       this.vicpWarpShow = false

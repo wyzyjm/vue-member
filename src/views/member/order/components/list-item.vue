@@ -170,6 +170,8 @@ export default {
         confirmOrder({ orderId: id }).then(res => {
           if (res.data.code !== '0') return
           location.reload()
+        }).catch(error => {
+          console.log('请求失败', error)
         })
       }).catch(() => {
         this.$message({
@@ -186,6 +188,8 @@ export default {
         cancelOrder({ orderId: id }).then(res => {
           if (res.data.code !== '0') return
           location.reload()
+        }).catch(error => {
+          console.log('请求失败', error)
         })
       }).catch(() => {
         this.$message({
