@@ -132,12 +132,18 @@ export default {
         this.list = res.data.data.list
         this.pagination = res.data.data.pagination
         this.initorderStatus()
+      }).catch(error => {
+        this.loading = false
+        console.log('请求失败', error)
       })
     },
     initorderStatus() {
       orderStatus().then(res => {
         this.orderCount = res.data.data
         this.loading = false
+      }).catch(error => {
+        this.loading = false
+        console.log('请求失败', error)
       })
     },
     // tab事件

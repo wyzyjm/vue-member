@@ -303,6 +303,9 @@ export default {
         this.current = { orderId: this.data.orderId, ...this.data.consigneeInfo }
         this.sumTotal(this.data.goodsList)
         this.loading = false
+      }).catch(error => {
+        this.loading = false
+        console.log('请求失败', error)
       })
     },
     // 修改发票弹窗
@@ -346,6 +349,8 @@ export default {
         confirmOrder({ orderId: this.data.orderId }).then(res => {
           if (res.data.code !== '0') return
           location.reload()
+        }).catch(error => {
+          console.log('请求失败', error)
         })
       }).catch(() => {
         this.$message({
@@ -363,6 +368,8 @@ export default {
         cancelOrder({ orderId: this.data.orderId }).then(res => {
           if (res.data.code !== '0') return
           location.reload()
+        }).catch(error => {
+          console.log('请求失败', error)
         })
       }).catch(() => {
         this.$message({

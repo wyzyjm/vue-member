@@ -299,12 +299,16 @@ export default {
         ]
         }
       }
-      const res = await updateMember(subdata)
-      if (res.data !== 1) return
-      this.form.modifyData = ''
-      this.form.name = ''
-      this.$emit('close')
-      location.reload()
+      try {
+        const res = await updateMember(subdata)
+        if (res.data !== 1) return
+        this.form.modifyData = ''
+        this.form.name = ''
+        this.$emit('close')
+        location.reload()
+      } catch (error) {
+        console.log('请求失败', error)
+      }
     },
     // 国家下拉框变化
     countryChange(val) {
