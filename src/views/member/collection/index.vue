@@ -142,7 +142,6 @@ import PageTitle from '@/views/components/pageTitle' // 头部组件
 
 import {
   getCollectionList,
-  addCollectionContent,
   deleteCollectionContent
 } from '@/api/collection'
 export default {
@@ -207,6 +206,7 @@ export default {
 
         this.isLoading = false // 取消loading效果
       } catch (error) {
+        this.isLoading = false
         console.log('请求失败', error)
       }
     },
@@ -315,7 +315,6 @@ export default {
       this.isBatch = false // 取消批量
     }
 
-  
   }
 }
 </script>
