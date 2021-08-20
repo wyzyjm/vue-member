@@ -14,14 +14,9 @@ import request from '@/utils/request'
  */
 const getCollectionList = (data) => {
   return request({
-    url: '/fwebapi/member/collection/findPageList',
+    url: '/fwebapi/member/collection/findPageList?appId='+window.appMap.member,
     method: 'POST',
     data,
-    params: {
-      tenantId: 1600018169,
-      instance: 'qinhui20210610',
-      appId: 143150160001
-    }
   })
 }
 
@@ -48,11 +43,7 @@ const addCollectionContent = (data) => {
     url: '/fwebapi/member/collection/insert',
     method: 'POST',
     data,
-    params: {
-      tenantId: 1600018169,
-      instance: 'qinhui20210610',
-      appId: 143150160001
-    }
+ 
   })
 }
 
@@ -68,11 +59,7 @@ const deleteCollectionContent = (data) => {
     url: '/fwebapi/member/collection/deleteByList',
     method: 'POST',
     data,
-    params: {
-      tenantId: 1600018169,
-      instance: 'qinhui20210610',
-      appId: 143150160001
-    }
+  
   })
 }
 

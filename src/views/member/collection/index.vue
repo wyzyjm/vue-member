@@ -191,7 +191,6 @@ export default {
       const data = {
         currentPage: currentPage,
         pageSize: pageSize,
-        memberBizId: '854299120902660096',
         collectionType: 'product',
         orderByMap: {
           updateDate: 'asc'
@@ -214,7 +213,6 @@ export default {
     // 取消收藏
     async removeCollection(arrId) {
       const data = {
-        memberBizId: '854299120902660096', // 会员业务ID
         bizIds: arrId
       }
       try {
@@ -317,23 +315,7 @@ export default {
       this.isBatch = false // 取消批量
     }
 
-    // 添加收藏
-    // async addCollectionFn() {
-    //   // 852945602618646528
-    //   // 852953242098786304
-    //   const data = {
-    //     memberBizId: '854299120902660096',
-    //     collectionType: 'product',
-    //     collectionDataId: '852953242098786304'
-    //   }
-    //   try {
-    //     const res = await addCollectionContent(data)
-    //     console.log(res)
-    //     this.getCollectList()
-    //   } catch (error) {
-    //     console.log(error)
-    //   }
-    // }
+  
   }
 }
 </script>
