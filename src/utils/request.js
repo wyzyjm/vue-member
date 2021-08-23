@@ -2,6 +2,7 @@ import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
+import {isDesignMode} from '@/utils/index'
 
 let baseurl = ''
 if (process.env.NODE_ENV == 'development') {
@@ -32,11 +33,14 @@ service.defaults.headers.post['Content-Type'] = 'application/json'
 // request interceptor
 service.interceptors.request.use(
   config => {
-    axios.get(baseurl+'/fwebapi/member/checkToken').then((res)=>{
-      if(res.data.data.code!=='200'){
-        window.location = window.location.origin+'/login.html'
-      }
-    })
+    if(!isDesignMode()){
+      axios.get(baseurl+'/fwebapi/member/checkToken').then((res)=>{
+        if(res.data.data.code!=='200'){
+          window.location = window.location.origin+'/login.html'
+        }
+      })
+    }
+   
     
    
     return config
