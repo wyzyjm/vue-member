@@ -1,6 +1,5 @@
 
 import { isDesignMode } from './index'
-console.log(isDesignMode())
 
   function markeCss() {
     fetch(window.location.origin + '/css/site.css').then(function (res) {

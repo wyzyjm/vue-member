@@ -1,11 +1,11 @@
 <template>
   <div class="app-container" style="width: 600px; margin: 50px auto">
     <ce-steps :active="active" :datalist="dataPwd" style="width: 100%" />
-    <div class="content-wrapper" >
+    <div class="content-wrapper">
       <div v-if="active == 0" style="text-align: center; line-height: 40px">
         <svg-icon name="icon-anquanzhuye" class="icon" setsize="60" />
-        <p v-if="type == 'phone'">为确认是您本人安全，请输入您常用手机号</p>
-        <p v-else>为确认是您本人安全，请输入您常用邮箱</p>
+        <p v-if="type == 'phone'">请输入您常用手机号</p>
+        <p v-else>请输入您常用邮箱</p>
       </div>
       <div v-if="active == 1">
         <p style="color: rgb(230, 162, 60)">
@@ -114,7 +114,9 @@
         <svg-icon name="icon-caozuochenggong" class="icon" setsize="60" />
         <p style="margin-top: 20px">找回密码成功</p>
         <div>
-          <el-button type="primary" style="width: 100%" @click="goLogin">重新登录</el-button>
+          <el-button type="primary" style="width: 100%" @click="goLogin"
+            >重新登录</el-button
+          >
         </div>
       </div>
     </div>
@@ -183,13 +185,13 @@ export default {
         }
       }
     };
-    var validateCode = (rule,value,callback)=>{
-      if(value==''){
-        return callback(new Error('验证码不能为空'))
-      }else{
-        callback()
+    var validateCode = (rule, value, callback) => {
+      if (value == "") {
+        return callback(new Error("验证码不能为空"));
+      } else {
+        callback();
       }
-    }
+    };
     var validatePass = (rule, value, callback) => {
       console.log(rule, value);
       if (value === "") {
@@ -244,7 +246,7 @@ export default {
       validateRules: {
         name: [{ validator: validateName, trigger: "blur" }],
         mail: [{ validator: validateMail, trigger: "blur" }],
-        code:[{validator:validateCode,trigger:'blur'}]
+        code: [{ validator: validateCode, trigger: "blur" }],
       },
       rules: {
         pass: [{ validator: validatePass, trigger: "blur" }],
@@ -382,18 +384,19 @@ export default {
           !/^\d{6,12}$/.test(this.validateForm.name) ||
           account == "" ||
           this.validateForm.code == ""
-        ){
-          this.$refs.validateForm.validateField('name');
-          this.$refs.validateForm.validateField('code');
+        ) {
+          this.$refs.validateForm.validateField("name");
+          this.$refs.validateForm.validateField("code");
           return false;
         }
       } else {
         if (
-          !emailValidate(this.validateForm.mail) ||account==''||
+          !emailValidate(this.validateForm.mail) ||
+          account == "" ||
           this.validateForm.code == ""
-        ){
-           this.$refs.validateForm.validateField('mail');
-          this.$refs.validateForm.validateField('code');
+        ) {
+          this.$refs.validateForm.validateField("mail");
+          this.$refs.validateForm.validateField("code");
           return false;
         }
       }
@@ -448,9 +451,9 @@ export default {
         }
       });
     },
-    goLogin(){
-      window.location.href=window.location.origin+'/login.html'
-    }
+    goLogin() {
+      window.location.href = window.location.origin + "/login.html";
+    },
   },
 };
 </script>
@@ -485,12 +488,11 @@ export default {
     }
   }
 }
-.content-wrapper{
-width: 400px; 
-margin: 0 auto;
-
+.content-wrapper {
+  width: 400px;
+  margin: 0 auto;
 }
-.content-wrapper .icon{
+.content-wrapper .icon {
   color: #409eff;
 }
 </style>
