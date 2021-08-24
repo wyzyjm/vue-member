@@ -2,13 +2,13 @@ import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
-import {isDesignMode} from '@/utils/index'
+import { isDesignMode } from '@/utils/index'
 
 let baseurl = ''
 if (process.env.NODE_ENV == 'development') {
   baseurl = 'http://20210622144830.p.make.test-dcloud.portal1.portal.yun300.cn/nportal/';
   // baseurl = 'http://qinhui20210610.p.make.test-dcloud.portal1.portal.yun300.cn/nportal/';
-  //baseurl = 'http://172.22.146.56:8888/';
+  // baseurl = 'http://172.22.146.56:8888/';
 }
 else if (process.env.NODE_ENV == 'production') {
   baseurl = '/nportal/';
@@ -33,16 +33,6 @@ service.defaults.headers.post['Content-Type'] = 'application/json'
 // request interceptor
 service.interceptors.request.use(
   config => {
-    if(!isDesignMode()){
-      axios.get(baseurl+'/fwebapi/member/checkToken').then((res)=>{
-        if(res.data.data.code!=='200'){
-          window.location = window.location.origin+'/login.html'
-        }
-      })
-    }
-   
-    
-   
     return config
   },
   error => {
@@ -54,14 +44,22 @@ service.interceptors.request.use(
 
 // response interceptor
 service.interceptors.response.use(
- 
+
   response => {
-    const res = response.data
-    return res
-   
+    if (response.status === 200) {
+      if (response.data != undefined & response.data.code != undefined & response.data.code == '401') {
+        if (!isDesignMode()) {
+          window.location = window.location.origin + '/login.html'
+        }
+      } else {
+        return response.data
+      }
+    }
+
   },
   error => {
     console.log('err' + error) // for debug
+
     // Message({
     //   message: error.message,
     //   type: 'error',
