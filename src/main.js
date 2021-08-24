@@ -30,6 +30,7 @@ Vue.use(ElementUI, { enlocale })
 
 Vue.use(ElementUI)
 import SlideVerify from 'vue-monoplasty-slide-verify';
+import { isDesignMode } from './utils'
 Vue.use(SlideVerify);
 //动态尾部
 
@@ -48,7 +49,12 @@ router.beforeEach((to,from,next)=>{
   let reg = new RegExp("(^| )"+"psession"+"=([^;]*)(;|$)")
   let res = document.cookie.match(reg)
    if(res===null&&to.name!=='forgotpassword'){
+     if(!isDesignMode()){
       window.location.href = window.location.origin+'/login.html'
+
+     }else{
+       next()
+     }
    }else{
      next()
    }
