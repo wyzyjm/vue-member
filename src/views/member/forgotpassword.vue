@@ -488,9 +488,10 @@ export default {
 .content-wrapper{
 width: 400px; 
 margin: 0 auto;
-.icon{
-  color: #409eff;
+
 }
+.content-wrapper .icon{
+  color: #409eff;
 }
 </style>
 
