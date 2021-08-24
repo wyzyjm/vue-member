@@ -1,7 +1,7 @@
 <template>
   <div class="app-container" style="width: 600px; margin: 50px auto">
     <ce-steps :active="active" :datalist="dataPwd" style="width: 100%" />
-    <div style="width: 400px; margin: 0 auto">
+    <div class="content-wrapper" >
       <div v-if="active == 0" style="text-align: center; line-height: 40px">
         <svg-icon name="icon-anquanzhuye" class="icon" setsize="60" />
         <p v-if="type == 'phone'">为确认是您本人安全，请输入您常用手机号</p>
@@ -484,6 +484,13 @@ export default {
       border: none;
     }
   }
+}
+.content-wrapper{
+width: 400px; 
+margin: 0 auto;
+.icon{
+  color: #409eff;
+}
 }
 </style>
 
