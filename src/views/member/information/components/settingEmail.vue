@@ -154,6 +154,7 @@ export default {
               email: this.dynamicValidateForm.email,
               verifyCode: this.dynamicValidateForm.yzm
             }
+            console.log('bingling参数', data)
             bingling(data).then(res => {
               this.$message(res.data.errorMsg ? res.data.errorMsg : res.msg)
               if (res.data === 1) {
@@ -205,6 +206,7 @@ export default {
               email: this.dynamicValidateForm.email,
               verifyCode: this.dynamicValidateForm.yzm
             }
+            console.log('bingling参数', data)
             bingling(data).then(res => {
               this.$message(res.data.errorMsg ? res.data.errorMsg : res.msg)
               if (res.data === 1) {
