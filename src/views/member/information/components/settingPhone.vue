@@ -4,6 +4,7 @@
       :active="active"
       :datalist="dataPhone[phoneType].item"
     />
+    <!-- 中间图标 + 底部文字 -->
     <div v-show="submitedSuccess" class="step-icon">
       <svg-icon name="icon-anquanzhuye" class="icon" setsize="150" />
       <p>
@@ -11,6 +12,7 @@
         <span v-else>为确认是您本人操作，请完成身份认证</span>
       </p>
     </div>
+    <!-- 设置完成 -->
     <div v-show="!submitedSuccess" class="step-icon">
       <svg-icon name="icon-caozuochenggong" class="icon" setsize="150" />
       <p>设置完成！</p>
@@ -19,11 +21,10 @@
         @click="goHome"
       >返回首页</el-button>
     </div>
+    <!-- 修改手机号页面 -->
     <div v-show="submitedSuccess" class="form-list">
-      <!-- 修改手机号 -->
-      <!-- <div v-if="propData.type === 'mobile'"> -->
       <el-form ref="formLabelAlign" label-width="80px" :model="formLabelAlign" class="demo-dynamic">
-        <!-- 手机区号 + 手机号 -->
+        <!-- 添加手机号 -->
         <el-form-item v-if="phoneType === 0 || active === 1" label="手机号">
           <!-- select选择器+文本框 -->
           <el-col :span="7">
@@ -66,9 +67,13 @@
             </el-form-item>
           </el-col>
         </el-form-item>
+
+        <!-- 更换 手机号 -->
         <el-form-item v-else label="手机号">
           <span>{{ setdata.phoneHead.substring(0,setdata.phoneHead.lastIndexOf(",")) }} {{ setdata.phone }}</span>
         </el-form-item>
+
+        <!-- 验证码 -->
         <el-form-item
           label="验证码"
           prop="phoneYzm"
@@ -83,6 +88,8 @@
           />
           <el-button class="get-code-btn" @click="getVerfyCode">{{ btnText }}</el-button>
         </el-form-item>
+
+        <!-- 底部按钮 -->
         <el-form-item class="item-btn">
           <el-button
             type="primary"
@@ -101,16 +108,15 @@
           >保存</el-button>
         </el-form-item>
       </el-form>
-      <!-- </div> -->
     </div>
   </div>
 </template>
 <script>
 import countryData from '@/views/components/resource/locList_zh_CN' // 国家
 import { countries } from '@/views/components/resource/phoneCodeCountries' // 手机区号
-import ceSteps from '@/components/CeSteps'
-import svgIcon from '@/components/SvgIcon'
-import { generateCode, validateVerifyCode, bingling, unbundling } from '@/api/member'
+import ceSteps from '@/components/CeSteps' // 侧边栏
+import svgIcon from '@/components/SvgIcon' // icon
+import { generateCode, validateVerifyCode, bingling, unbundling } from '@/api/member' // 接口
 
 export default {
   components: {
@@ -134,19 +140,20 @@ export default {
       }
     }
     return {
-      propData: this.setdata,
-      active: 0,
-      phoneType: this.setdata.phoneType,
+      propData: this.setdata, // 传参
+      phoneType: this.setdata.phoneType, // 手机类型 0:添加手机号, 1:更换手机号 2:解绑手机号
+      active: 0, // ?
       hasSubmited: false,
-      submitedSuccess: true,
-      btnText: '获取验证码',
-      btnDisabled: false,
+      submitedSuccess: true, // 页面布局 显示与隐藏
+      btnText: '获取验证码', // 获取验证码文字
+      btnDisabled: false, // 禁止点击
       isConsigneePhone: false, // 是否验证手机号
       isConsigneePhoneHead: false, // 验证手机区号
+      // 传参时用
       formLabelAlign: {
         phoneYzm: '',
-        consigneePhoneHead: '', // 手机区号
-        consigneePhone: '' // 手机号
+        consigneePhoneHead: this.setdata.phoneHead || '', // 手机区号
+        consigneePhone: this.setdata.phone || '' // 手机号
       },
       dataPhone: {
         0: {
@@ -224,14 +231,14 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const data = {
-            bizType: this.propData.type,
+            bizType: this.propData.type, // 类型
             mobilePrefix: this.formLabelAlign.consigneePhoneHead, // 手机号前缀
             mobile: this.formLabelAlign.consigneePhone, // 手机号
-            verifyCode: this.formLabelAlign.phoneYzm
+            verifyCode: this.formLabelAlign.phoneYzm // 短信验证码
           }
           console.log('bingling参数--->', data)
           bingling(data).then(res => {
-            this.$message(res.data.errorMsg ? res.data.errorMsg : res.msg)
+            this.$message(res.data.errorMsg ? res.data.errorMsg : res.msg) // 后端提示信息
             if (res.data === 1) {
               this.onSubmit()
             }
@@ -244,13 +251,10 @@ export default {
       })
     },
     // 下一步
-    /*
-    * bizType // 业务类型 mobile:手机， email:邮箱
-    *
-    */
     next(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          // 解绑手机
           if (this.propData.phoneType === 2) {
             const data = {
               bizType: this.propData.type,
@@ -279,12 +283,14 @@ export default {
     // 校验验证码接口
     checkCode() {
       let data = {}
+      // 绑定手机
       if (this.phoneType === 0) {
         this.submitForm('formLabelAlign')
       } else {
         data = {
-          bizType: this.propData.type,
-          verifyCode: this.formLabelAlign.phoneYzm
+          bizId: this.propData.memberId, // 会员id
+          bizType: this.propData.type, // 业务类型
+          verifyCode: this.formLabelAlign.phoneYzm // 验证码
         }
         validateVerifyCode(data).then(res => {
           if (res.data) {
@@ -306,6 +312,7 @@ export default {
     },
     // 获取验证码
     getVerfyCode() {
+      // 绑定手机
       if (this.phoneType === 0 && this.active === 0 && this.formLabelAlign.consigneePhoneHead === '') {
         // this.$message('区号不能为空！')
         this.$refs['formLabelAlign'].validate((valid) => {
@@ -318,7 +325,6 @@ export default {
         return
       }
       if (this.phoneType === 0 && this.active === 0 && this.formLabelAlign.consigneePhone === '') {
-        // this.$message('请输入您的手机号码！')
         this.$refs['formLabelAlign'].validate((valid) => {
           if (valid) {
             return true
@@ -329,7 +335,6 @@ export default {
         return
       }
       if (this.phoneType === 1 && this.active === 1 && this.formLabelAlign.consigneePhoneHead === '') {
-        // this.$message('区号不能为空！')
         this.$refs['formLabelAlign'].validate((valid) => {
           if (valid) {
             return true
@@ -340,17 +345,19 @@ export default {
         return
       }
       if (this.phoneType === 1 && this.active === 1 && this.formLabelAlign.consigneePhone === '') {
-        // this.$message('请输入您的手机号码！')
         return
       }
+
       this.queryData()
     },
     // 接口获取验证码
     queryData() {
       let data = {}
-      if (this.setdata.phoneType === 0 || this.active === 1) {
+      // 绑定手机号 或者
+      if (this.setdata.phoneType === 0 || this.setdata.phoneType === 1 || this.active === 1) {
         data = {
-          bizType: this.propData.type,
+          bizId: this.propData.memberId, // 会员id
+          bizType: this.propData.type, // 业务类型
           mobilePrefix: this.formLabelAlign.consigneePhoneHead.replace('+', ''), // 手机号前缀
           mobile: this.formLabelAlign.consigneePhone // 手机号
         }

@@ -19,6 +19,7 @@
         </div>
         <!-- 基础信息 -->
         <div class="customList">
+          <!-- 昵称 -->
           <div class="item">
             <p>
               <span>昵称</span>
@@ -26,6 +27,7 @@
             </p>
             <el-button type="text" @click="modify('nickName')">编辑</el-button>
           </div>
+          <!-- 姓名 -->
           <div class="item">
             <p>
               <span>姓名</span>
@@ -33,6 +35,7 @@
             </p>
             <el-button type="text" @click="modify('name')">编辑</el-button>
           </div>
+          <!-- 手机 -->
           <div class="item">
             <p>
               <span>手机</span>
@@ -44,6 +47,7 @@
               <el-button v-if="data.user.phone" type="text" @click="updatePhone(2)">解绑手机</el-button>
             </div>
           </div>
+          <!-- 邮箱 -->
           <div class="item">
             <p>
               <span>邮箱</span>
@@ -55,6 +59,7 @@
               <el-button v-if="data.user.email" type="text" @click="updateEmail(2)">解绑邮箱</el-button>
             </div>
           </div>
+          <!-- 密码 -->
           <div class="item">
             <p>
               <span>密码</span>
@@ -62,6 +67,7 @@
             </p>
             <el-button type="text" @click="updatePwd(data.user.pwd)">重设密码</el-button>
           </div>
+          <!-- 自定义项 -->
           <div
             v-for="(item, index) in data.customList"
             :key="index"
@@ -84,8 +90,8 @@
         />
         <modify
           v-show="modifyShow"
-          :selfDefining="selfDefining"
-          :modifyType="modifyType"
+          :self-defining="selfDefining"
+          :modify-type="modifyType"
           @close="close"
         />
       </div>
@@ -131,7 +137,7 @@ export default {
       data: null,
       dataList: {},
       isShow: true,
-      showModule: 0
+      showModule: 0 // 显示哪个修改, 默认 邮箱,1:密码, 2:手机号
     }
   },
   created() {
@@ -174,14 +180,16 @@ export default {
     },
     // 设置手机
     updatePhone(type) {
+      // 传参
       this.dataList = {
-        type: 'mobile',
-        phoneType: type,
-        phone: this.data.user.phone,
-        phoneHead: this.data.user.phoneHead
+        memberId: this.data.user.memberId, // 会员id
+        type: 'mobile', // 手机
+        phoneType: type, // 类型
+        phone: this.data.user.phone, // 手机
+        phoneHead: this.data.user.phoneHead // 手机头部
       }
-      this.isShow = false
-      this.showModule = 2
+      this.isShow = false // 本身页面隐藏
+      this.showModule = 2 // 显示编辑手机UI
     },
     // 重置密码
     updatePwd(pwd) {
