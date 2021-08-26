@@ -142,10 +142,14 @@ var getParentWindow = function() {
 // 是否是前台环境
 
 export function isDesignMode() {
-  if (!(getParentWindow().$LAB != null && typeof getParentWindow().$LAB === 'object')) {
-    return false
-  } else {
-    return true
+  try {
+    if (!(getParentWindow().$LAB != null && typeof getParentWindow().$LAB === 'object')) {
+      return false
+    } else {
+      return true
+    }
+  } catch (error) {
+    return false;
   }
 }
 //密码设置为8-20位，并且由字母，数字和符号两种以上组合
