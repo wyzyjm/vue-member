@@ -197,7 +197,8 @@ export default {
       this.dataList = {
         type: 'email',
         emailType: type,
-        email: this.data.user.email
+        email: this.data.user.email,
+        memberId: this.data.user.memberId
       }
       this.isShow = false
       this.showModule = 0

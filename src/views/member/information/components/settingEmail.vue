@@ -149,6 +149,7 @@ export default {
         if (valid) {
           if (formName === 'dynamicValidateForm') { // 修改邮箱
             const data = {
+              bizId: this.propData.memberId,
               bizType: this.propData.type,
               email: this.dynamicValidateForm.email,
               verifyCode: this.dynamicValidateForm.yzm
@@ -199,6 +200,7 @@ export default {
           } else if (this.propData.emailType === 0) {
             //  修改邮箱提交
             const data = {
+              bizId: this.propData.memberId,
               bizType: this.propData.type,
               email: this.dynamicValidateForm.email,
               verifyCode: this.dynamicValidateForm.yzm
