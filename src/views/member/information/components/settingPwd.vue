@@ -20,7 +20,7 @@
       <!-- 修改密码 -->
       <el-form ref="ruleForm" :model="ruleForm" status-icon :rules="rules" label-width="100px" class="demo-ruleForm">
         <el-form-item label="旧密码" prop="oldPwd">
-          <el-input v-model.number="ruleForm.oldPwd" placeholder="请输入旧密码" />
+          <el-input v-model="ruleForm.oldPwd" placeholder="请输入旧密码" />
         </el-form-item>
         <el-form-item label="新密码" prop="pass">
           <el-input v-model="ruleForm.pass" type="password" autocomplete="off" placeholder="请输入新密码" />
