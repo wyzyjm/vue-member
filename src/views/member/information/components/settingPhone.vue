@@ -67,7 +67,7 @@
           </el-col>
         </el-form-item>
         <el-form-item v-else label="手机号">
-          <span>{{ setdata.phoneHead ? '+' : '' }}{{ setdata.phoneHead.substring(0,setdata.phoneHead.lastIndexOf(",")) }} {{ setdata.phone }}</span>
+          <span>{{ setdata.phoneHead.substring(0,setdata.phoneHead.lastIndexOf(",")) }} {{ setdata.phone }}</span>
         </el-form-item>
         <el-form-item
           label="验证码"
@@ -359,6 +359,7 @@ export default {
           bizType: this.propData.type
         }
       }
+      console.log('获取验证码参数', data)
       generateCode(data).then(res => {
         if (res.data) {
           if (this.btnDisabled) return
