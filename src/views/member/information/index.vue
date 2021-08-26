@@ -88,10 +88,12 @@
           @close="close"
           @crop-upload-success="cropSuccess"
         />
+        <!-- 弹窗修改 组件 -->
         <modify
           v-show="modifyShow"
           :self-defining="selfDefining"
           :modify-type="modifyType"
+          :member-id="memberId"
           @close="close"
         />
       </div>
@@ -137,7 +139,8 @@ export default {
       data: null,
       dataList: {},
       isShow: true,
-      showModule: 0 // 显示哪个修改, 默认 邮箱,1:密码, 2:手机号
+      showModule: 0, // 显示哪个修改, 默认 邮箱,1:密码, 2:手机号
+      memberId: '' // 会员id
     }
   },
   created() {
@@ -148,6 +151,7 @@ export default {
       try {
         const detailData = await memberDetail()
         this.data = detailData.data
+        this.memberId = detailData.data.user.memberId // 设置会员id
         this.avatar = 'https://pre-omo-oss-image.site.cn/' + this.data.user.avatar
         this.loading = false
       } catch (error) {
@@ -160,9 +164,10 @@ export default {
       this.imagecropperKey = this.imagecropperKey + 1
       this.image = resData.files.avatar
     },
+    // 修改弹窗 显示
     modify(itemType) {
-      this.modifyShow = true
-      this.modifyType = itemType
+      this.modifyShow = true // 弹窗显示
+      this.modifyType = itemType // 弹窗类型
     },
     // 自定义项
     selfDefiningTerm(item) {

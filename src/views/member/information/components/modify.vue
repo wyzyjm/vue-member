@@ -179,7 +179,6 @@
 </template>
 
 <script>
-// import UploadImgs from './uploadImg'
 import countryData from '@/views/components/resource/locList_zh_CN' // 国家
 import { updateMember } from '@/api/member'
 
@@ -193,6 +192,7 @@ export default {
       type: Boolean,
       default: true
     },
+    // 弹窗类型
     modifyType: {
       type: String,
       default: ''
@@ -200,10 +200,16 @@ export default {
     selfDefining: {
       type: Object,
       required: false
+    },
+    // 会员id
+    memberId: {
+      type: String,
+      required: true
     }
   },
   data() {
     return {
+      id: this.memberId, // 会员id
       // 编辑项目
       editItem: {
         0: {
@@ -279,26 +285,37 @@ export default {
     async onSubmit() {
       let subdata = {}
       if (this.modifyType === 'name') {
-        subdata = { name: this.form.name }
+        subdata = {
+          bizId: this.id, // 会员id
+          name: this.form.name
+        }
       } else if (this.modifyType === 'nickName') {
-        subdata = { nickname: this.form.name }
+        subdata = {
+          bizId: this.id, // 会员id
+          nickname: this.form.name
+        }
       } else if (this.modifyType === 'checkbox') {
-        subdata = { eg: [
-          {
-            key: this.modifyType,
-            value: this.form.type
-          }
-        ]
+        subdata = {
+          bizId: this.id, // 会员id
+          eg: [
+            {
+              key: this.modifyType,
+              value: this.form.type
+            }
+          ]
         }
       } else {
-        subdata = { eg: [
-          {
-            key: this.modifyType,
-            value: this.form.modifyData
-          }
-        ]
+        subdata = {
+          bizId: this.id, // 会员id
+          eg: [
+            {
+              key: this.modifyType,
+              value: this.form.modifyData
+            }
+          ]
         }
       }
+      console.log('编辑信息-->', subdata)
       try {
         const res = await updateMember(subdata)
         if (res.data !== 1) return
