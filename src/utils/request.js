@@ -47,11 +47,12 @@ service.interceptors.response.use(
 
   response => {
     if (response.status === 200) {
-      if (response.data != undefined & response.data.code != undefined & response.data.code == '401') {
+      if (response.data.data != undefined & response.data.data.code != undefined & response.data.data.code == '401') {
         if (!isDesignMode()) {
           window.location = window.location.origin + '/login.html'
         }
       } else {
+        console.log("interceptor",response.data)
         return response.data
       }
     }
