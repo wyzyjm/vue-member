@@ -4,6 +4,7 @@
     class="modify"
   >
     <div class="vicp-wrap">
+      <!-- 弹窗标题 -->
       <div class="vicp-header">
         <span v-if="modifyType != 'nickName' && modifyType != 'name'">{{ selfDefining.attrName }}</span>
         <span v-else>{{ modifyType === 'nickName' ? '昵称' : '姓名' }}</span>
@@ -168,6 +169,7 @@
               >
             </el-form-item>
           </el-form-item>
+          <!-- 按钮区 -->
           <el-form-item class="align-center">
             <el-button plain type="primary" @click="off">取消</el-button>
             <el-button type="primary" @click="onSubmit">保存</el-button>
@@ -195,8 +197,11 @@ export default {
     // 弹窗类型
     modifyType: {
       type: String,
+      required: true,
       default: ''
     },
+    // 默认信息
+    // eslint-disable-next-line vue/require-default-prop
     selfDefining: {
       type: Object,
       required: false
@@ -204,6 +209,11 @@ export default {
     // 会员id
     memberId: {
       type: String,
+      required: true
+    },
+    // 昵称和姓名
+    name: {
+      type: Object,
       required: true
     }
   },
@@ -233,8 +243,10 @@ export default {
           name: '自定义'
         }
       },
+      // 弹窗表单信息
       form: {
-        name: '',
+        name: this.name, // 姓名
+        nickName: this.memberInfo.user.nickName, // 昵称 和 姓名
         modifyData: '', // 修改数据
         type: [],
         userDefined: false // 自定义项
@@ -273,6 +285,9 @@ export default {
         city: [] // 市
       }
     }
+  },
+  created() {
+    console.log('所有的会员信息', this.memberInfo)
   },
   methods: {
     // 关闭控件
@@ -322,7 +337,7 @@ export default {
         this.form.modifyData = ''
         this.form.name = ''
         this.$emit('close')
-        location.reload()
+        location.reload() // 页面刷新
       } catch (error) {
         console.log('请求失败', error)
       }

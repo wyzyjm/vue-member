@@ -94,6 +94,7 @@
           :self-defining="selfDefining"
           :modify-type="modifyType"
           :member-id="memberId"
+          :name="cname"
           @close="close"
         />
       </div>
@@ -132,15 +133,16 @@ export default {
       loading: false,
       title: '我的资料',
       vicpWarpShow: false,
-      modifyShow: false,
+      modifyShow: false, // modify 组件显示 与隐藏,
       modifyType: '',
       selfDefining: {},
       imagecropperKey: 0,
-      data: null,
+      data: null, // 所有的会员信息
       dataList: {},
       isShow: true,
       showModule: 0, // 显示哪个修改, 默认 邮箱,1:密码, 2:手机号
-      memberId: '' // 会员id
+      memberId: '', // 会员id
+      cname: '' // 昵称 或 姓名
     }
   },
   created() {
@@ -164,10 +166,16 @@ export default {
       this.imagecropperKey = this.imagecropperKey + 1
       this.image = resData.files.avatar
     },
-    // 修改弹窗 显示
+    // 修改昵称姓名弹窗 显示
     modify(itemType) {
       this.modifyShow = true // 弹窗显示
       this.modifyType = itemType // 弹窗类型
+      // 根据类型设置不同的值
+      if (itemType === 'nickName') {
+        this.cname = this.data.user.nickName
+      } else {
+        this.cname = this.data.name
+      }
     },
     // 自定义项
     selfDefiningTerm(item) {

@@ -231,6 +231,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const data = {
+            bizId: this.propData.memberId, // 会员id
             bizType: this.propData.type, // 类型
             mobilePrefix: this.formLabelAlign.consigneePhoneHead, // 手机号前缀
             mobile: this.formLabelAlign.consigneePhone, // 手机号
@@ -257,6 +258,7 @@ export default {
           // 解绑手机
           if (this.propData.phoneType === 2) {
             const data = {
+              bizId: this.propData.memberId, // 会员id
               bizType: this.propData.type,
               verifyCode: this.formLabelAlign.phoneYzm
             }
