@@ -260,9 +260,10 @@ export default {
   }
 }
 .member-order{
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+  // display: flex;
+  // justify-content: space-around;
+  // align-items: center;
+  line-height: 1em;
 }
 .icon{
   color: #333;
