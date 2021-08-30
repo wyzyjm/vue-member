@@ -277,7 +277,7 @@ export default {
       data: {
         totalPrice: 5,
         totalNum: 8,
-        currencySymbol: '￥',
+        currencySymbol: '',
         shoppingCartList: [
           {
             productId: 143,
@@ -383,10 +383,10 @@ export default {
   },
   computed: {
     plDisabled() {
-      return this.selectProduct.length == 0
+      return this.selectProduct.length === 0
     },
     plUntileDisabled() {
-      return this.unvalidList.length == 0
+      return this.unvalidList.length === 0
     }
   },
   mounted() {
@@ -403,10 +403,9 @@ export default {
       this.cartList = []
       this.unvalidList = []
       //   console.log('cart data', res)
-      if (res.status == 200) {
+      if (res.status === 200) {
         this.data = res.data
         this.data.totalPrice = 0
-        // var _this = this
         this.data.shoppingCartList.forEach((e, i) => {
           if (!e['moq']) {
             e['moq'] = undefined
@@ -423,7 +422,7 @@ export default {
         console.log(this.cartList)
         this.$nextTick(() => {
           this.cartList.forEach((e, i) => {
-            if (e.selected == 1 && this.$refs.cartList) {
+            if (e.selected === 1 && this.$refs.cartList) {
               this.$refs.cartList.toggleRowSelection(e, true)
             }
           })
@@ -726,7 +725,7 @@ export default {
     },
     // 跳转首页
     backHome() {
-      this.$router.push({ path: '/' })
+      // this.$router.push({ path: '/' })
     }
 
   }
