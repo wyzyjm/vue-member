@@ -305,9 +305,11 @@ export default {
       } else if (this.modifyType === 'checkbox') {
         subdata = {
           bizId: this.id, // 会员id
-          eg: [
+          itemValue: [
             {
-              key: this.modifyType,
+              code: this.selfDefining.attrId, // 属性code
+              dataType: this.selfDefining.attrType,
+              dataSubType: this.modifyType,
               value: this.form.type
             }
           ]
@@ -315,9 +317,11 @@ export default {
       } else {
         subdata = {
           bizId: this.id, // 会员id
-          eg: [
+          itemValue: [
             {
-              key: this.modifyType,
+              code: this.selfDefining.attrId, // 属性code
+              dataType: this.selfDefining.attrType,
+              dataSubType: this.modifyType,
               value: this.form.modifyData
             }
           ]

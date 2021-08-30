@@ -76,7 +76,7 @@
           >
             <p>
               <span>{{ item.attrName }}</span>
-              <span>{{ item.description }}</span>
+              <span>{{ item.attrValue? item.attrValue: item.description }}</span>
             </p>
             <div>
               <el-button type="text" @click="selfDefiningTerm(item)">编辑</el-button>
