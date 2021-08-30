@@ -216,7 +216,7 @@ export default {
         phoneHead: this.data.user.phoneHead // 手机头部
       }
       this.isShow = false // 本身页面隐藏
-      this.showModule = 2 // 显示编辑手机UI
+      this.showModule = 2 // 显示编辑手机界面
     },
     // 重置密码
     updatePwd(pwd) {

@@ -12,19 +12,11 @@
         <span v-else>为确认是您本人操作，请完成身份认证</span>
       </p>
     </div>
-    <!-- 设置完成 -->
-    <div v-show="!submitedSuccess" class="step-icon">
-      <svg-icon name="icon-caozuochenggong" class="icon" setsize="150" />
-      <p>设置完成！</p>
-      <el-button
-        type="primary"
-        @click="goHome"
-      >返回首页</el-button>
-    </div>
+
     <!-- 修改手机号页面 -->
     <div v-show="submitedSuccess" class="form-list">
       <el-form ref="formLabelAlign" label-width="80px" :model="formLabelAlign" class="demo-dynamic">
-        <!-- 添加手机号 -->
+        <!-- 绑定手机号 -->
         <el-form-item v-if="phoneType === 0 || active === 1" label="手机号">
           <!-- select选择器+文本框 -->
           <el-col :span="7">
@@ -91,16 +83,19 @@
 
         <!-- 底部按钮 -->
         <el-form-item class="item-btn">
+          <!-- 取消 -->
           <el-button
             type="primary"
             plain
             @click="cancel"
           >取消</el-button>
+          <!-- 下一步 -->
           <el-button
             v-show="!hasSubmited"
             type="primary"
             @click="next('formLabelAlign')"
           >下一步</el-button>
+          <!-- 保存 -->
           <el-button
             v-show="hasSubmited"
             type="primary"
@@ -108,6 +103,16 @@
           >保存</el-button>
         </el-form-item>
       </el-form>
+    </div>
+
+    <!-- 设置完成 -->
+    <div v-show="!submitedSuccess" class="step-icon">
+      <svg-icon name="icon-caozuochenggong" class="icon" setsize="150" />
+      <p>设置完成！</p>
+      <el-button
+        type="primary"
+        @click="goHome"
+      >返回首页</el-button>
     </div>
   </div>
 </template>
@@ -129,6 +134,16 @@ export default {
       required: true
     }
   },
+  //
+  /**
+    setdata :{
+        memberId: this.data.user.memberId, // 会员id
+        type: 'mobile', // 手机
+        phoneType: type, // 类型 0:绑定 1:更换 2:解绑
+        phone: this.data.user.phone, // 手机
+        phoneHead: this.data.user.phoneHead // 手机头部
+    }
+   */
   data() {
     // 校验 手机号
     var checkPhone = (rule, value, callback) => {
@@ -237,7 +252,7 @@ export default {
           const data = {
             bizId: this.propData.memberId, // 会员id
             bizType: this.propData.type, // 类型
-            mobilePrefix: this.formLabelAlign.consigneePhoneHead, // 手机号前缀
+            mobilePrefix: this.formLabelAlign.consigneePhoneHead.replace('+', ''), // 手机号前缀
             mobile: this.formLabelAlign.consigneePhone, // 手机号
             verifyCode: this.formLabelAlign.phoneYzm // 短信验证码
           }
@@ -255,7 +270,7 @@ export default {
         }
       })
     },
-    // 下一步
+    // 下一步, 校验验证码
     next(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -293,19 +308,23 @@ export default {
       if (this.phoneType === 0) {
         this.submitForm('formLabelAlign')
       } else {
+        // 更换手机
         data = {
           bizId: this.propData.memberId, // 会员id
           bizType: this.propData.type, // 业务类型
           verifyCode: this.formLabelAlign.phoneYzm // 验证码
         }
+        // 校验 验证码
         validateVerifyCode(data).then(res => {
           if (res.data) {
+            // 验证成功
             if (this.active++ >= 0) this.hasSubmited = true
-            this.formLabelAlign.phoneYzm = ''
-            this.formLabelAlign.consigneePhone = ''
-            clearInterval(this.setIntID)
-            this.btnText = '获取验证码'
-            this.btnDisabled = false
+            this.formLabelAlign.phoneYzm = '' // 清空验证码
+            this.formLabelAlign.consigneePhone = '' // 清空手机号
+            this.formLabelAlign.consigneePhoneHead = '' // 清空手机号头部
+            clearInterval(this.setIntID) // 清除定时器
+            this.btnText = '获取验证码' // 重置按钮文字
+            this.btnDisabled = false // 可以点击
             this.isConsigneePhone = true
             this.isConsigneePhoneHead = true
           } else {
@@ -359,12 +378,19 @@ export default {
     // 接口获取验证码
     queryData() {
       let data = {}
-      console.log(this.setdata.phoneType , this.setdata.phoneType, this.active);
+      console.log(this.setdata.phoneType, this.setdata.phoneType, this.active)
       debugger
-      // 更换手机号 或者 解绑手机号
-      if (this.setdata.phoneType === 1 || this.setdata.phoneType === 2 || this.active === 1) {
+      // 更换手机号,第一次 或者 解绑手机号
+      if ((this.setdata.phoneType === 1 && this.active === 0) || this.setdata.phoneType === 2) {
         data = {
           bizId: this.propData.memberId, // 会员id
+          bizType: this.propData.type, // 业务类型
+          mobilePrefix: this.formLabelAlign.consigneePhoneHead.replace('+', ''), // 手机号前缀
+          mobile: this.formLabelAlign.consigneePhone // 手机号
+        }
+      } else if (this.setdata.phoneType === 1 && this.active === 1) {
+        // 更换手机号 添加新的手机号后 无需传会员id
+        data = {
           bizType: this.propData.type, // 业务类型
           mobilePrefix: this.formLabelAlign.consigneePhoneHead.replace('+', ''), // 手机号前缀
           mobile: this.formLabelAlign.consigneePhone // 手机号
@@ -406,9 +432,11 @@ export default {
       this.$parent.isShow = true
       location.reload()
     },
+    // 取消修改
     cancel() {
+      // 重置表单
       this.$refs['formLabelAlign'].resetFields()
-      this.$parent.isShow = true
+      this.$parent.isShow = true // 父级显示
     },
     // 检验只能输入数字
     checkInputValue(typeName) {
