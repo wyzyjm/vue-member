@@ -125,6 +125,7 @@ export default {
         if (valid) {
           const newPwd = md5(this.ruleForm.pass)
           const data = {
+            bizId: this.propData.memberId,
             oldPassword: this.propData.oldPassword,
             newPassword: newPwd
           }

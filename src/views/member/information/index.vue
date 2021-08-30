@@ -199,6 +199,7 @@ export default {
     // 重置密码
     updatePwd(pwd) {
       this.dataList = {
+        memberId: this.data.user.memberId,
         type: 'pwd',
         oldPassword: pwd
       }
@@ -260,9 +261,6 @@ export default {
   }
 }
 .member-order{
-  // display: flex;
-  // justify-content: space-around;
-  // align-items: center;
   line-height: 1em;
 }
 .icon{
