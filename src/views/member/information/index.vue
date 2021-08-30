@@ -205,7 +205,7 @@ export default {
       this.vicpWarpShow = false
       this.modifyShow = false
     },
-    // 设置手机
+    // 设置手机 0:绑定 1:更换 2:解绑
     updatePhone(type) {
       // 传参
       this.dataList = {

@@ -221,6 +221,10 @@ export default {
       }
     }
   },
+  // 创建
+  created() {
+    console.log('接收的参数', this.setdata)
+  },
   methods: {
     // 修改密码
     submitForm(formName) {
@@ -355,8 +359,10 @@ export default {
     // 接口获取验证码
     queryData() {
       let data = {}
-      // 绑定手机号 或者
-      if (this.setdata.phoneType === 0 || this.setdata.phoneType === 1 || this.active === 1) {
+      console.log(this.setdata.phoneType , this.setdata.phoneType, this.active);
+      debugger
+      // 更换手机号 或者 解绑手机号
+      if (this.setdata.phoneType === 1 || this.setdata.phoneType === 2 || this.active === 1) {
         data = {
           bizId: this.propData.memberId, // 会员id
           bizType: this.propData.type, // 业务类型
@@ -364,8 +370,11 @@ export default {
           mobile: this.formLabelAlign.consigneePhone // 手机号
         }
       } else {
+        // 绑定手机号 无需传会员id
         data = {
-          bizType: this.propData.type
+          bizType: this.propData.type, // 业务类型
+          mobilePrefix: this.formLabelAlign.consigneePhoneHead.replace('+', ''), // 手机号前缀
+          mobile: this.formLabelAlign.consigneePhone // 手机号
         }
       }
       console.log('获取验证码参数', data)
