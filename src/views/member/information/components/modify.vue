@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-show="value"
-    class="modify"
-  >
+  <div class="modify">
     <div class="vicp-wrap">
       <!-- 弹窗标题 -->
       <div class="vicp-header">
@@ -10,19 +7,19 @@
         <span v-else>{{ modifyType === 'nickName' ? '昵称' : '姓名' }}</span>
         <span class="vicp-close" @click="off"><i class="vicp-icon4" /></span>
       </div>
-      <div
-        v-if="form"
-        class="modify-cont"
-      >
+      <!-- 弹窗内容 -->
+      <div class="modify-cont">
         <el-form
           ref="form"
           :model="form"
         >
+          <!-- 昵称 或 姓名 -->
           <el-form-item v-if="modifyType === 'name' || modifyType === 'nickName'" :label="modifyType === 'nickName' ? '昵称' : '姓名'">
             <el-input
-              v-model="form.name"
+              v-model="nameValue"
             />
           </el-form-item>
+          <!-- 其它 -->
           <el-form-item v-else>
             <el-form-item v-if="selfDefining.attrDetailType === 'simpleDate'" :label="selfDefining.attrName" class="block">
               <el-date-picker
@@ -189,11 +186,6 @@ export default {
     // UploadImgs
   },
   props: {
-    // 显示该控件与否
-    value: {
-      type: Boolean,
-      default: true
-    },
     // 弹窗类型
     modifyType: {
       type: String,
@@ -212,7 +204,7 @@ export default {
       required: true
     },
     // 昵称和姓名
-    name: {
+    propname: {
       type: Object,
       required: true
     }
@@ -244,9 +236,9 @@ export default {
         }
       },
       // 弹窗表单信息
+      nameValue: this.propname, // // 姓名 或 昵称
       form: {
-        name: this.name, // 姓名
-        nickName: this.memberInfo.user.nickName, // 昵称 和 姓名
+        name: this.propname || '', // 姓名 或 昵称
         modifyData: '', // 修改数据
         type: [],
         userDefined: false // 自定义项
@@ -286,14 +278,15 @@ export default {
       }
     }
   },
-  created() {
-    console.log('所有的会员信息', this.memberInfo)
+  // 挂载时
+  mounted() {
+    console.log('接收的信息', this.propname, this.form)
   },
   methods: {
     // 关闭控件
     off() {
       this.form.modifyData = ''
-      this.form.name = ''
+      this.nameValue = ''
       this.$emit('close')
     },
     // 提交数据
@@ -302,12 +295,12 @@ export default {
       if (this.modifyType === 'name') {
         subdata = {
           bizId: this.id, // 会员id
-          name: this.form.name
+          name: this.nameValue
         }
       } else if (this.modifyType === 'nickName') {
         subdata = {
           bizId: this.id, // 会员id
-          nickname: this.form.name
+          nickname: this.nameValue
         }
       } else if (this.modifyType === 'checkbox') {
         subdata = {
@@ -335,7 +328,7 @@ export default {
         const res = await updateMember(subdata)
         if (res.data !== 1) return
         this.form.modifyData = ''
-        this.form.name = ''
+        this.nameValue = ''
         this.$emit('close')
         location.reload() // 页面刷新
       } catch (error) {

@@ -3,6 +3,7 @@
     <PageTitle :pagetitle="title">
     <!-- <slot slot="slot">搜索</slot> -->
     </PageTitle>
+    <!-- 页面 -->
     <div v-if="isShow" v-loading="loading">
       <div v-if="data && data.user" class="content">
         <!-- 头像 -->
@@ -90,18 +91,21 @@
         />
         <!-- 弹窗修改 组件 -->
         <modify
-          v-show="modifyShow"
+          v-if="modifyShow"
           :self-defining="selfDefining"
           :modify-type="modifyType"
           :member-id="memberId"
-          :name="cname"
+          :propname="cname"
           @close="close"
         />
       </div>
     </div>
     <div v-else>
+      <!-- 邮箱 -->
       <SettingEmail v-if="showModule === 0" :setdata="dataList" />
+      <!-- 密码 -->
       <SettingPwd v-if="showModule === 1" :setdata="dataList" />
+      <!-- 手机 -->
       <SettingPhone v-if="showModule === 2" :setdata="dataList" />
     </div>
   </div>
@@ -132,32 +136,39 @@ export default {
       avatar: '',
       loading: false,
       title: '我的资料',
-      vicpWarpShow: false,
-      modifyShow: false, // modify 组件显示 与隐藏,
+      vicpWarpShow: false, // 上传头像弹窗 显示与隐藏
+      modifyShow: false, // modify 组件显示 与隐藏
       modifyType: '',
       selfDefining: {},
       imagecropperKey: 0,
-      data: null, // 所有的会员信息
       dataList: {},
       isShow: true,
       showModule: 0, // 显示哪个修改, 默认 邮箱,1:密码, 2:手机号
+
       memberId: '', // 会员id
-      cname: '' // 昵称 或 姓名
+      cname: '', // 昵称 或 姓名
+      user: '', //  用户信息
+
+      data: null // 所有的会员信息
     }
   },
   created() {
+    // 获取会员信息
     this.getMemberDetail()
   },
   methods: {
     async getMemberDetail() {
+      this.loading = true // 开启loading效果
       try {
-        const detailData = await memberDetail()
-        this.data = detailData.data
-        this.memberId = detailData.data.user.memberId // 设置会员id
-        this.avatar = 'https://pre-omo-oss-image.site.cn/' + this.data.user.avatar
-        this.loading = false
+        const { data: res } = await memberDetail()
+        this.data = res // 会员信息集合
+        this.memberId = res.user.memberId // 设置会员id
+        this.user = res.user // 固定用户信息
+        this.avatar = res.user.avatar // 获取头像
+        this.loading = false // 关闭loading效果
+        console.log('this.data', this.data)
       } catch (error) {
-        this.loading = false
+        this.loading = false // 关闭loading效果
         console.log('请求失败', error)
       }
     },
@@ -172,10 +183,11 @@ export default {
       this.modifyType = itemType // 弹窗类型
       // 根据类型设置不同的值
       if (itemType === 'nickName') {
-        this.cname = this.data.user.nickName
+        this.cname = this.user.nickName
       } else {
-        this.cname = this.data.name
+        this.cname = this.user.name
       }
+      console.log('修改名称传值', this.cname)
     },
     // 自定义项
     selfDefiningTerm(item) {
@@ -187,6 +199,8 @@ export default {
       this.modifyType = item.attrDetailType
       this.selfDefining = item
     },
+
+    // 关闭弹窗
     close() {
       this.vicpWarpShow = false
       this.modifyShow = false
