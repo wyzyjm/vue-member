@@ -1,13 +1,16 @@
 <template>
   <div class="content">
+    <!-- 步骤条 -->
     <ce-steps
       :active="active"
       :datalist="dataEmail[isType].list"
     />
+    <!-- 中间图标 + 提示 -->
     <div v-show="submitedSuccess" class="step-icon">
       <svg-icon name="icon-anquanzhuye" class="icon" setsize="150" />
       <p>为确认是您本人操作，请完成身份认证</p>
     </div>
+    <!-- 设置完成 -->
     <div v-show="!submitedSuccess" class="step-icon">
       <svg-icon name="icon-caozuochenggong" class="icon" setsize="150" />
       <p>设置完成！</p>
@@ -19,6 +22,7 @@
     <div v-show="submitedSuccess" class="form-list">
       <!-- 修改邮箱 -->
       <el-form ref="dynamicValidateForm" :model="dynamicValidateForm" label-width="100px" class="demo-dynamic">
+        <!-- 输入邮箱 -->
         <el-form-item
           v-if="active === 1 || propData.emailType === 0"
           prop="email"
@@ -30,10 +34,11 @@
         >
           <el-input v-model="dynamicValidateForm.email" placeholder="请输入新的邮箱地址" />
         </el-form-item>
-        <!-- v-if="active === 0 && propData.emailType !== 0" -->
+        <!-- 有邮箱时 -->
         <el-form-item v-else label="邮箱">
           <span>{{ propData.email }}</span>
         </el-form-item>
+        <!-- 验证码 -->
         <el-form-item
           label="验证码"
           prop="yzm"
@@ -45,6 +50,7 @@
           <el-input v-model="dynamicValidateForm.yzm" autocomplete="off" placeholder="邮箱验证码" />
           <el-button class="get-code-btn" @click="getVerfyCode">{{ btnText }}</el-button>
         </el-form-item>
+        <!-- 取消 下一步 提交 -->
         <el-form-item class="item-btn">
           <el-button @click="goHome">取消</el-button>
           <el-button v-show="!hasSubmited" type="primary" @click="next('dynamicValidateForm')">下一步</el-button>
@@ -70,11 +76,18 @@ export default {
       required: true
     }
   },
+
+  /**
+    type: 'email',
+    emailType: type, // 0:绑定 1:更换 2:解绑
+    email: this.data.user.email,
+    memberId: this.data.user.memberId
+   */
   data() {
     return {
-      propData: this.setdata,
-      isType: this.setdata.emailType,
-      active: 0,
+      propData: this.setdata, // 传过来的数据
+      isType: this.setdata.emailType, // 哪个类型
+      active: 0, // 步骤条
       modifyType: true,
       modifyTitle: this.setdata.type,
       phoneType: this.setdata.phoneType,
@@ -135,6 +148,7 @@ export default {
         checkPass: '',
         age: ''
       },
+      // 当前页面内容
       dynamicValidateForm: {
         email: '',
         yzm: ''
@@ -168,58 +182,55 @@ export default {
       })
     },
     // 下一步
-    /*
-    * bizType // 业务类型 mobile:手机， email:邮箱
-    *
-    */
-
     next(formName) {
+      // 验证码 为空时
       if (this.dynamicValidateForm.yzm === '') {
         this.$message('验证码不能为空！')
         return
       }
+      // 表单校验
       this.$refs[formName].validate((valid) => {
-        if (valid) {
-          if (this.propData.emailType === 2) {
-            const data = {
-              bizType: this.propData.type,
-              verifyCode: this.dynamicValidateForm.yzm
-            }
-            unbundling(data).then(res => { // 解除绑定
-              this.$message(res.data.errorMsg ? res.data.errorMsg : res.msg)
-              if (res.data === 1) {
-                this.$message.success('解绑成功！')
-                this.goHome()
-              }
-            }).catch(error => {
-              console.log('请求失败', error)
-            })
-          } else if (this.propData.emailType === 0) {
-            //  修改邮箱提交
-            const data = {
-              bizId: this.propData.memberId,
-              bizType: this.propData.type,
-              email: this.dynamicValidateForm.email,
-              verifyCode: this.dynamicValidateForm.yzm
-            }
-            console.log('bingling参数', data)
-            bingling(data).then(res => {
-              this.$message(res.data.errorMsg ? res.data.errorMsg : res.msg)
-              if (res.data === 1) {
-                this.onSubmit()
-              }
-            }).catch(error => {
-              console.log('请求失败', error)
-            })
-          } else {
-            if (!this.isCheckYzm) {
-              this.$message('验证失败！')
-              return
-            }
-            this.checkCode()
+        if (!valid) return false // 校验不通过
+        // 校验通过
+        // 解绑邮箱
+        if (this.propData.emailType === 2) {
+          const data = {
+            bizId: this.propData.memberId, // 会员ID
+            bizType: this.propData.type, // 类型
+            verifyCode: this.dynamicValidateForm.yzm // 二维码
           }
+          unbundling(data).then(res => { // 解除绑定
+            this.$message(res.data.errorMsg ? res.data.errorMsg : res.msg)
+            if (res.data === 1) {
+              this.$message.success('解绑成功！')
+              this.goHome()
+            }
+          }).catch(error => {
+            console.log('请求失败', error)
+          })
+        } else if (this.propData.emailType === 0) {
+          //  修改邮箱提交
+          const data = {
+            bizId: this.propData.memberId,
+            bizType: this.propData.type,
+            email: this.dynamicValidateForm.email,
+            verifyCode: this.dynamicValidateForm.yzm
+          }
+          console.log('bingling参数', data)
+          bingling(data).then(res => {
+            this.$message(res.data.errorMsg ? res.data.errorMsg : res.msg)
+            if (res.data === 1) {
+              this.onSubmit()
+            }
+          }).catch(error => {
+            console.log('请求失败', error)
+          })
         } else {
-          return false
+          if (!this.isCheckYzm) {
+            this.$message('验证失败！')
+            return
+          }
+          this.checkCode()
         }
       })
     },
@@ -229,12 +240,56 @@ export default {
     },
     // 获取验证码
     getVerfyCode() {
+      // 更换邮箱 & 第二步骤 & 页面没有邮箱
       if (this.propData.emailType === 1 && this.active === 1 && this.dynamicValidateForm.email === '') {
         this.$message('请输入您的邮箱！')
         return
       }
       this.queryData()
     },
+    // 接口获取验证码
+    queryData() {
+      // 绑定邮箱 & 邮箱为空
+      if (this.propData.emailType === 0 && this.dynamicValidateForm.email === '') return
+      let data = {}
+      // 绑定邮箱 || 更换邮箱 & 第二步骤
+      if (this.propData.emailType === 0 || this.propData.emailType === 1 && this.active === 1) {
+        data = {
+          bizType: this.propData.type,
+          email: this.dynamicValidateForm.email
+        }
+      } else {
+        data = {
+          bizId: this.propData.memberId,
+          bizType: this.propData.type
+        }
+      }
+      console.log('获取验证码传参', data)
+      generateCode(data).then(res => {
+        if (res.data) {
+          this.isCheckYzm = true
+          if (this.btnDisabled) return
+          this.btnDisabled = true
+          this.btnText = '60s后重新获取'
+          let count = 60
+          this.setIntID = setInterval(() => {
+            count--
+            if (count === 0) {
+              clearInterval(this.setIntID)
+              this.btnText = '获取验证码'
+              this.btnDisabled = false
+              return
+            }
+            this.btnText = count < 10 ? `0${count}s后重新获取` : `${count}s后重新获取`
+          }, 1000)
+        } else {
+          this.$message('发送失败，请稍后重试！')
+        }
+      }).catch(error => {
+        console.log('请求失败', error)
+      })
+    },
+
     // 校验验证码接口
     checkCode() {
       let data = {}
@@ -269,50 +324,12 @@ export default {
         })
       }
     },
-    // 接口获取验证码
-    queryData() {
-      if (this.propData.emailType === 0 && this.dynamicValidateForm.email === '') {
-        return
-      }
-      let data = {}
-      if (this.propData.emailType === 0 || this.propData.emailType === 1 && this.active === 1) {
-        data = {
-          bizType: this.propData.type,
-          email: this.dynamicValidateForm.email
-        }
-      } else {
-        data = {
-          bizType: this.propData.type
-        }
-      }
-      generateCode(data).then(res => {
-        if (res.data) {
-          this.isCheckYzm = true
-          if (this.btnDisabled) return
-          this.btnDisabled = true
-          this.btnText = '60s后重新获取'
-          let count = 60
-          this.setIntID = setInterval(() => {
-            count--
-            if (count === 0) {
-              clearInterval(this.setIntID)
-              this.btnText = '获取验证码'
-              this.btnDisabled = false
-              return
-            }
-            this.btnText = count < 10 ? `0${count}s后重新获取` : `${count}s后重新获取`
-          }, 1000)
-        } else {
-          this.$message('发送失败，请稍后重试！')
-        }
-      }).catch(error => {
-        console.log('请求失败', error)
-      })
-      // }
-    },
+
+    // 回到父页面
     goHome() {
       this.$refs['dynamicValidateForm'].resetFields()
       this.$parent.isShow = true
+      location.reload() // 页面刷新
     }
   }
 }
