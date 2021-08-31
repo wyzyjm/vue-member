@@ -40,7 +40,7 @@
           <div class="item">
             <p>
               <span>手机</span>
-              <span>{{ data.user.phoneHead.substring(0,data.user.phoneHead.lastIndexOf(",")) }} {{ data.user.phone ? data.user.phone : '还没有手机号' }}</span>
+              <span>{{ getPhone }}</span>
             </p>
             <div>
               <el-button v-if="!data.user.phone" type="text" @click="updatePhone(0)">绑定手机</el-button>
@@ -152,6 +152,26 @@ export default {
       data: null // 所有的会员信息
     }
   },
+  // 计算属性
+  computed: {
+    // 获取手机号 头部 + 手机号
+    getPhone() {
+      let phone = ''
+      if (!this.data.user.phone) {
+        phone = '还没有手机号'
+        return phone
+      }
+      if (this.data.user.phoneHead) {
+        const phoneHead = this.data.user.phoneHead.split(',')[0]
+        if (phoneHead.includes('+')) {
+          phone = phoneHead + ' ' + this.data.user.phone
+        } else {
+          phone = '+' + phoneHead + ' ' + this.data.user.phone
+        }
+      }
+      return phone
+    }
+  },
   created() {
     // 获取会员信息
     this.getMemberDetail()
@@ -191,13 +211,14 @@ export default {
     },
     // 自定义项
     selfDefiningTerm(item) {
+      // 图片类型,正在开发
       if (item.attrType === 'image') {
         this.$message('开发中!')
         return
       }
-      this.modifyShow = true
-      this.modifyType = item.attrDetailType
-      this.selfDefining = item
+      this.modifyShow = true // 弹窗展示
+      this.modifyType = item.attrDetailType // 传递类型
+      this.selfDefining = item // 传递item
       console.log('传子组件的值', this.selfDefining)
     },
 

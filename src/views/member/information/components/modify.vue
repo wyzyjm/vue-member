@@ -3,70 +3,126 @@
     <div class="vicp-wrap">
       <!-- 弹窗标题 -->
       <div class="vicp-header">
-        <span v-if="modifyType != 'nickName' && modifyType != 'name'">{{ selfDefining.attrName }}</span>
-        <span v-else>{{ modifyType === 'nickName' ? '昵称' : '姓名' }}</span>
+        <!-- 标题 -->
+        <span> {{ getHeadName }}</span>
+        <!-- 关闭按钮 -->
         <span class="vicp-close" @click="off"><i class="vicp-icon4" /></span>
       </div>
       <!-- 弹窗内容 -->
       <div class="modify-cont">
-        <el-form
-          ref="form"
-          :model="form"
-        >
+        <el-form ref="modifyForm" :model="form">
           <!-- 昵称 或 姓名 -->
-          <el-form-item v-if="modifyType === 'name' || modifyType === 'nickName'" :label="modifyType === 'nickName' ? '昵称' : '姓名'">
-            <el-input
-              v-model="nameValue"
-            />
+          <el-form-item
+            v-if="modifyType === 'name' || modifyType === 'nickName'"
+            :label="modifyType === 'nickName' ? '昵称' : '姓名'"
+          >
+            <el-input v-model="nameValue" />
           </el-form-item>
-          <!-- 其它类型 -->
-          <div v-else>
-            <!-- 修改手机号 -->
-            <el-form-item v-if="selfDefining.attrDetailType === 'mobile'" :label="selfDefining.attrName">
-              <el-input
-                v-model.number="form.modifyData"
-              />
+
+          <!-- 单行文本 -->
+          <div v-else-if="selfDefining.attrType === 'txt'">
+            <!-- 文字 -->
+            <el-form-item
+              v-if="modifyType === 'text' "
+              :label="selfDefining.attrName"
+              prop="modifyData"
+              :rules="[
+                {required:selfDefining.required,message:selfDefining.attrName+'必填',trigger:'blur'},
+                rules.text
+              ]"
+            >
+              <el-input v-model="form.modifyData" :placeholder="selfDefining.description" />
             </el-form-item>
-            <!-- 选择日期 -->
-            <el-form-item v-if="selfDefining.attrDetailType === 'simpleDate'" :label="selfDefining.attrName" class="block">
+
+            <!-- 数字 -->
+            <el-form-item
+              v-if="modifyType === 'numberic' "
+              :label="selfDefining.attrName"
+              prop="modifyData"
+              :rules="[
+                {required:selfDefining.required, message:selfDefining.attrName+'必填',trigger:'blur'},
+                rules.numberic
+              ]"
+            >
+              <el-input v-model.number="form.modifyData" :placeholder="selfDefining.description" />
+            </el-form-item>
+
+            <!-- 手机号 -->
+            <el-form-item
+              v-if="modifyType === 'mobile' "
+              :label="selfDefining.attrName"
+              prop="modifyData"
+              :rules="[
+                {required:selfDefining.required,message:selfDefining.attrName+'必填',trigger:'blur'},
+                rules.mobile
+              ]"
+            >
+              <el-input v-model="form.modifyData" :placeholder="selfDefining.description" />
+            </el-form-item>
+
+            <!-- 电话号 -->
+            <el-form-item
+              v-if="modifyType === 'phone' "
+              :label="selfDefining.attrName"
+              prop="modifyData"
+              :rules="[
+                {required:selfDefining.required,message:selfDefining.attrName+'必填',trigger:'blur'},
+                rules.phone
+              ]"
+            >
+              <el-input v-model="form.modifyData" :placeholder="selfDefining.description" />
+            </el-form-item>
+
+            <!-- 邮箱 -->
+            <el-form-item
+              v-if="modifyType === 'email' "
+              :label="selfDefining.attrName"
+              prop="modifyData"
+              :rules="[
+                {required:selfDefining.required,message:selfDefining.attrName+'必填',trigger:'blur'},
+                rules.email
+              ]"
+            >
+              <el-input v-model="form.modifyData" :placeholder="selfDefining.description" />
+            </el-form-item>
+
+            <!-- 日期 -->
+            <el-form-item v-if="modifyType === 'simpleDate'" :label="selfDefining.attrName" class="block">
               <el-date-picker
                 v-model="form.modifyData"
                 type="date"
-                placeholder="选择日期"
+                :placeholder="selfDefining.description"
                 value-format="yyyy-MM-dd"
                 style="width: 100%;"
               />
             </el-form-item>
-            <!-- 文字 -->
-            <el-form-item v-if="selfDefining.attrDetailType === 'text' " :label="selfDefining.attrName">
-              <el-input
+
+            <!-- 日期时间 -->
+            <el-form-item v-if="modifyType === 'allDate'" :label="selfDefining.attrName" class="block">
+              <el-date-picker
                 v-model="form.modifyData"
+                type="datetime"
+                :placeholder="selfDefining.description"
+                style="width: 100%;"
               />
+              <!-- value-format="yyyy-MM-dd" -->
+
             </el-form-item>
-            <!-- 下拉单选 -->
-            <el-form-item v-if="selfDefining.attrDetailType === 'selSigle'" :label="selfDefining.attrName">
-              <el-select v-model="form.modifyData" placeholder="请选择">
-                <el-option
-                  v-for="item in selfDefining.optionsData"
-                  :key="item.key"
-                  :label="item.value"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-            <!-- 下拉多选 -->
-            <el-form-item v-if="selfDefining.attrDetailType === 'selMulti'" :label="selfDefining.attrName">
-              <el-select v-model="form.modifyData" multiple placeholder="请选择">
-                <el-option
-                  v-for="item in selfDefining.optionsData"
-                  :key="item.key"
-                  :label="item.value"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
+          </div>
+
+          <!-- 多行文本 -->
+          <el-form-item v-else-if="selfDefining.attrType === 'multiTxt'" :label="selfDefining.attrName">
+            <el-input
+              v-model="form.modifyData"
+              type="textarea"
+              :placeholder="selfDefining.description|| '多行文本'"
+            />
+          </el-form-item>
+
+          <!-- 选项型 -->
+          <div v-else-if="selfDefining.attrType ==='select'">
             <!-- redio -->
-            <el-form-item v-if="selfDefining.attrDetailType === 'redio' && modifyType != 'nickName' && modifyType != 'name'" :label="selfDefining.attrName">
+            <el-form-item v-if="modifyType === 'redio'" :label="selfDefining.attrName">
               <el-radio-group v-model="form.modifyData">
                 <el-radio
                   v-for="item in selfDefining.optionsData"
@@ -77,7 +133,7 @@
               </el-radio-group>
             </el-form-item>
             <!-- checkbox 多选 -->
-            <el-form-item v-if="selfDefining.attrDetailType === 'checkbox'" :label="selfDefining.attrName">
+            <el-form-item v-if="modifyType === 'checkbox'" :label="selfDefining.attrName">
               <el-checkbox-group v-model="form.type">
                 <el-checkbox
                   v-for="item in selfDefining.optionsData"
@@ -87,29 +143,30 @@
                 />
               </el-checkbox-group>
             </el-form-item>
-            <!-- 图片集 -->
-            <el-form-item v-if="selfDefining.attrType === 'image'" :label="selfDefining.attrName">
-              图片集
-              <!-- <img
-                v-for="item in selfDefining.optionsData"
-                :key="item.key"
-                :src="item.type"
-                :alt="item.type"
-              > -->
-              <!-- <UploadImgs
-                :imgVal=
-              /> -->
+            <!-- 下拉单选 -->
+            <el-form-item v-if="modifyType === 'selSigle'" :label="selfDefining.attrName">
+              <el-select v-model="form.modifyData" placeholder="请选择">
+                <el-option
+                  v-for="item in selfDefining.optionsData"
+                  :key="item.key"
+                  :label="item.value"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
-            <!-- 多行文本 -->
-            <el-form-item v-if="selfDefining.attrDetailType === 'multiTxt'" :label="selfDefining.attrName">
-              <el-input
-                v-model="form.modifyData"
-                type="textarea"
-                placeholder="详细地址"
-              />
+            <!-- 下拉多选 -->
+            <el-form-item v-if="modifyType === 'selMulti'" :label="selfDefining.attrName">
+              <el-select v-model="form.modifyData" multiple placeholder="请选择">
+                <el-option
+                  v-for="item in selfDefining.optionsData"
+                  :key="item.key"
+                  :label="item.value"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
             <!-- 地址级联 -->
-            <el-form-item v-if="selfDefining.attrDetailType === 'area'" :label="selfDefining.attrName">
+            <el-form-item v-if="modifyType === 'area'" :label="selfDefining.attrName">
               <el-form-item>
                 <el-col :span="7">
                   <!-- 国家/地区 必填 -->
@@ -162,17 +219,34 @@
                 </el-col>
               </el-form-item>
             </el-form-item>
-            <!-- 附件集 -->
-            <el-form-item v-if="selfDefining.attrType === 'image'" :label="selfDefining.attrName">
-              附件
-              <img
+          </div>
+
+          <!-- 图片集 -->
+          <el-form-item v-else-if="selfDefining.attrType === 'image'" :label="selfDefining.attrName">
+            图片集 待定
+            <!-- <img
                 v-for="item in selfDefining.optionsData"
                 :key="item.key"
                 :src="item.type"
                 :alt="item.type"
-              >
-            </el-form-item>
-          </div>
+              > -->
+            <!-- <UploadImgs
+                :imgVal=
+              /> -->
+          </el-form-item>
+
+          <!-- 附件集 -->
+          <el-form-item v-else-if="selfDefining.attrType === 'file'" :label="selfDefining.attrName">
+            附件集 待定
+            <!-- <img
+              v-for="item in selfDefining.optionsData"
+              :key="item.key"
+              :src="item.type"
+              :alt="item.type"
+            > -->
+          </el-form-item>
+
+          <div v-else>请选择正确的自定义类型</div>
           <!-- 按钮区 -->
           <el-form-item class="align-center">
             <el-button plain type="primary" @click="off">取消</el-button>
@@ -217,6 +291,44 @@ export default {
     }
   },
   data() {
+    // 数字
+    var checkNumberic = (rule, value, callback) => {
+      if (Number.isNaN(Number(value))) {
+        callback(new Error('请输入数值'))
+      } else {
+        callback() // 输入正确
+      }
+    }
+    // 手机号
+    var checkMobile = (rule, value, callback) => {
+      if (!value) return callback()
+      var mobileReg = /^(((13[0-9]{1})|(14[0-9]{1})|(15[0-9]{1})|(16[0-9]{1})|(17[0-9]{1})|(18[0-9]{1})|(19[0-9]{1}))\d{8})$/
+      if (!mobileReg.test(value)) {
+        callback(new Error('请输入正确的手机号'))
+      } else {
+        callback()
+      }
+    }
+    // 电话号
+    var checkPhone = (rule, value, callback) => {
+      if (!value) return callback()
+      var mobileReg = /^(((13[0-9]{1})|(14[0-9]{1})|(15[0-9]{1})|(16[0-9]{1})|(17[0-9]{1})|(18[0-9]{1})|(19[0-9]{1}))\d{8})$/ // 缺少校验规则
+      if (!mobileReg.test(value)) {
+        callback(new Error('请输入正确的电话号'))
+      } else {
+        callback()
+      }
+    }
+    // 邮箱
+    var checkEmail = (rule, value, callback) => {
+      if (!value) return callback()
+      var mobileReg = /^\s*\w+(?:\.{0,1}[\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\.[a-zA-Z]+\s*$/
+      if (!mobileReg.test(value)) {
+        callback(new Error('请输入正确的邮箱'))
+      } else {
+        callback()
+      }
+    }
     return {
       id: this.memberId, // 会员id
       // 编辑项目
@@ -247,8 +359,16 @@ export default {
       form: {
         name: this.propname || '', // 姓名 或 昵称
         modifyData: this.selfDefining.attrValue || '', // 修改数据
-        type: [],
+        type: [], // 选项型
         userDefined: false // 自定义项
+      },
+      // 表单校验规则
+      rules: {
+        text: { max: 128, message: '最大长度128个字符', trigger: 'blur' }, // 文字
+        numberic: { validator: checkNumberic, trigger: 'blur' }, // 数值
+        mobile: { validator: checkMobile, trigger: 'blur' }, // 手机号
+        phone: { validator: checkPhone, trigger: 'blur' }, // 电话
+        email: { validator: checkEmail, trigger: 'blur' } // 邮箱
       },
       // 收货地址表单
       addrForm: {
@@ -285,9 +405,21 @@ export default {
       }
     }
   },
+  // 计算属性
+  computed: {
+    getHeadName() {
+      let headName = ''
+      if (this.modifyType !== 'nickName' && this.modifyType !== 'name') {
+        headName = this.selfDefining.attrName
+      } else {
+        this.modifyType === 'nickName' ? headName = '昵称' : headName = '姓名'
+      }
+      return headName
+    }
+  },
   // 挂载时
-  created() {
-    console.log('接收的信息', this.propname, this.form)
+  mounted() {
+    console.log('接收的信息', this.propname, this.selfDefining)
   },
   methods: {
     // 关闭控件
@@ -297,54 +429,61 @@ export default {
       this.$emit('close')
     },
     // 提交数据
-    async onSubmit() {
-      let subdata = {}
-      if (this.modifyType === 'name') {
-        subdata = {
-          bizId: this.id, // 会员id
-          name: this.nameValue
+    onSubmit() {
+      this.$refs.modifyForm.validate(async valid => {
+        if (!valid) return false
+        let subdata = {}
+        if (this.modifyType === 'name') {
+          subdata = {
+            bizId: this.id, // 会员id
+            name: this.nameValue
+          }
+        } else if (this.modifyType === 'nickName') {
+          subdata = {
+            bizId: this.id, // 会员id
+            nickname: this.nameValue
+          }
+        } else if (this.modifyType === 'checkbox') {
+          subdata = {
+            bizId: this.id, // 会员id
+            itemValue: [
+              {
+                code: this.selfDefining.attrId, // 属性code
+                dataType: this.selfDefining.attrType,
+                dataSubType: this.modifyType,
+                value: this.form.type
+              }
+            ]
+          }
+        } else {
+          subdata = {
+            bizId: this.id, // 会员id
+            itemValue: [
+              {
+                code: this.selfDefining.attrId, // 属性code
+                dataType: this.selfDefining.attrType,
+                dataSubType: this.modifyType,
+                value: this.form.modifyData
+              }
+            ]
+          }
         }
-      } else if (this.modifyType === 'nickName') {
-        subdata = {
-          bizId: this.id, // 会员id
-          nickname: this.nameValue
+        console.log('编辑信息-->', subdata)
+        if (subdata.name || subdata.nickname || subdata.itemValue[0].value) {
+          try {
+            const res = await updateMember(subdata)
+            if (res.data !== 1) return
+            this.form.modifyData = ''
+            this.nameValue = ''
+            this.$emit('close')
+            location.reload() // 页面刷新
+          } catch (error) {
+            console.log('请求失败', error)
+          }
+        } else {
+          this.off() // 关闭弹窗
         }
-      } else if (this.modifyType === 'checkbox') {
-        subdata = {
-          bizId: this.id, // 会员id
-          itemValue: [
-            {
-              code: this.selfDefining.attrId, // 属性code
-              dataType: this.selfDefining.attrType,
-              dataSubType: this.modifyType,
-              value: this.form.type
-            }
-          ]
-        }
-      } else {
-        subdata = {
-          bizId: this.id, // 会员id
-          itemValue: [
-            {
-              code: this.selfDefining.attrId, // 属性code
-              dataType: this.selfDefining.attrType,
-              dataSubType: this.modifyType,
-              value: this.form.modifyData
-            }
-          ]
-        }
-      }
-      console.log('编辑信息-->', subdata)
-      try {
-        const res = await updateMember(subdata)
-        if (res.data !== 1) return
-        this.form.modifyData = ''
-        this.nameValue = ''
-        this.$emit('close')
-        location.reload() // 页面刷新
-      } catch (error) {
-        console.log('请求失败', error)
-      }
+      })
     },
     // 国家下拉框变化
     countryChange(val) {
