@@ -173,7 +173,7 @@ export default {
 
   data() {
     var validateName = (rule, value, callback) => {
-      if (value == '') {
+      if (!value) {
         return callback(new Error('手机号不能为空'))
       } else {
         if (!/^\d{6,12}$/.test(value)) {

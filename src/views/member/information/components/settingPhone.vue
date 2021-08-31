@@ -6,7 +6,7 @@
     />
     <!-- 中间图标 + 底部文字 -->
     <div v-show="submitedSuccess" class="step-icon">
-      <svg-icon name="icon-anquanzhuye" class="icon" setsize="150" />
+      <svg-icon name="icon-anquanzhuye" class="icon" setsize="100" />
       <p>
         <span v-if="propData.phoneType === 0">请绑定您的手机号码</span>
         <span v-else>为确认是您本人操作，请完成身份认证</span>
@@ -37,7 +37,8 @@
                   :label="item.dialCode"
                   :value="`${item.dialCode},${item.iso2}`"
                 >
-                  <span> {{ item.dialCode }} {{ item.name }}</span>
+                  <span style="float:left;padding-right:15px"> {{ item.dialCode }} </span>
+                  <span style="float: right; color: rgb(132, 146, 166); font-size: 13px;">{{ item.name }}</span>
                 </el-option>
               </el-select>
             </el-form-item>
@@ -62,7 +63,7 @@
 
         <!-- 更换 手机号 -->
         <el-form-item v-else label="手机号">
-          <span>{{ setdata.phoneHead.substring(0,setdata.phoneHead.lastIndexOf(",")) }} {{ setdata.phone }}</span>
+          <span>{{ getPhone }}</span>
         </el-form-item>
 
         <!-- 验证码 -->
@@ -107,18 +108,15 @@
 
     <!-- 设置完成 -->
     <div v-show="!submitedSuccess" class="step-icon">
-      <svg-icon name="icon-caozuochenggong" class="icon" setsize="150" />
+      <svg-icon name="icon-caozuochenggong" class="icon" setsize="100" />
       <p>设置完成！</p>
-      <el-button
-        type="primary"
-        @click="goHome"
-      >返回首页</el-button>
+      <el-button type="primary" @click="goHome">返回</el-button>
     </div>
   </div>
 </template>
 <script>
 import countryData from '@/views/components/resource/locList_zh_CN' // 国家
-import { countries } from '@/views/components/resource/phoneCodeCountries' // 手机区号
+import { countries } from '@/views/components/resource/phoneCodeCountries-zhCN' // 手机区号
 import ceSteps from '@/components/CeSteps' // 侧边栏
 import svgIcon from '@/components/SvgIcon' // icon
 import { generateCode, validateVerifyCode, bingling, unbundling } from '@/api/member' // 接口
@@ -234,6 +232,26 @@ export default {
         city: [], // 市
         phoneCode: countries // 手机区号
       }
+    }
+  },
+  // 计算属性
+  computed: {
+    // 获取手机号 头部 + 手机号
+    getPhone() {
+      let phone = ''
+      if (!this.propData.phone) {
+        phone = '还没有手机号'
+        return phone
+      }
+      if (this.propData.phoneHead) {
+        const phoneHead = this.propData.phoneHead.split(',')[0]
+        if (phoneHead.includes('+')) {
+          phone = phoneHead + ' ' + this.propData.phone
+        } else {
+          phone = '+' + phoneHead + ' ' + this.propData.phone
+        }
+      }
+      return phone
     }
   },
   // 创建
@@ -447,6 +465,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+ .txtCenter {
+    text-align: center;
+  }
+
 .content{
     width: 700px;
     margin: 0 auto;

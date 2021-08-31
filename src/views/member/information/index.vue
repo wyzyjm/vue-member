@@ -45,7 +45,7 @@
             <div>
               <el-button v-if="!data.user.phone" type="text" @click="updatePhone(0)">绑定手机</el-button>
               <el-button v-if="data.user.phone" type="text" @click="updatePhone(1)">更换手机</el-button>
-              <el-button v-if="data.user.phone" type="text" @click="updatePhone(2)">解绑手机</el-button>
+              <el-button v-if="data.user.phone && data.user.email" type="text" @click="updatePhone(2)">解绑手机</el-button>
             </div>
           </div>
           <!-- 邮箱 -->
@@ -57,7 +57,7 @@
             <div>
               <el-button v-if="!data.user.email" type="text" @click="updateEmail(0)">绑定邮箱</el-button>
               <el-button v-if="data.user.email" type="text" @click="updateEmail(1)">更换邮箱</el-button>
-              <el-button v-if="data.user.email" type="text" @click="updateEmail(2)">解绑邮箱</el-button>
+              <el-button v-if="data.user.email && data.user.phone" type="text" @click="updateEmail(2)">解绑邮箱</el-button>
             </div>
           </div>
           <!-- 密码 -->
