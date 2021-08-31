@@ -725,7 +725,7 @@ export default {
     },
     // 跳转首页
     backHome() {
-      // this.$router.push({ path: '/' })
+      window.location.href = window.location.origin
     }
 
   }

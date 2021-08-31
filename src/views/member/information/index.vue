@@ -70,8 +70,8 @@
           </div>
           <!-- 自定义项 -->
           <div
-            v-for="(item, index) in data.customList"
-            :key="index"
+            v-for="item in data.customList"
+            :key="item.attrId"
             class="item"
           >
             <p>
@@ -198,6 +198,7 @@ export default {
       this.modifyShow = true
       this.modifyType = item.attrDetailType
       this.selfDefining = item
+      console.log('传子组件的值', this.selfDefining)
     },
 
     // 关闭弹窗

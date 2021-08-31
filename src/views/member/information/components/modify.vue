@@ -19,8 +19,15 @@
               v-model="nameValue"
             />
           </el-form-item>
-          <!-- 其它 -->
-          <el-form-item v-else>
+          <!-- 其它类型 -->
+          <div v-else>
+            <!-- 修改手机号 -->
+            <el-form-item v-if="selfDefining.attrDetailType === 'mobile'" :label="selfDefining.attrName">
+              <el-input
+                v-model.number="form.modifyData"
+              />
+            </el-form-item>
+            <!-- 选择日期 -->
             <el-form-item v-if="selfDefining.attrDetailType === 'simpleDate'" :label="selfDefining.attrName" class="block">
               <el-date-picker
                 v-model="form.modifyData"
@@ -31,7 +38,7 @@
               />
             </el-form-item>
             <!-- 文字 -->
-            <el-form-item v-if="selfDefining.attrDetailType === 'text'" :label="selfDefining.attrName">
+            <el-form-item v-if="selfDefining.attrDetailType === 'text' " :label="selfDefining.attrName">
               <el-input
                 v-model="form.modifyData"
               />
@@ -165,7 +172,7 @@
                 :alt="item.type"
               >
             </el-form-item>
-          </el-form-item>
+          </div>
           <!-- 按钮区 -->
           <el-form-item class="align-center">
             <el-button plain type="primary" @click="off">取消</el-button>
@@ -239,7 +246,7 @@ export default {
       nameValue: this.propname, // // 姓名 或 昵称
       form: {
         name: this.propname || '', // 姓名 或 昵称
-        modifyData: '', // 修改数据
+        modifyData: this.selfDefining.attrValue || '', // 修改数据
         type: [],
         userDefined: false // 自定义项
       },
@@ -279,7 +286,7 @@ export default {
     }
   },
   // 挂载时
-  mounted() {
+  created() {
     console.log('接收的信息', this.propname, this.form)
   },
   methods: {

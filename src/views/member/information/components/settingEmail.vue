@@ -143,8 +143,6 @@ export default {
   },
   methods: {
     submitForm(formName) {
-      // this.$refs['dynamicValidateForm'].validate((valid) => {
-      //   if (valid) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (formName === 'dynamicValidateForm') { // 修改邮箱
@@ -156,7 +154,7 @@ export default {
             }
             console.log('bingling参数', data)
             bingling(data).then(res => {
-              this.$message(res.data.errorMsg ? res.data.errorMsg : res.msg)
+              res.data.code && res.data.code === '1001001022' && this.$message('此邮箱已存在!')
               if (res.data === 1) {
                 this.onSubmit()
               }
@@ -168,8 +166,6 @@ export default {
           return false
         }
       })
-      //   }
-      // })
     },
     // 下一步
     /*
