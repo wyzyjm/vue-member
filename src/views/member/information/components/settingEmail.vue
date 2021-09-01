@@ -276,7 +276,7 @@ export default {
             count--
             if (count === 0) {
               clearInterval(this.setIntID)
-              this.btnText = '获取验证码'
+              this.btnText = '重获验证码'
               this.btnDisabled = false
               return
             }

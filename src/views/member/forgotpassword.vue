@@ -5,16 +5,19 @@
 
     <div class="content-wrapper">
 
+      <!-- 第一步: 验证 -->
       <div v-if="active == 0" style="text-align: center; line-height: 40px">
         <svg-icon name="icon-anquanzhuye" class="icon" setsize="60" />
         <p v-if="type == 'phone'">请输入您常用手机号</p>
         <p v-else>请输入您常用邮箱</p>
       </div>
+      <!-- 第二步: 重置 -->
       <div v-if="active == 1">
         <p style="color: rgb(230, 162, 60)">
           密码设置为8-20位，并且由字母，数字和符号两种以上组合
         </p>
       </div>
+      <!-- 第一步 -->
       <el-form
         v-if="active == 0"
         ref="validateForm"
@@ -55,12 +58,14 @@
         <!-- 验证码 -->
         <el-form-item label="验证码" prop="code">
           <el-input v-model="validateForm.code" placeholder="请输入验证码">
+            <!-- 获取验证码 -->
             <span
               v-show="!showTimer"
               slot="append"
               style="cursor: pointer"
               @click="getCode"
-            >获取验证码</span>
+            > {{ btntxt }} </span>
+            <!-- 计时 -->
             <span v-show="showTimer" slot="append">{{ count }}s</span>
           </el-input>
         </el-form-item>
@@ -73,6 +78,7 @@
           >下一步</el-button>
         </div>
       </el-form>
+      <!-- 第二步: 表单 -->
       <el-form
         v-show="active == 1"
         ref="ruleForm"
@@ -111,6 +117,7 @@
           >确 认</el-button>
         </div>
       </el-form>
+      <!-- 第二步: 完成 -->
       <div
         v-if="active == 2"
         style="
@@ -146,16 +153,15 @@
           @fail="onFail"
           @refresh="onRefresh"
         />
-        <!-- <div>{{ msg }}</div> -->
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
-import ceSteps from '@/components/CeSteps'
-import svgIcon from '@/components/SvgIcon'
+import ceSteps from '@/components/CeSteps' // 步骤条
+import svgIcon from '@/components/SvgIcon' // 图标
 import { countries } from '@/views/components/resource/phoneCodeCountries-zhCN' // 手机区号
-import { emailValidate, validatePassType } from '@/utils/index'
+import { emailValidate, validatePassType } from '@/utils/index' // 工具方法
 import {
   getRandomCaptcha,
   getByAccountRSA,
@@ -164,7 +170,7 @@ import {
   generateCode
 } from '@/api/password'
 
-import { addAddressList } from '@/api/address'
+// import { addAddressList } from '@/api/address'
 import { captchaImgs } from '@/utils/get-captcha'
 import { setRSApass } from '@/utils/rsa'
 
@@ -175,6 +181,7 @@ export default {
   },
 
   data() {
+    // 手机号校验
     var validateName = (rule, value, callback) => {
       if (!value) {
         return callback(new Error('手机号不能为空'))
@@ -186,6 +193,7 @@ export default {
         }
       }
     }
+    // 邮箱校验
     var validateMail = (rule, value, callback) => {
       if (value == '') {
         return callback(new Error('邮箱不能为空'))
@@ -197,13 +205,15 @@ export default {
         }
       }
     }
+    // 验证码校验
     var validateCode = (rule, value, callback) => {
-      if (value == '') {
+      if (value === '') {
         return callback(new Error('验证码不能为空'))
       } else {
         callback()
       }
     }
+    // 第一次输入密码
     var validatePass = (rule, value, callback) => {
       console.log(rule, value)
       if (value === '') {
@@ -219,6 +229,7 @@ export default {
         }
       }
     }
+    // 校验两次密码是否相同
     var validatePass2 = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入密码'))
@@ -229,13 +240,16 @@ export default {
       }
     }
     return {
+      btntxt: '获取验证码',
       active: 0, // 默认为0,
+      // 表单值
       validateForm: {
-        name: '',
-        prename: '+86,CN',
+        name: '', // 手机号
+        prename: '+86,CN', // 手机号头部
         code: '',
         mail: ''
       },
+      // 手机区号
       countries: countries,
       dataPwd: [
         {
@@ -255,7 +269,7 @@ export default {
         pass: '',
         checkPass: ''
       },
-      // 校验规则
+      // 表单校验规则
       validateRules: {
         name: [{ validator: validateName, trigger: 'blur' }],
         mail: [{ validator: validateMail, trigger: 'blur' }],
@@ -265,19 +279,19 @@ export default {
         pass: [{ validator: validatePass, trigger: 'blur' }],
         checkPass: [{ validator: validatePass2, trigger: 'blur' }]
       },
-      type: 'phone',
+      type: 'phone', // 默认手机 | 邮箱
       msg: '',
       showCode: false,
       codeImgs: captchaImgs,
       codeNum: null,
       uuid: null,
-      showTimer: false,
+      showTimer: false, // 是否显示数字
       count: 60
     }
   },
   created() {},
   mounted() {
-    this.type = this.$route.query.type
+    this.type = this.$route.query.type // 获取类型,  手机 | 邮箱
   },
   methods: {
     validateName() {
@@ -290,34 +304,39 @@ export default {
         return false
       }
     },
-
+    // 获取验证码
     getCode() {
       if (this.type == 'phone') {
+        // 手机校验
         if (this.validateName()) {
-          this.getByAccountRSA()
+          this.exists()
         }
       } else {
+        // 邮箱校验
         if (emailValidate(this.validateForm.mail)) {
-          this.getByAccountRSA()
+          this.exists()
         }
       }
     },
     // 匹配账号是否存在
-    getByAccountRSA() {
-      const params = {}
-      if (this.type == 'phone') {
-        var type = 2
-        var account = this.validateForm.name
+    exists() {
+      // eslint-disable-next-line prefer-const
+      let dataPrams = {}
+      let type = 2
+      let account = ''
+      if (this.type === 'phone') {
+        account = this.validateForm.name
       } else {
-        var type = 3
-        var account = this.validateForm.mail
+        type = 3
+        account = this.validateForm.mail
       }
-      const str = `account=${account}&category=2&mobilePrefix=${this.validateForm.prename}&type=${type}`
+      // eslint-disable-next-line prefer-const
+      let str = `account=${account}&category=2&mobilePrefix=${this.validateForm.prename}&type=${type}`
       console.log(str)
-      params.rsaCode = setRSApass(str)
-      getByAccountRSA(params).then((res) => {
-        if (res.status == 200) {
-          if (res.data.code == '200') {
+      dataPrams.rsaCode = setRSApass(str)
+      getByAccountRSA(dataPrams).then((res) => {
+        if (res.status === 200) {
+          if (res.data.code === '200') {
             this.showCode = true
             this.onRefresh()
             // 当账号存在时，打开滑块验证码界面，并且获取服务端随机验证码标识
@@ -360,7 +379,8 @@ export default {
               this.count--
             } else {
               clearInterval(timer)
-              this.showTimer = false
+              this.showTimer = false // 计时去除
+              this.btntxt = '重获验证码' // 设置文件
             }
           }, 1000)
           this.$message({
@@ -424,6 +444,7 @@ export default {
             this.$refs['validateForm'].clearValidate()
             this.$refs['ruleForm'].clearValidate()
             this.active = 1
+            this.btntxt = '获取验证码'
           } else {
             this.$message({
               message: res.data.msg,

@@ -1,6 +1,6 @@
 
 import request from '@/utils/request'
-//获取随机验证码数字
+// 获取随机验证码数字
 export function getRandomCaptcha(params) {
   return request({
     url: '/fwebapi/member/getRandomCaptcha',
@@ -8,7 +8,7 @@ export function getRandomCaptcha(params) {
     params
   })
 }
-//查询账号是否存在
+// 查询账号是否存在
 export function getByAccountRSA(data) {
   return request({
     url: '/fwebapi/member/getByAccountRSA',
@@ -16,7 +16,7 @@ export function getByAccountRSA(data) {
     data
   })
 }
-//保存密码
+// 保存密码
 export function saveLoginPwdRSA(data) {
   return request({
     url: '/fwebapi/member/saveLoginPwdRSA',
@@ -24,7 +24,7 @@ export function saveLoginPwdRSA(data) {
     data
   })
 }
-//获取手机验证码
+// 获取手机验证码
 export function generateCode(data) {
   return request({
     url: '/fwebapi/member/detail/generateCaptcha?appId=' + window.appMap.member,
@@ -32,7 +32,7 @@ export function generateCode(data) {
     data
   })
 }
-//检查是否可以修改密码
+// 检查是否可以修改密码
 export function checkForgetPwdRSA(data) {
   return request({
     url: '/fwebapi/member/checkForgetPwdRSA',

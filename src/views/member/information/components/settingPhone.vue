@@ -270,7 +270,8 @@ export default {
           const data = {
             bizId: this.propData.memberId, // 会员id
             bizType: this.propData.type, // 类型
-            mobilePrefix: this.formLabelAlign.consigneePhoneHead.replace('+', ''), // 手机号前缀
+            // mobilePrefix: this.formLabelAlign.consigneePhoneHead.replace('+', ''), // 手机号前缀
+            mobilePrefix: this.formLabelAlign.consigneePhoneHead, // 手机号前缀 不去+
             mobile: this.formLabelAlign.consigneePhone, // 手机号
             verifyCode: this.formLabelAlign.phoneYzm // 短信验证码
           }
