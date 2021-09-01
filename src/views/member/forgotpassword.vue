@@ -41,7 +41,10 @@
                 :key="index"
                 :label="item.dialCode"
                 :value="item.dialCode + ',' + item.iso2"
-              />
+              >
+                <span style="float:left;padding-right:15px"> {{ item.dialCode }} </span>
+                <span style="float: right; color: rgb(132, 146, 166); font-size: 13px;">{{ item.name }}</span>
+              </el-option>
             </el-select>
           </el-input>
         </el-form-item>
@@ -252,6 +255,7 @@ export default {
         pass: '',
         checkPass: ''
       },
+      // 校验规则
       validateRules: {
         name: [{ validator: validateName, trigger: 'blur' }],
         mail: [{ validator: validateMail, trigger: 'blur' }],
@@ -429,6 +433,7 @@ export default {
         }
       })
     },
+    // 上一步
     goPre() {
       this.$refs['ruleForm'].clearValidate()
       this.active = 0
@@ -460,6 +465,7 @@ export default {
         }
       })
     },
+    // 去登录
     goLogin() {
       window.location.href = window.location.origin + '/login.html'
     }

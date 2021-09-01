@@ -364,7 +364,7 @@ export default {
       form: {
         nameValue: this.propname || '', // 姓名 或 昵称
         modifyData: this.selfDefining.attrValue, // 修改数据
-        type: this.selfDefining.attrValue.split(',') || [], // 复选框, 下拉多选
+        type: this.selfDefining.attrValue ? this.selfDefining.attrValue.split(',') || [] : [], // 复选框, 下拉多选
         userDefined: false // 自定义项
       },
       // 表单校验规则
