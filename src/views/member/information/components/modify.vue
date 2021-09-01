@@ -10,7 +10,7 @@
       </div>
       <!-- 弹窗内容 -->
       <div class="modify-cont">
-        <el-form ref="modifyForm" :model="form">
+        <el-form ref="modifyForm" :model="form" label-width="100px">
           <!-- 昵称 或 姓名 -->
           <el-form-item
             v-if="modifyType === 'name' || modifyType === 'nickName'"
@@ -175,52 +175,36 @@
             <el-form-item v-if="modifyType === 'area'" :label="selfDefining.attrName">
               <el-form-item>
                 <el-col :span="7">
-                  <!-- 国家/地区 必填 -->
-                  <el-form-item prop="consigneeCountry">
+                  <!-- 国家 -->
+                  <el-form-item>
                     <!-- select选择器 -->
                     <el-select
                       v-model="addrForm.consigneeCountry"
                       placeholder="请选择国家"
-                      @change="countryChange"
+                      @change="countryChange(addrForm.consigneeCountry)"
                     >
                       <el-option
                         v-for="(item, index) in frontData.conuntryOptions"
-                        :key="index"
-                        :label="item.Name"
-                        :value="item.Name"
+                        :key="item.name + index"
+                        :label="item.name"
+                        :value="item.code"
                       />
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :span="1" class="txtCenter">-</el-col>
-                <!-- 级联选择 -->
-                <el-col :span="7">
-                  <el-form-item ref="provinceRef" prop="consigneeProvince">
-                    <el-select
-                      v-model="addrForm.consigneeProvince"
-                      placeholder="省份"
-                      @change="provinceChange"
-                    >
-                      <el-option
-                        v-for="item in frontData.province"
-                        :key="item.Name"
-                        :label="item.Name"
-                        :value="item.Name"
-                      />
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="1" class="txtCenter">-</el-col>
-                <el-col :span="7">
-                  <el-form-item ref="cityRef" prop="consigneeCity">
-                    <el-select v-model="addrForm.consigneeCity" placeholder="城市">
-                      <el-option
-                        v-for="item in frontData.city"
-                        :key="item.Name"
-                        :label="item.Name"
-                        :value="item.Name"
-                      />
-                    </el-select>
+                <!-- 省市区 -->
+                <el-col :span="10">
+                  <el-form-item>
+                    <el-cascader
+                      :key="addressKey"
+                      v-model="addrForm.addressABC"
+                      :options="frontData.addressData"
+                      :props="{
+                        value: 'code',
+                        label: 'name',
+                      }"
+                    />
                   </el-form-item>
                 </el-col>
               </el-form-item>
@@ -265,9 +249,11 @@
 </template>
 
 <script>
-import countryData from '@/views/components/resource/locList_zh_CN' // 国家
+// import countryData from '@/views/components/resource/locList_zh_CN' // 国家
 import { updateMember } from '@/api/member'
 
+// 国家地区
+import { getCountryData, getCurrentData, addressFormateData } from '@/utils/address'
 export default {
   components: {
     // UploadImgs
@@ -378,15 +364,7 @@ export default {
       // 收货地址表单
       addrForm: {
         consigneeCountry: '', // 国家
-        consigneeName: '', // 收货人名称
-        consigneePhoneHead: '', // 手机区号
-        consigneePhone: '', // 手机号
-        consigneeTelHead: '', // 电话区号
-        consigneeTel: '', // 电话号
-        consigneeAddr: '', // 详细地址
-        consigneeProvince: '', // 省/州/地区
-        consigneeCity: '', // 地区
-        consigneeZipCode: '' // 邮政编码
+        addressABC: ''// 省市区
       },
       formLabelAlign: {
         selectMobile: '',
@@ -404,10 +382,10 @@ export default {
       },
       // 省市区数据
       frontData: {
-        conuntryOptions: countryData.Location.CountryRegion, // 国家
-        province: [], // 省
-        city: [] // 市
-      }
+        conuntryOptions: '', // 国家
+        addressData: '' // 省市区
+      },
+      addressKey: 1000 // 级联key
     }
   },
   // 计算属性
@@ -421,6 +399,14 @@ export default {
         this.modifyType === 'nickName' ? headName = '昵称' : headName = '姓名'
       }
       return headName
+    }
+  },
+  // 创建时
+  created() {
+    this.addressKey = this.addressKey + 1
+    if (this.modifyType === 'area') {
+      // 获取国家数据
+      this.frontData.conuntryOptions = getCountryData()
     }
   },
   // 挂载时
@@ -474,6 +460,19 @@ export default {
               }
             ]
           }
+        } else if (this.modifyType === 'area') {
+          // 地区
+          subdata = {
+            bizId: this.id, // 会员id
+            itemValue: [
+              {
+                code: this.selfDefining.attrId, // 属性code
+                dataType: this.selfDefining.attrType,
+                dataSubType: this.modifyType,
+                value: this.addrForm.consigneeCountry.toString() + ',' + this.addrForm.addressABC.toString()
+              }
+            ]
+          }
         } else {
           subdata = {
             bizId: this.id, // 会员id
@@ -503,41 +502,26 @@ export default {
       })
     },
     // 国家下拉框变化
-    countryChange(val) {
+    countryChange(code) {
+      this.addressKey = this.addressKey + 1
       this.frontData.province = []
-      this.frontData.city = []
       if (this.$refs.provinceRef) {
         this.$refs.provinceRef.resetField() // 省重置
         this.$refs.cityRef.resetField() // 市重置
       }
-
-      countryData.Location.CountryRegion.map((item) => {
-        if (item.Name !== val) return
-        if (!item.State) return
-        if (Array.isArray(item.State) && item.State.length > 0) {
-          this.frontData.province = item.State ? item.State : [] // 有省
-        } else {
-          this.frontData.province = item.State.City ? item.State.City : [] // 无省份
-        }
-      })
-    },
-    // 省下拉
-    provinceChange(val) {
-      if (!this.frontData.province) return
-      if (this.$refs.cityRef) {
-        this.$refs.cityRef.resetField() // 市重置
-      }
-      this.frontData.province.map((item) => {
-        if (item.Name === val) {
-          this.frontData.city = item.City ? item.City : []
-        }
-      })
+      const proviceValue = getCurrentData(code) // 获取没有格式化后的省数据
+      const provinceFormateValue = addressFormateData(proviceValue) // 格式化 省市区数据
+      this.frontData.addressData = provinceFormateValue
+      console.log('此时省市区数据为', this.frontData.addressData)
     }
   }
 }
 </script>
 
 <style lang='scss' scoped>
+.txtCenter {
+    text-align: center;
+  }
 .modify{
     position: fixed;
     display: block;
@@ -621,10 +605,10 @@ export default {
     }
     .modify-cont{
         padding: 50px;
-        .el-form-item{
-          display: flex;
-          justify-content: center;
-        }
+        // .el-form-item{
+        //   display: flex;
+        //   justify-content: center;
+        // }
         .align-center{
           // margin-left: -40%;
             margin-top: 100px;

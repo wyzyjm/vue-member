@@ -121,6 +121,9 @@ import SettingEmail from './components/settingEmail'
 import SettingPwd from './components/settingPwd'
 import SettingPhone from './components/settingPhone'
 
+// 地址
+import { getAddressName } from '@/utils/address'
+
 export default {
   components: {
     PageTitle,
@@ -176,7 +179,12 @@ export default {
       return (item) => {
         let val = ''
         if (item.attrValue) {
-          val = item.attrValue
+          if (item.attrType === 'select' && item.attrDetailType === 'area') {
+            var [a, b, c, d] = item.attrValue.split(',')
+            val = getAddressName(a, b, c, d)
+          } else {
+            val = item.attrValue
+          }
         } else {
           val = item.description
         }
@@ -333,7 +341,7 @@ export default {
     display: flex;
   }
   span{
-    width: 200px;
+    width: 350px;
     margin-right: 30px;
   }
   span:nth-child(1){
