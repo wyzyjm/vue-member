@@ -76,7 +76,7 @@
           >
             <p>
               <span>{{ item.attrName }}</span>
-              <span>{{ item.attrValue? item.attrValue: item.description }}</span>
+              <span> {{ getAttrValue(item) }}</span>
             </p>
             <div>
               <el-button type="text" @click="selfDefiningTerm(item)">编辑</el-button>
@@ -170,6 +170,18 @@ export default {
         }
       }
       return phone
+    },
+    // 处理自定义属性返回值
+    getAttrValue() {
+      return (item) => {
+        let val = ''
+        if (item.attrValue) {
+          val = item.attrValue
+        } else {
+          val = item.description
+        }
+        return val
+      }
     }
   },
   created() {
@@ -219,7 +231,6 @@ export default {
       this.modifyShow = true // 弹窗展示
       this.modifyType = item.attrDetailType // 传递类型
       this.selfDefining = item // 传递item
-      console.log('传子组件的值', this.selfDefining)
     },
 
     // 关闭弹窗

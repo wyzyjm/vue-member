@@ -15,8 +15,12 @@
           <el-form-item
             v-if="modifyType === 'name' || modifyType === 'nickName'"
             :label="modifyType === 'nickName' ? '昵称' : '姓名'"
+            prop="nameValue"
+            :rules="[
+              {required:true, message: '姓名必填',trigger:'blur'}
+            ]"
           >
-            <el-input v-model="nameValue" />
+            <el-input v-model="form.nameValue" />
           </el-form-item>
 
           <!-- 单行文本 -->
@@ -103,6 +107,7 @@
                 v-model="form.modifyData"
                 type="datetime"
                 :placeholder="selfDefining.description"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 style="width: 100%;"
               />
               <!-- value-format="yyyy-MM-dd" -->
@@ -156,7 +161,7 @@
             </el-form-item>
             <!-- 下拉多选 -->
             <el-form-item v-if="modifyType === 'selMulti'" :label="selfDefining.attrName">
-              <el-select v-model="form.modifyData" multiple placeholder="请选择">
+              <el-select v-model="form.type" multiple placeholder="请选择">
                 <el-option
                   v-for="item in selfDefining.optionsData"
                   :key="item.key"
@@ -164,6 +169,7 @@
                   :value="item.value"
                 />
               </el-select>
+              <!-- {{ form }} -->
             </el-form-item>
             <!-- 地址级联 -->
             <el-form-item v-if="modifyType === 'area'" :label="selfDefining.attrName">
@@ -355,11 +361,10 @@ export default {
         }
       },
       // 弹窗表单信息
-      nameValue: this.propname, // // 姓名 或 昵称
       form: {
-        name: this.propname || '', // 姓名 或 昵称
-        modifyData: this.selfDefining.attrValue || '', // 修改数据
-        type: [], // 选项型
+        nameValue: this.propname || '', // 姓名 或 昵称
+        modifyData: this.selfDefining.attrValue, // 修改数据
+        type: this.selfDefining.attrValue.split(',') || [], // 复选框, 下拉多选
         userDefined: false // 自定义项
       },
       // 表单校验规则
@@ -407,6 +412,7 @@ export default {
   },
   // 计算属性
   computed: {
+    // 获取手机号
     getHeadName() {
       let headName = ''
       if (this.modifyType !== 'nickName' && this.modifyType !== 'name') {
@@ -422,10 +428,11 @@ export default {
     console.log('接收的信息', this.propname, this.selfDefining)
   },
   methods: {
-    // 关闭控件
+    // 弹窗关闭
     off() {
-      this.form.modifyData = ''
-      this.nameValue = ''
+      this.form.modifyData = '' // 清空输入的值
+      this.form.type = '' // 清空筛选项的值
+      this.form.nameValue = '' // 昵称 和 姓名
       this.$emit('close')
     },
     // 提交数据
@@ -436,12 +443,12 @@ export default {
         if (this.modifyType === 'name') {
           subdata = {
             bizId: this.id, // 会员id
-            name: this.nameValue
+            name: this.form.nameValue
           }
         } else if (this.modifyType === 'nickName') {
           subdata = {
             bizId: this.id, // 会员id
-            nickname: this.nameValue
+            nickname: this.form.nameValue
           }
         } else if (this.modifyType === 'checkbox') {
           subdata = {
@@ -451,7 +458,19 @@ export default {
                 code: this.selfDefining.attrId, // 属性code
                 dataType: this.selfDefining.attrType,
                 dataSubType: this.modifyType,
-                value: this.form.type
+                value: this.form.type.toString()
+              }
+            ]
+          }
+        } else if (this.modifyType === 'selMulti') {
+          subdata = {
+            bizId: this.id, // 会员id
+            itemValue: [
+              {
+                code: this.selfDefining.attrId, // 属性code
+                dataType: this.selfDefining.attrType,
+                dataSubType: this.modifyType,
+                value: this.form.type.toString()
               }
             ]
           }
@@ -463,7 +482,7 @@ export default {
                 code: this.selfDefining.attrId, // 属性code
                 dataType: this.selfDefining.attrType,
                 dataSubType: this.modifyType,
-                value: this.form.modifyData
+                value: this.form.modifyData.toString()
               }
             ]
           }
@@ -473,9 +492,7 @@ export default {
           try {
             const res = await updateMember(subdata)
             if (res.data !== 1) return
-            this.form.modifyData = ''
-            this.nameValue = ''
-            this.$emit('close')
+            this.off() // 关闭弹窗
             location.reload() // 页面刷新
           } catch (error) {
             console.log('请求失败', error)
