@@ -25,10 +25,11 @@
     </div>
 
     <!-- 收货信息 -->
-    <ul class="border detail">
+    <ul class="border detail" :style="{display:(data.goodsList[0].formJson==null?'flex':'block')}">
       <li class="detail-item">
-        <p class="title">收货人信息</p>
-        <div class="item-list">
+        
+        <div class="item-list" v-if="data.goodsList[0].formJson==null">
+          <p class="title">收货人信息</p>
           <p v-if="data.consigneeInfo.consigneeName" class="consignee"><span>收货人：</span><span>{{ data.consigneeInfo.consigneeName }}</span></p>
           <div :class="{'reverse':data.consigneeInfo.reverseFlag}">
             <p v-if="data.consigneeInfo.consigneeProvince" class="consignee"><span>所在地区：</span><span>
@@ -48,10 +49,35 @@
           <p v-if="data.consigneeInfo.consigneeTel" class="consignee"><span>固定电话：</span><span>{{ data.consigneeInfo.consigneeTelHead.substring(data.consigneeInfo.consigneeTelHead.lastIndexOf("+")) }}-{{ data.consigneeInfo.consigneeTel }}</span></p>
           <p v-if="data.consigneeInfo.consigneeZipCode" class="consignee"><span>邮政编码：</span><span>{{ data.consigneeInfo.consigneeZipCode }}</span></p>
         </div>
+        <div v-else>
+          <p class="title">表单信息</p>
+          <div
+            v-for="(tableItem, tableIndex) in formJson.subForm"
+            :key="tableIndex + 'table'"
+            style="width: 100%;"
+          >
+            <el-table :data="tableItem.list" style="width: 100%">
+              <el-table-column
+                :label="item.label"
+                v-for="(item, index) in tableItem.head"
+                :key="index"
+              >
+                <template slot-scope="scope">
+                  {{ tableItem.list[scope.$index][item.key] }}
+                </template>
+              </el-table-column>
+            </el-table>
+            <br />
+          </div>
+          <div style="margin-left:10px;line-height:34px" v-for="(item, index) in formJson.normal" :key="index">
+            {{ item.label }}：{{ item.value }}
+          </div>
+          <br>
+        </div>
       </li>
       <li v-if="data.payInfo" class="detail-item">
         <p class="title">支付信息</p>
-        <div class="item-list display-flex">
+        <div class="item-list display-flex" :style="{height:(data.goodsList[0].formJson==null?'260px':'50px'),'margin-top':(data.goodsList[0].formJson==null?'0px':'-10px')}">
           <p class="pr-10">支付方式：<i class="col-grey-6">{{ data.payInfo.paymentTypeName ? data.payInfo.paymentTypeName : data.payInfo.payModeName }}</i></p>
           <el-popover
             v-if="data.orderStatus > 10 && data.orderStatus < 60 && data.payInfo.paymentTypeId !== 7"
@@ -92,7 +118,7 @@
           </el-popover>
         </div>
       </li>
-      <li v-if="data.logisticsInfo" class="detail-item">
+      <li v-if="data.logisticsInfo&&data.goodsList[0].formJson==null" class="detail-item">
         <p class="title">物流信息</p>
         <div class="item-list">
           <p v-if="data.logisticsInfo.distribution" class="consignee"><span>配送方式：</span><span>{{ data.logisticsInfo.distribution }}</span></p>
@@ -250,7 +276,8 @@ export default {
           description: null,
           title: '待确认付款'
         }
-      }
+      },
+      formJson:null
     }
   },
   computed: {
@@ -303,6 +330,7 @@ export default {
         this.current = { orderId: this.data.orderId, ...this.data.consigneeInfo }
         this.sumTotal(this.data.goodsList)
         this.loading = false
+        this.formJson = this.data.goodsList[0].formJson==null?null:JSON.parse(this.data.goodsList[0].formJson);
       }).catch(error => {
         this.loading = false
         console.log('请求失败', error)

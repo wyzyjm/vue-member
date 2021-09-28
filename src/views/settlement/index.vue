@@ -138,8 +138,26 @@
       <template v-else>
         <div class="form-wrapper text-normal">
           <p><strong>表单信息</strong></p>
-          <div v-for="(value, name, index) in formJson" :key="index">
-            {{ name }}:{{ value }}
+          <div
+            v-for="(tableItem, tableIndex) in formJson.subForm"
+            :key="tableIndex + 'table'"
+            style="width: 100%"
+          >
+            <el-table :data="tableItem.list" style="width: 100%">
+              <el-table-column
+                :label="item.label"
+                v-for="(item, index) in tableItem.head"
+                :key="index"
+              >
+                <template slot-scope="scope">
+                  {{ tableItem.list[scope.$index][item.key] }}
+                </template>
+              </el-table-column>
+            </el-table>
+            <br />
+          </div>
+          <div v-for="(item, index) in formJson.normal" :key="index">
+            {{ item.label }}：{{ item.value }}
           </div>
         </div>
       </template>
@@ -408,11 +426,7 @@ export default {
       receiptList: [],
       receiptIndex: null,
       newAddressId: null,
-      formJson: {
-        name: "123",
-        age: "22",
-        phone: "1593949494",
-      },
+      formJson: {},
     };
   },
   computed: {
@@ -431,7 +445,9 @@ export default {
         this.getList();
       }
     } else {
-      if (this.$route.query.formJson == undefined) {
+      this.formJson = JSON.parse(sessionStorage.getItem("orderFormJson"));
+
+      if (this.formJson == null) {
         this.hasFormJson = false;
       } else {
         this.hasFormJson = true;
@@ -607,8 +623,7 @@ export default {
       }
       // 商品详情过来结算
       if (this.$route.query.skuId !== undefined) {
-        params.skuId = this.$route.query.skuId;
-        params.templateId = this.$route.query.templateId;
+        params.skuId = this.$route.query.skuId.split(",");
       }
       payModeInitInfo(params).then((res) => {
         if (res.status === 200) {
@@ -700,9 +715,9 @@ export default {
         params.shoppingCartCodes = this.$route.query.shoppingCartIds;
       }
       if (this.$route.query.skuId !== undefined) {
-        params.skuId = this.$route.query.skuId;
+        params.skuId = this.$route.query.skuId.split(",");
         // params.appId = this.$route.query.appId;
-        params.quantity = this.$route.query.quantity;
+        params.quantity = this.$route.query.quantity.split(",");
       }
       params.receiverAddressId = this.addressInfo.id;
       skuItem(params).then((res) => {
@@ -779,7 +794,7 @@ export default {
         params.distributionId = this.distributionVal;
         // params.electronicInvoiceId = this.receiptInfo.invoiceId;
         params.payModeId = this.payVal;
-        params.receiverAddressId = this.addressInfo.id;
+
         // params.remark = this.remark;
         // params.freight = this.freight;
         if (type == "continue") {
@@ -793,14 +808,19 @@ export default {
           totalFreight += this.productlist[i].freightPrice;
           volist[i].remark = this.remarkAttrs[i].value;
           volist[i].electronicInvoice = this.receiptList[i].receiptInfo;
+          for(let m=0;m<this.productlist[i].shoppingCartList.length;m++){
+            this.productlist[i].shoppingCartList[m].formJson = JSON.stringify(this.formJson) 
+          }
         }
-
+        
         params.shoppingCartList = shoppingCartList;
         params.orderSplitResponseVOList = volist;
 
         params.freight = totalFreight;
-        if(this.hasFormJson){
-          params.formJson = JSON.stringify(formJson)
+        if (this.hasFormJson) {
+          params.formJson = JSON.stringify(this.formJson);
+        } else {
+          params.receiverAddressId = this.addressInfo.id;
         }
         addOrder(params).then((res) => {
           if (res.status === 200) {
@@ -856,7 +876,7 @@ export default {
           this.orderDisabled = false;
         });
       } catch (error) {
-        console.log(error);
+        console.log("ordererror", error);
         this.$message.error("对不起，系统异常，请稍后再试");
       }
     },
@@ -1048,9 +1068,8 @@ export default {
   height: 20px;
   line-height: 20px;
 }
-.form-wrapper{
+.form-wrapper {
   line-height: 30px;
-  ;
 }
 </style>
 

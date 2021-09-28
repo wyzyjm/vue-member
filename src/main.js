@@ -41,6 +41,7 @@ router.afterEach((to, from) => {
     window.headFooterEdit()
   }
 })
+
 // 读cookie里的token,判断路由跳转
 router.beforeEach((to, from, next) => {
   const reg = new RegExp('(^| )' + 'psession' + '=([^;]*)(;|$)')
@@ -55,6 +56,7 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+window.pageType = 'vue'//在线客服屏蔽
 
 new Vue({
   el: '#app',
