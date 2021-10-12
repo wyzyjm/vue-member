@@ -232,7 +232,8 @@
         <strong class="text-normal">实付：</strong
         ><span class="text-danger">{{ currency }}{{ realPayment }}</span>
       </div>
-      <div v-if="addressInfo.hasOwnProperty('reverseFlag')">
+
+      <div v-if="JSON.stringify(addressInfo) != '{}'">
         寄送至：
         <template v-if="addressInfo.reverseFlag">
           {{ addressInfo.consigneeAddr }}
@@ -258,23 +259,23 @@
           }}
           {{ addressInfo.consigneeAddr }}
         </template>
-      </div>
-      <div>
-        收货人：{{ addressInfo.consigneeName }}
-        <template v-if="addressInfo.consigneePhone !== ''">
-          <template v-if="addressInfo.consigneePhoneHead != undefined">
-            +{{ addressInfo.consigneePhoneHead.split("+")[1] }}-{{
-              addressInfo.consigneePhone
-            }}
+        <div>
+          收货人：{{ addressInfo.consigneeName }}
+          <template v-if="addressInfo.consigneePhone !== ''">
+            <template v-if="addressInfo.consigneePhoneHead != undefined">
+              +{{ addressInfo.consigneePhoneHead.split("+")[1] }}-{{
+                addressInfo.consigneePhone
+              }}
+            </template>
           </template>
-        </template>
-        <template v-else>
-          <template v-if="addressInfo.consigneePhoneHead != undefined">
-            +{{ addressInfo.consigneeTelHead.split("+")[1] }}-{{
-              addressInfo.consigneeTel
-            }}
+          <template v-else>
+            <template v-if="addressInfo.consigneePhoneHead != undefined">
+              +{{ addressInfo.consigneeTelHead.split("+")[1] }}-{{
+                addressInfo.consigneeTel
+              }}
+            </template>
           </template>
-        </template>
+        </div>
       </div>
     </div>
     <div class="trade-btn">
@@ -400,22 +401,36 @@ export default {
       currency: "¥",
       orderLoading: false,
       orderDisabled: false,
-      addressInfo: {},
+      addressInfo: {
+        // consigneeName: "ddddd",
+        // consigneeCountry: "",
+        // consigneeProvince: "",
+        // consigneeCity: "",
+        // consigneeCounty: "",
+        // consigneeAddr: "",
+        // consigneePhoneHead: "",
+        // consigneeTelHead: "",
+        // consigneePhone: "",
+        // consigneeTel: "",
+        // consigneeZipCode: "",
+        // isDefault: 0,
+        // reverseFlag: 0,
+      },
       messageVisible: false,
       addressActive: 0,
       editFormItem: {
-        consigneeCountry: "", // 国家
-        consigneeName: "", // 收货人名称
-        consigneePhoneHead: "", // 手机区号
-        consigneePhone: "", // 手机号
-        consigneeTelHead: "", // 电话区号
-        consigneeTel: "", // 电话号
-        consigneeAddr: "", // 详细地址
-        consigneeProvince: "", // 省/州/地区
-        consigneeCity: "", // 地区
-        consigneeZipCode: "", // 邮政编码
-        consigneeCounty: "",
-        receiverCode: "",
+        // consigneeCountry: "", // 国家
+        // consigneeName: "", // 收货人名称
+        // consigneePhoneHead: "", // 手机区号
+        // consigneePhone: "", // 手机号
+        // consigneeTelHead: "", // 电话区号
+        // consigneeTel: "", // 电话号
+        // consigneeAddr: "", // 详细地址
+        // consigneeProvince: "", // 省/州/地区
+        // consigneeCity: "", // 地区
+        // consigneeZipCode: "", // 邮政编码
+        // consigneeCounty: "",
+        // receiverCode: "",
       },
       msgContent: "",
       msgCode: "",
@@ -462,39 +477,40 @@ export default {
       try {
         const res = await getAddressList();
         if (res.status !== 200) return;
-        // console.log(res);
-        this.logisticsInfoList = res.data.addressList;
-        console.log("newaddressId" + this.newAddressId);
-        if (this.newAddressId !== null) {
-          let newIndex = null;
-          for (let i = 0; i < this.logisticsInfoList.length; i++) {
-            if (this.logisticsInfoList[i].id == this.newAddressId) {
-              newIndex = i;
-              this.addressInfo = this.logisticsInfoList[i];
-            }
-          }
-          this.choseAddress(newIndex);
-        }
-        if (this.addressInfo.id === undefined) {
-          this.addressInfo = this.logisticsInfoList[0];
-          this.choseAddress(0);
-        } else {
-          for (let i = 0; i < this.logisticsInfoList.length; i++) {
-            if (this.addressInfo.id == this.logisticsInfoList[i].id) {
-              this.addressInfo = this.logisticsInfoList[i];
-              this.choseAddress(i);
-            }
-          }
-        }
+        
+        if (res.data.addressList.length > 0) {
+          this.logisticsInfoList = res.data.addressList;
+          if (this.newAddressId !== null) {
+            let newIndex = null;
+            for (let i = 0; i < this.logisticsInfoList.length; i++) {
+              if (this.logisticsInfoList[i].id == this.newAddressId) {
+                newIndex = i;
 
-        // this.choseAddress(newIndex)
-        console.log("addressInfo", this.addressInfo);
-        console.log("newlist--", this.logisticsInfoList);
-        // 商品清单
-        this.getProductList();
-        // 获取支付方式，配送方式
-        this.getPayMode(this.addressInfo.id);
-        console.log(typeof this.addressInfo.consigneePhoneHead);
+                this.addressInfo = this.logisticsInfoList[i];
+              }
+            }
+            this.choseAddress(newIndex);
+          }
+          if (this.addressInfo.hasOwnProperty("id")) {
+            this.addressInfo = this.logisticsInfoList[0];
+            this.choseAddress(0);
+          } else {
+            for (let i = 0; i < this.logisticsInfoList.length; i++) {
+              if (this.addressInfo.id == this.logisticsInfoList[i].id) {
+                this.addressInfo = this.logisticsInfoList[i];
+                this.choseAddress(i);
+              }
+            }
+          }
+
+          // 商品清单
+          this.getProductList();
+          // 获取支付方式，配送方式
+          if (this.addressInfo.id != undefined) {
+            this.getPayMode(this.addressInfo.id);
+          }
+
+        }
       } catch (error) {
         console.log("获取收货地址失败", error);
       }
@@ -701,7 +717,10 @@ export default {
       }
       this.addressActive = index;
       this.addressInfo = this.logisticsInfoList[index];
-      this.getPayMode(this.addressInfo.id);
+      if (this.addressInfo.id != undefined) {
+        this.getPayMode(this.addressInfo.id);
+      }
+
       this.logisticsInfoList[index].active = true;
       const activeItem = JSON.stringify(this.logisticsInfoList[index]);
       this.logisticsInfoList.splice(index, 1);
@@ -808,11 +827,17 @@ export default {
           totalFreight += this.productlist[i].freightPrice;
           volist[i].remark = this.remarkAttrs[i].value;
           volist[i].electronicInvoice = this.receiptList[i].receiptInfo;
-          for(let m=0;m<this.productlist[i].shoppingCartList.length;m++){
-            this.productlist[i].shoppingCartList[m].formJson = JSON.stringify(this.formJson) 
+          for (
+            let m = 0;
+            m < this.productlist[i].shoppingCartList.length;
+            m++
+          ) {
+            this.productlist[i].shoppingCartList[m].formJson = JSON.stringify(
+              this.formJson
+            );
           }
         }
-        
+
         params.shoppingCartList = shoppingCartList;
         params.orderSplitResponseVOList = volist;
 

@@ -39,7 +39,8 @@ import { isDesignMode } from './index'
           .el-button--text{color:${bgColor}}
           .el-button--primary{background-color:${bgColor};border-color:${bgColor};}
           .el-button--primary:focus, .el-button--primary:hover,.el-button--primary.is-plain:focus, .el-button--primary.is-plain:hover{background:${bgColor};border-color:${bgColor}}
-        
+          .address-item.active .name{border:1px solid ${bgColor}}
+          .address-item.active .name:after,default-address-icon,.address-container li .default{background-color:${bgColor}}
           `
       document.head.appendChild(style)
     })
