@@ -77,7 +77,7 @@
       }"
     >
       <li class="detail-item">
-        <p class="title">收货人信息</p>
+        <p class="title" v-show="data.goodsList[0].formJson == 'null'">收货人信息</p>
         <div class="item-list" v-if="data.goodsList[0].formJson == 'null'">
           
           <p v-if="data.consigneeInfo.consigneeName" class="consignee">
@@ -593,7 +593,7 @@ export default {
           this.sumTotal(this.data.goodsList);
           this.loading = false;
           if (this.data.goodsList[0].formJson !== "null") {
-            JSON.parse(this.data.goodsList[0].formJson);
+            this.formJson=JSON.parse(this.data.goodsList[0].formJson);
           }
           // this.formJson = this.data.goodsList[0].formJson==null?null:JSON.parse(this.data.goodsList[0].formJson);
         })

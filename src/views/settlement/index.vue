@@ -503,14 +503,18 @@ export default {
             }
           }
 
-          // 商品清单
-          this.getProductList();
+          
           // 获取支付方式，配送方式
-          if (this.addressInfo.id != undefined) {
-            this.getPayMode(this.addressInfo.id);
-          }
+          
+          // if (this.addressInfo.id != undefined||this.hasFormJson) {
+          //   this.getPayMode(this.addressInfo.id);
+          // }
 
         }
+          this.getPayMode(this.addressInfo.id);
+          // 商品清单
+          this.getProductList();
+        
       } catch (error) {
         console.log("获取收货地址失败", error);
       }
