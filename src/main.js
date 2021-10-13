@@ -48,7 +48,8 @@ router.beforeEach((to, from, next) => {
   const res = document.cookie.match(reg)
   if (res === null && to.name !== 'forgotpassword') {
     if (!isDesignMode()) {
-      window.location.href = window.location.origin + '/login.html'
+      let backurl = window.location.href;
+      window.location.href = window.location.origin + '/login.html?back='+backurl;
     } else {
       next()
     }
