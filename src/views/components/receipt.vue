@@ -106,7 +106,7 @@ computed:{
     // 手机号验证
     const telFormValidate = (rule, value, callback) => {
       if (value !== "") {
-        if (!/^1[3456789]\d{9}$/.test(value)) {
+        if (!/^\d{6,12}$/.test(value)) {
           callback(new Error("请输入正确的手机号"));
         } else {
           callback();

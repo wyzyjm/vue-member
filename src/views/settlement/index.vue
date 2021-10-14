@@ -460,13 +460,20 @@ export default {
         this.getList();
       }
     } else {
-      this.formJson = JSON.parse(sessionStorage.getItem("orderFormJson"));
-
-      if (this.formJson == null) {
-        this.hasFormJson = false;
-      } else {
+      
+      if(this.$route.query.from=='form'){
+        this.formJson = JSON.parse(sessionStorage.getItem("orderFormJson"));
         this.hasFormJson = true;
+      }else{
+        sessionStorage.removeItem('orderFormJson');
+        this.formJson = null
+        this.hasFormJson = false;
       }
+      // if (this.formJson == null) {
+      //   this.hasFormJson = false;
+      // } else {
+      //   this.hasFormJson = true;
+      // }
       // 获取收货地址
       this.getList();
     }
@@ -491,7 +498,8 @@ export default {
             }
             this.choseAddress(newIndex);
           }
-          if (this.addressInfo.hasOwnProperty("id")) {
+          
+          if (JSON.stringify(this.addressInfo)=='{}' ) {
             this.addressInfo = this.logisticsInfoList[0];
             this.choseAddress(0);
           } else {
