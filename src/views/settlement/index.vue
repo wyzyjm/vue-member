@@ -303,9 +303,9 @@
       <span slot="footer" class="dialog-footer">
         <!-- 价格有变动时候 -->
         <template v-if="msgCode === '10004' || msgCode === '10005'">
-          <el-button type="default" @click="$router.push('/cart')"
+          <!-- <el-button type="default" @click="$router.push('/cart')"
             >返回购物车</el-button
-          >
+          > -->
           <!-- todo query?? -->
           <el-button type="primary" @click="submit('continue')"
             >继续结算</el-button
@@ -313,18 +313,18 @@
         </template>
         <!-- //运费有变动时候 -->
         <template v-else-if="msgCode === '10006'">
-          <el-button type="default" @click="$router.push('/cart')"
+          <!-- <el-button type="default" @click="$router.push('/cart')"
             >返回购物车</el-button
-          >
+          > -->
           <!-- 刷新运费价格 -->
           <el-button type="primary" @click="getProductList('pop')"
             >刷新运费价格</el-button
           >
         </template>
         <template v-else>
-          <el-button type="primary" @click="$router.push('/cart')"
+          <!-- <el-button type="primary" @click="$router.push('/cart')"
             >返回购物车</el-button
-          >
+          > -->
         </template>
       </span>
     </el-dialog>
