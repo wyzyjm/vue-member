@@ -1,7 +1,13 @@
 <template>
   <div class="app-container">
     <page-title :pagetitle="title" />
-    <div v-if="cartList.length > 0 || unvalidList.length > 0 || data.shoppingCartList.length>0">
+    <div
+      v-if="
+        cartList.length > 0 ||
+          unvalidList.length > 0 ||
+          data.shoppingCartList.length > 0
+      "
+    >
       <div class="cartList">
         <div v-if="cartList.length > 0">
           <el-table
@@ -12,6 +18,7 @@
             @select="selectData"
             @select-all="selectData"
           >
+            <!-- 索引列 -->
             <el-table-column
               type="selection"
               width="40"
@@ -19,13 +26,12 @@
               align="center"
               :selectable="selectInit"
             />
+            <!-- 商品名称 -->
             <el-table-column label="商品信息">
               <template slot-scope="scope">
                 <div class="product">
                   <div class="productImg">
-                    <custom-img
-                      :src="scope.row.skuImg"
-                    />
+                    <custom-img :src="scope.row.skuImg" />
                   </div>
                   <div class="productInfo">
                     <p class="title">
@@ -33,19 +39,18 @@
                     </p>
                     <p class="text-grey spec">
                       <span
-                        v-for="(item, index) in scope
-                          .row.skuSpec"
+                        v-for="(item, index) in scope.row.skuSpec"
                         :key="index"
                         class="specItem"
                       >
-                        {{ item.specName }} :
-                        {{ item.specValue }}；
+                        {{ item.specName }} : {{ item.specValue }}；
                       </span>
                     </p>
                   </div>
                 </div>
               </template>
             </el-table-column>
+            <!-- 单价 -->
             <el-table-column
               prop="skuName"
               label="单价"
@@ -59,6 +64,7 @@
                 </span>
               </template>
             </el-table-column>
+            <!-- 数量 -->
             <el-table-column
               prop="skuName"
               label="数量"
@@ -70,20 +76,29 @@
                   v-model="scope.row.quantity"
                   :step="1"
                   size="small"
-                  :class="{'is-disabledmin':scope.row.moq > scope.row.quantity ,'is-disabledmax': scope.row.stock<scope.row.quantity}"
-                  @change="((val,oldVal)=>{changeQuantity(val,oldVal, scope)})"
+                  :min="scope.row.moq || 1"
+                  :max="scope.row.stock"
+                  :class="{
+                    'is-disabledmin': scope.row.moq > scope.row.quantity,
+                    'is-disabledmax': scope.row.stock < scope.row.quantity
+                  }"
+                  @change="(val, oldVal) => { changeQuantity(val, oldVal, scope)}"
                 />
-                <span v-if="scope.row['stock'] == undefined ||(scope.row['stock'] <scope.row.quantity)" class="span-danger">
-                  库存不足
-                </span>
+                <span
+                  v-if="scope.row['stock'] == undefined || scope.row['stock'] < scope.row.quantity"
+                  class="span-danger"
+                >库存不足 </span>
                 <template v-else>
-                  <span v-if="scope.row['moq']== undefined || (scope.row['moq'] > scope.row.quantity)" class="span-danger">
-                    最少起订量为{{ scope.row.moq }}
+                  <span
+                    v-if="scope.row['moq'] == undefined || scope.row['moq'] > scope.row.quantity "
+                    class="span-danger"
+                  >
+                    最少起订量为{{ scope.row.moq || 1 }}
                   </span>
                 </template>
-
               </template>
             </el-table-column>
+            <!-- 小计 -->
             <el-table-column
               prop="skuName"
               label="小计"
@@ -97,6 +112,7 @@
                 </span>
               </template>
             </el-table-column>
+            <!-- 操作 -->
             <el-table-column
               prop="skuName"
               label="操作"
@@ -114,15 +130,8 @@
         </div>
         <div v-if="unvalidList.length > 0">
           <p>失效商品</p>
-          <el-table
-            :data="unvalidList"
-            class="productTable unvalidTable"
-          >
-            <el-table-column
-              width="40"
-              class-name="checkboxTd"
-              align="center"
-            >
+          <el-table :data="unvalidList" class="productTable unvalidTable">
+            <el-table-column width="40" class-name="checkboxTd" align="center">
               <template>
                 <span class="unvalide">失效</span>
               </template>
@@ -131,9 +140,7 @@
               <template slot-scope="scope">
                 <div class="product">
                   <div class="productImg">
-                    <custom-img
-                      :src="scope.row.skuImg"
-                    />
+                    <custom-img :src="scope.row.skuImg" />
                   </div>
                   <div class="productInfo">
                     <p class="title">
@@ -141,13 +148,11 @@
                     </p>
                     <p class="text-grey spec">
                       <span
-                        v-for="(item, index) in scope
-                          .row.skuSpec"
+                        v-for="(item, index) in scope.row.skuSpec"
                         :key="index"
                         class="specItem"
                       >
-                        {{ item.specName }} :
-                        {{ item.specValue }}；
+                        {{ item.specName }} : {{ item.specValue }}；
                       </span>
                     </p>
                   </div>
@@ -221,23 +226,28 @@
             :indeterminate="isIndeterminate"
             @change="selectAllFun"
           >全选</el-checkbox>
-          <el-button type="text" :disabled="plDisabled" @click="delectMore(selectProduct,1)">批量删除</el-button>
-          <el-button type="text" :disabled="plUntileDisabled" @click="delectMore(unvalidList,0)">清除失效商品</el-button>
+          <el-button
+            type="text"
+            :disabled="plDisabled"
+            @click="delectMore(selectProduct, 1)"
+          >批量删除</el-button>
+          <el-button
+            type="text"
+            :disabled="plUntileDisabled"
+            @click="delectMore(unvalidList, 0)"
+          >清除失效商品</el-button>
         </div>
         <div class="tjop">
           <span
             class="totalCount"
           >已选商品
-            <span class="strongMark">{{
-              selectProduct.length
-            }}</span>
+            <span class="strongMark">{{ selectProduct.length }}</span>
             件</span>
           <span
             class="totalPrice"
           >合计（不含运费）：<span
             class="strongMark"
-          >{{ data.currencySymbol
-          }}{{ data.totalPrice }}</span></span>
+          >{{ data.currencySymbol }}{{ data.totalPrice }}</span></span>
           <el-button
             class="submitBtn"
             type="primary"
@@ -254,14 +264,25 @@
         </div>
         <p>购物车内暂时没有商品，登录后显示已加入的商品</p>
 
-        <el-button type="primary" size="small" plain @click="backHome">去逛逛</el-button>
+        <el-button
+          type="primary"
+          size="small"
+          plain
+          @click="backHome"
+        >去逛逛</el-button>
       </div>
     </div>
   </div>
 </template>
 <script>
 import pageTitle from '../components/pageTitle'
-import { cartData, cartDel, cartUpdate, updateSelected, selectSettle } from '@/api/cart'
+import {
+  cartData,
+  cartDel,
+  cartUpdate,
+  updateSelected,
+  selectSettle
+} from '@/api/cart'
 export default {
   components: {
     pageTitle
@@ -284,9 +305,9 @@ export default {
             skuId: 260,
             quantity: 11, // 购买数量
             skuName:
-							'货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称', // 货品名称
+              '货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称', // 货品名称
             skuImg:
-							'https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-36350aae.jpg', // 货品图片
+              'https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-36350aae.jpg', // 货品图片
             skuSpec: [
               {
                 specName: '规格名称',
@@ -305,7 +326,7 @@ export default {
             quantity: 11, // 购买数量
             skuName: '库存不足库存不足库存不足库存不足', // 货品名称
             skuImg:
-							'https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-363c59550aae.jpg', // 货品图片
+              'https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-363c59550aae.jpg', // 货品图片
             skuSpec: [
               {
                 specName: '规格名称',
@@ -324,7 +345,7 @@ export default {
             quantity: 11, // 购买数量
             skuName: '货品已下架货品已下架货品已下架', // 货品名称
             skuImg:
-							'https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-363c59550aae.jpg', // 货品图片
+              'https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-363c59550aae.jpg', // 货品图片
             skuSpec: [
               {
                 specName: '规格名称',
@@ -342,9 +363,9 @@ export default {
             skuId: 260,
             quantity: 11, // 购买数量
             skuName:
-							'货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称', // 货品名称
+              '货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称', // 货品名称
             skuImg:
-							'https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-363c59550aae.jpg', // 货品图片
+              'https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-363c59550aae.jpg', // 货品图片
             skuSpec: [
               {
                 specName: '规格名称',
@@ -362,9 +383,9 @@ export default {
             skuId: 260,
             quantity: 11, // 购买数量
             skuName:
-							'货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称', // 货品名称
+              '货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称', // 货品名称
             skuImg:
-							'https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-363c59550aae.jpg', // 货品图片
+              'https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-363c59550aae.jpg', // 货品图片
             skuSpec: [
               {
                 specName: '规格名称',
@@ -435,24 +456,30 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(async() => {
-        const a_shoppingCartCode = obj.row.shoppingCartCode.replace(/^\"|\"$/g, '')
-        const json = { shoppingCartIds: a_shoppingCartCode }
-        const res = await cartDel(json)
-        if (res.status === 200) {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-          this.renderData()
-        }
-      }).catch((err) => {
-        console.log(err)
       })
+        .then(async() => {
+          const a_shoppingCartCode = obj.row.shoppingCartCode.replace(
+            /^\"|\"$/g,
+            ''
+          )
+          const json = { shoppingCartIds: a_shoppingCartCode }
+          const res = await cartDel(json)
+          if (res.status === 200) {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.renderData()
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
     // 批量删除
     delectMore(list, titleNum) {
-      const title = titleNum == 1 ? '确定删除所有选中商品？' : '确定清空所有失效商品？'
+      const title =
+        titleNum == 1 ? '确定删除所有选中商品？' : '确定清空所有失效商品？'
       const arrSelect = list
       if (arrSelect.length === 0) {
         this.$message({
@@ -464,26 +491,28 @@ export default {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(async() => {
-          let arr_shoppingCartCode = ''
-          arrSelect.forEach(item => {
-            arr_shoppingCartCode += item.shoppingCartCode + ','
-          })
-          const json = { shoppingCartIds: arr_shoppingCartCode }
-          const res = await cartDel(json)
-          if (res.status == 200) {
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
-            })
-            this.renderData()
-          }
-        }).catch((err) => {
-          this.$message({
-            type: 'info',
-            message: '删除失败'
-          })
         })
+          .then(async() => {
+            let arr_shoppingCartCode = ''
+            arrSelect.forEach(item => {
+              arr_shoppingCartCode += item.shoppingCartCode + ','
+            })
+            const json = { shoppingCartIds: arr_shoppingCartCode }
+            const res = await cartDel(json)
+            if (res.status == 200) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+              this.renderData()
+            }
+          })
+          .catch(err => {
+            this.$message({
+              type: 'info',
+              message: '删除失败'
+            })
+          })
       }
     },
     selectData(val, row) {
@@ -522,8 +551,7 @@ export default {
           cartListLength++
         }
       })
-      this.isIndeterminate =
-				val.length > 0 && val.length < cartListLength
+      this.isIndeterminate = val.length > 0 && val.length < cartListLength
       this.checkAll = val.length === cartListLength
 
       this.totalPrice()
@@ -548,7 +576,7 @@ export default {
     selectAllFun(val) {
       console.log(val)
       if (val) {
-        this.cartList.forEach((e) => {
+        this.cartList.forEach(e => {
           if (!e['disabled']) {
             this.$refs.cartList.toggleRowSelection(e, true)
           }
@@ -572,10 +600,10 @@ export default {
     },
 
     // 修改购物车
-	 async	changeQuantity(currentValue, oldValue, item) {
-		 const obj = item.row
-		 let timer = null
-		 if ((obj['moq']) && (obj.quantity < obj['moq'] && currentValue < oldValue)) {
+    async changeQuantity(currentValue, oldValue, item) {
+      const obj = item.row
+      let timer = null
+      if (obj['moq'] && obj.quantity < obj['moq'] && currentValue < oldValue) {
         timer = setTimeout(() => {
           this.$message({
             type: 'info',
@@ -585,27 +613,29 @@ export default {
         }, 0)
 
         return false
-		 } else if ((obj['stock']) && (obj['stock'] < obj.quantity && currentValue > oldValue)) {
+      } else if (
+        obj['stock'] &&
+        obj['stock'] < obj.quantity &&
+        currentValue > oldValue
+      ) {
         timer = setTimeout(() => {
           this.$message({
             type: 'info',
             message: '库存不足！'
-
           })
           this.$set(this.cartList[item.$index], 'quantity', oldValue)
         }, 0)
-		 } else {
-			 if (timer) {
-				 clearTimeout(timer)
-			 }
-			 const shoppingCartCode = this.delstr(obj.shoppingCartCode)
-			 const skuId = this.delstr(obj.skuId)
-			 	const json = {
+      } else {
+        if (timer) {
+          clearTimeout(timer)
+        }
+        const shoppingCartCode = this.delstr(obj.shoppingCartCode)
+        const skuId = this.delstr(obj.skuId)
+        const json = {
           buyAmount: obj.quantity,
           selected: obj.selected,
           shoppingCartId: shoppingCartCode,
           skuId: skuId
-
         }
         const res = await cartUpdate(json)
         if (res.status == 200) {
@@ -622,25 +652,30 @@ export default {
     },
 
     selectInit(row, index) {
-      if (row.moq > row.quantity || row.quantity > row.stock || !row.stock || !row.moq) {
+      if (
+        row.moq > row.quantity ||
+        row.quantity > row.stock ||
+        !row.stock ||
+        !row.moq
+      ) {
         this.cartList[index].disabled = 1
         return false // 不可勾选
       } else {
-        return true// 可勾选
+        return true // 可勾选
       }
     },
 
     // 结算
     async submit() {
       let json = {
-        'buyAmount': 0,
-        'cargoId': 0,
-        'goodsId': 0,
-        'shoppingCartId': 0,
-        'unitPrice': 0,
-        'currencySymbol': '￥',
-        'appId': '',
-        'templateId': ''
+        buyAmount: 0,
+        cargoId: 0,
+        goodsId: 0,
+        shoppingCartId: 0,
+        unitPrice: 0,
+        currencySymbol: '￥',
+        appId: '',
+        templateId: ''
       }
 
       const arr = []
@@ -654,14 +689,14 @@ export default {
           btnDis = true
         }
         json = {
-          'quantity': item.quantity,
-          'skuId': this.delstr(item.skuId),
-          'productId': this.delstr(item.productId),
-          'shoppingCartCode': this.delstr(item.shoppingCartCode),
-          'skuPrice': item.skuPrice,
-          'currencySymbol': item.currency,
-          'appId': item.appId,
-          'templateId': item.templateId
+          quantity: item.quantity,
+          skuId: this.delstr(item.skuId),
+          productId: this.delstr(item.productId),
+          shoppingCartCode: this.delstr(item.shoppingCartCode),
+          skuPrice: item.skuPrice,
+          currencySymbol: item.currency,
+          appId: item.appId,
+          templateId: item.templateId
         }
         arr.push(json)
       })
@@ -710,7 +745,14 @@ export default {
             appId += item.appId + ','
             templateId += temp || null + ','
           })
-          this.$router.push({ path: '/settlement', query: { shoppingCartIds: dataIDs, appId: appId, templateId: templateId }})
+          this.$router.push({
+            path: '/settlement',
+            query: {
+              shoppingCartIds: dataIDs,
+              appId: appId,
+              templateId: templateId
+            }
+          })
           break
       }
 
@@ -727,128 +769,127 @@ export default {
     backHome() {
       window.location.href = window.location.origin
     }
-
   }
 }
 </script>
 <style>
 .checkboxTd .cell {
-	padding: 0 10px;
+  padding: 0 10px;
 }
 .unvalidTable .checkboxTd .cell {
-	padding: 0;
+  padding: 0;
 }
 .productTable {
-	color: #000;
+  color: #000;
 }
 .productTable .el-table__header-wrapper th {
-	background: #f0f0f0;
+  background: #f0f0f0;
 }
-.is-disabledmin .el-input-number__decrease,.is-disabledmax .el-input-number__increase{
-	border-color: #E4E7ED;
-    color: #E4E7ED;
-	cursor: no-drop;
+.is-disabledmin .el-input-number__decrease,
+.is-disabledmax .el-input-number__increase {
+  border-color: #e4e7ed;
+  color: #e4e7ed;
+  cursor: no-drop;
 }
 </style>
 <style scoped>
 .strongMark {
-	color: #f56c6c;
-	font-weight: bold;
+  color: #f56c6c;
+  font-weight: bold;
 }
 .cartList {
-	padding: 20px 0;
+  padding: 20px 0;
 }
 .productTable {
-	margin-bottom: 50px;
-	border: 1px solid #eee;
+  margin-bottom: 50px;
+  border: 1px solid #eee;
 }
 .product {
-	position: relative;
-	height: 80px;
+  position: relative;
+  height: 80px;
 }
 .productImg {
-	width: 80px;
-	height: 80px;
-	position: absolute;
-	left: 0;
-	top: 0;
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 .productImg img {
-	display: block;
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .productInfo {
-	padding-left: 100px;
+  padding-left: 100px;
 }
 .title {
-	margin: 0;
-	padding: 0;
-	line-height: 26px;
-	overflow: hidden;
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 2;
+  margin: 0;
+  padding: 0;
+  line-height: 26px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 .spec {
-	margin: 0;
-	padding: 0;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	line-height: 20px;
-	padding-top: 8px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 20px;
+  padding-top: 8px;
 }
 .unvalide {
-	background: #c5c5c5;
-	color: #fff;
-	border-radius: 8px;
-	padding: 2px 5px;
-	font-size: 12px;
+  background: #c5c5c5;
+  color: #fff;
+  border-radius: 8px;
+  padding: 2px 5px;
+  font-size: 12px;
 }
 .selectAll {
-	margin-right: 30px;
-	margin-left: 10px;
+  margin-right: 30px;
+  margin-left: 10px;
 }
 .operate {
-	border: 1px solid #eee;
+  border: 1px solid #eee;
 }
 .plop {
-	float: left;
+  float: left;
 }
 .tjop {
-	float: right;
+  float: right;
 }
 .submitBtn {
-	margin-left: 30px;
-	border-radius: 0;
+  margin-left: 30px;
+  border-radius: 0;
 }
 .totalPrice {
-	padding-left: 30px;
+  padding-left: 30px;
 }
 .noData {
-	min-height: 300px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .empty {
-	padding-left: 110px;
-	position: relative;
+  padding-left: 110px;
+  position: relative;
 }
 .icon {
-	width: 100px;
-	font-size: 76px;
-	color: #409eff;
-	position: absolute;
-	left: 0;
-	top: 0;
+  width: 100px;
+  font-size: 76px;
+  color: #409eff;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
-.span-danger{
-	color: #f56c6c;
-	font-size: 12px;
+.span-danger {
+  color: #f56c6c;
+  font-size: 12px;
 }
 </style>
-
