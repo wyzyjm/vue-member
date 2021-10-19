@@ -6,7 +6,7 @@
           <el-input
             v-model="searchVal"
             class="input_inner"
-            placeholder="商品名称/商品编号/订单号"
+            :placeholder="$t('member_order_list_1')"
           />
           <el-button
             class="get-code-btn"
@@ -35,7 +35,7 @@
             ref="listItem"
             :list="list"
           />
-          <p v-else class="text-center">您还没有相关订单哦~</p>
+          <p v-else class="text-center">{{$t('member_order_list_2')}}</p>
         </el-tab-pane>
       </el-tabs>
       <el-pagination
@@ -63,46 +63,46 @@ export default {
   },
   data() {
     return {
-      title: '我的订单',
+      title: this.$t('member_order_list_3'),
       loading: true,
       searchVal: '',
-      activeName: '全部订单',
+      activeName: this.$t('member_order_list_4'),
       orderCount: {},
       orderType: '',
       tabsIndex: 0,
       tabsArr: [
         {
-          text: '全部订单',
+          text: this.$t('member_order_list_4'),
           type: 0,
           status: null
         },
         {
-          text: '待付款',
+          text: this.$t('member_order_list_5'),
           type: 1,
           status: 10
         },
         {
-          text: '待确认收款',
+          text: this.$t('member_order_list_6'),
           type: 2,
           status: 20
         },
         {
-          text: '待发货',
+          text: this.$t('member_order_list_7'),
           type: 3,
           status: 30
         },
         {
-          text: '待收货',
+          text: this.$t('member_order_list_8'),
           type: 4,
           status: 40
         },
         {
-          text: '已完成',
+          text: this.$t('member_order_list_9'),
           type: 5,
           status: 50
         },
         {
-          text: '已取消',
+          text: this.$t('member_order_list_10'),
           type: 6,
           status: 60
         }
@@ -134,7 +134,7 @@ export default {
         this.initorderStatus()
       }).catch(error => {
         this.loading = false
-        console.log('请求失败', error)
+        console.log(this.$t('member_order_list_11'), error)
       })
     },
     initorderStatus() {
@@ -143,7 +143,7 @@ export default {
         this.loading = false
       }).catch(error => {
         this.loading = false
-        console.log('请求失败', error)
+        console.log(this.$t('member_order_list_11'), error)
       })
     },
     // tab事件
@@ -160,7 +160,7 @@ export default {
     },
     // 监听页码 变化
     handleCurrentChange(val) {
-      console.log(`当前页:${val}`)
+      console.log(this.$t('member_order_list_12', [val]))
       this.currentPage = val
       this.initList()
     },

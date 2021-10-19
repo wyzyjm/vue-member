@@ -1,7 +1,7 @@
 <template>
   <div class="app-container collection">
     <!-- 头部 开始-->
-    <PageTitle pagetitle="我的收藏" />
+    <PageTitle :pagetitle="$t('member_collection_index_1')" />
     <!-- 头部 结束-->
 
     <!-- 主体区 开始 -->
@@ -19,9 +19,7 @@
           >
             <!-- 内容区 开始 -->
             <!-- 无内容提示 -->
-            <div v-if="total === 0" class="no-content-tip">
-              您还没有收藏过任何内容哦！
-            </div>
+            <div v-if="total === 0" class="no-content-tip">{{$t('member_collection_index_2')}}</div>
 
             <!-- 有内容 -->
             <ul v-else class="content">
@@ -40,17 +38,15 @@
                   class="cancel"
                   :class="{ dn: isBatch }"
                   @click="aloneCancelCollect(item.id)"
-                >
-                  取消收藏
-                </div>
+                >{{$t('member_collection_index_3')}}</div>
                 <!-- 内容状态 -->
                 <div v-if="item.status !== 0" class="status">
                   <!-- 已下架 -->
-                  <div v-if="item.status === 1">已下架</div>
+                  <div v-if="item.status === 1">{{$t('member_collection_index_4')}}</div>
                   <!-- 无货 -->
-                  <div v-else-if="item.status === 2">无货</div>
+                  <div v-else-if="item.status === 2">{{$t('member_collection_index_5')}}</div>
                   <!-- 已下架 -->
-                  <div v-else>已删除</div>
+                  <div v-else>{{$t('member_collection_index_6')}}</div>
                 </div>
                 <!-- 链接内容 -->
                 <a :href="item.href">
@@ -92,21 +88,20 @@
             size="mini"
             plain
             @click="batchOperate"
-          >
-            批量操作</el-button>
+          >{{$t('member_collection_index_7')}}</el-button>
           <!-- 全选 -->
           <el-checkbox
             v-show="isBatch"
             v-model="allChecked"
             @change="allCheckedFn"
-          >全选</el-checkbox>
+          >{{$t('member_collection_index_8')}}</el-checkbox>
           <!-- 取消收藏 文本按钮 -->
           <el-button
             v-show="isBatch"
             type="text"
             class="cancel-btn"
             @click="cancelCollect"
-          >取消收藏</el-button>
+          >{{$t('member_collection_index_3')}}</el-button>
           <!-- 取消按钮 -->
           <el-button
             v-show="isBatch"
@@ -114,7 +109,7 @@
             plain
             size="mini"
             @click="cancelBatchOperate"
-          >取消操作</el-button>
+          >{{$t('member_collection_index_9')}}</el-button>
         </div>
       </div>
       <!-- 功能 + 内容区 结束 -->
@@ -134,7 +129,7 @@
     </div>
     <!-- 主体区 结束 -->
 
-    <!-- <el-button type="primary" @click="addCollectionFn">添加收藏</el-button> -->
+    <!-- <el-button type="primary" @click="addCollectionFn">{{$t('member_collection_index_10')}}</el-button> -->
   </div>
 </template>
 <script>
@@ -177,7 +172,7 @@ export default {
         {
           id: 23245,
           userId: 34567,
-          collectName: '产品收藏',
+          collectName: this.$t('member_collection_index_11'),
           collectType: 'product'
         }
       ]
@@ -207,7 +202,7 @@ export default {
         this.isLoading = false // 取消loading效果
       } catch (error) {
         this.isLoading = false
-        console.log('请求失败', error)
+        console.log(this.$t('member_collection_index_12'), error)
       }
     },
     // 取消收藏

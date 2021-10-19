@@ -1,8 +1,7 @@
 <template>
   <div>
     <span v-for="(item, index) in list" :key="index" class="act_item">
-      <svg-icon name="icon-shijian" />剩余{{ item.djs }}
-    </span>
+      <svg-icon name="icon-shijian" />{{$t('member_order_components_count_down_1', [ item.djs ])}}</span>
   </div>
 </template>
 
@@ -11,7 +10,7 @@ function InitTime(endtime) {
   var dd, hh, mm, ss = null
   var time = parseInt(endtime)
   if (time <= 0) {
-    return '0秒'
+    return this.$t('member_order_components_count_down_2')
   } else {
     dd = Math.floor(time / 60 / 60 / 24)
     hh = Math.floor((time / 60 / 60) % 24)
@@ -19,13 +18,13 @@ function InitTime(endtime) {
     ss = Math.floor(time % 60)
     var str = ''
     if (dd >= 1) {
-      str = dd + '天' + hh + '时' + mm + '分' + ss + '秒'
+      str = dd + this.$t('member_order_components_count_down_3') + hh + this.$t('member_order_components_count_down_4') + mm + this.$t('member_order_components_count_down_5') + ss + this.$t('member_order_components_count_down_6')
     } else if (hh >= 1) {
-      str = hh + '时' + mm + '分' + ss + '秒'
+      str = hh + this.$t('member_order_components_count_down_4') + mm + this.$t('member_order_components_count_down_5') + ss + this.$t('member_order_components_count_down_6')
     } else if (mm >= 1) {
-      str = mm + '分' + ss + '秒'
+      str = mm + this.$t('member_order_components_count_down_5') + ss + this.$t('member_order_components_count_down_6')
     } else if (ss >= 1) {
-      str = ss + '秒'
+      str = ss + this.$t('member_order_components_count_down_6')
     }
     return str
   }
@@ -73,16 +72,16 @@ export default {
           var mm = Math.floor((rightTime / 60) % 60)
           var ss = Math.floor(rightTime % 60)
           if (dd >= 1) {
-            this.list[key]['djs'] = dd + '天' + hh + '时' + mm + '分' + ss + '秒'
+            this.list[key]['djs'] = dd + this.$t('member_order_components_count_down_3') + hh + this.$t('member_order_components_count_down_4') + mm + this.$t('member_order_components_count_down_5') + ss + this.$t('member_order_components_count_down_6')
           } else if (hh >= 1) {
-            this.list[key]['djs'] = hh + '时' + mm + '分' + ss + '秒'
+            this.list[key]['djs'] = hh + this.$t('member_order_components_count_down_4') + mm + this.$t('member_order_components_count_down_5') + ss + this.$t('member_order_components_count_down_6')
           } else if (mm >= 1) {
-            this.list[key]['djs'] = mm + '分' + ss + '秒'
+            this.list[key]['djs'] = mm + this.$t('member_order_components_count_down_5') + ss + this.$t('member_order_components_count_down_6')
           } else if (ss >= 1) {
-            this.list[key]['djs'] = ss + '秒'
+            this.list[key]['djs'] = ss + this.$t('member_order_components_count_down_6')
           }
         } else {
-          this.list[key]['djs'] = '0秒'
+          this.list[key]['djs'] = this.$t('member_order_components_count_down_2')
         }
         this.list[key]['time'] = rightTime
       }

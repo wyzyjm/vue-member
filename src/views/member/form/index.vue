@@ -1,7 +1,5 @@
 <template>
-  <div class="app-container">
-      我的表订单
-  </div>
+  <div class="app-container">{{$t('member_form_index_1')}}</div>
 </template>
 <script>
 export default {

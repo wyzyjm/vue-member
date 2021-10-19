@@ -7,24 +7,20 @@
 
     <!-- 订单编号、按钮 -->
     <div class="order-type">
-      <div>
-        订单号：{{ data.orderNumber }}
-        <el-button
+      <div>{{$t('member_order_detail_1', [ data.orderNumber ])}}<el-button
           id="orderNum"
           type="text"
           :data-clipboard-text="data.orderNumber"
           @click="copy"
-          >复制</el-button
+          >{{$t('member_order_detail_2')}}</el-button
         >
       </div>
       <div
         v-if="data.orderStatus == 10 && data.forever === 0"
         class="col-danger"
       >
-        <SvgIcon name="icon-shijian" />剩余{{ dataTime }}
-      </div>
-      <div>
-        订单状态：<span
+        <SvgIcon name="icon-shijian" />{{$t('member_order_detail_3', [ dataTime ])}}</div>
+      <div>{{$t('member_order_detail_4')}}<span
           class="font-20"
           :class="{
             'col-danger': data.orderStatus < 50,
@@ -38,33 +34,33 @@
           v-if="data.orderStatus == 10 || data.orderStatus == 20"
           type="text"
           @click.prevent="cancelOrder"
-          >取消订单</el-button
+          >{{$t('member_order_detail_5')}}</el-button
         >
         <el-button
           v-if="data.electronicInvoice"
           type="primary"
           plain
           @click="dialogTableVisible = true"
-          >查看发票信息</el-button
+          >{{$t('member_order_detail_6')}}</el-button
         >
         <el-button
           v-if="data.orderStatus == 10"
           type="primary"
           plain
           @click="showDialog('edit')"
-          >修改地址</el-button
+          >{{$t('member_order_detail_7')}}</el-button
         >
         <el-button
           v-if="data.orderStatus == 10"
           type="primary"
           @click="payOrder"
-          >付款</el-button
+          >{{$t('member_order_detail_8')}}</el-button
         >
         <el-button
           v-if="data.orderStatus == 40"
           type="primary"
           @click="confirmOrder"
-          >确认收货</el-button
+          >{{$t('member_order_detail_9')}}</el-button
         >
       </div>
     </div>
@@ -77,16 +73,16 @@
       }"
     >
       <li class="detail-item">
-        <p class="title" v-show="data.goodsList[0].formJson == 'null'">收货人信息</p>
+        <p class="title" v-show="data.goodsList[0].formJson == 'null'">{{$t('member_order_detail_10')}}</p>
         <div class="item-list" v-if="data.goodsList[0].formJson == 'null'">
           
           <p v-if="data.consigneeInfo.consigneeName" class="consignee">
-            <span>收货人：</span
+            <span>{{$t('member_order_detail_11')}}</span
             ><span>{{ data.consigneeInfo.consigneeName }}</span>
           </p>
           <div :class="{ reverse: data.consigneeInfo.reverseFlag }">
             <p v-if="data.consigneeInfo.consigneeProvince" class="consignee">
-              <span>所在地区：</span
+              <span>{{$t('member_order_detail_12')}}</span
               ><span>
                 {{
                   getAddress(
@@ -100,12 +96,12 @@
               >
             </p>
             <p v-if="data.consigneeInfo.consigneeAddr" class="consignee mb-10">
-              <span>详细地址：</span
+              <span>{{$t('member_order_detail_13')}}</span
               ><span>{{ data.consigneeInfo.consigneeAddr }}</span>
             </p>
           </div>
           <p v-if="data.consigneeInfo.consigneePhone" class="consignee">
-            <span>手机号码：</span
+            <span>{{$t('member_order_detail_14')}}</span
             ><span
               >{{
                 data.consigneeInfo.consigneePhoneHead.substring(
@@ -116,7 +112,7 @@
             >
           </p>
           <p v-if="data.consigneeInfo.consigneeTel" class="consignee">
-            <span>固定电话：</span
+            <span>{{$t('member_order_detail_15')}}</span
             ><span
               >{{
                 data.consigneeInfo.consigneeTelHead.substring(
@@ -126,12 +122,12 @@
             >
           </p>
           <p v-if="data.consigneeInfo.consigneeZipCode" class="consignee">
-            <span>邮政编码：</span
+            <span>{{$t('member_order_detail_16')}}</span
             ><span>{{ data.consigneeInfo.consigneeZipCode }}</span>
           </p>
         </div>
         <div v-else>
-          <p class="title">表单信息</p>
+          <p class="title">{{$t('member_order_detail_17')}}</p>
           <div
             v-for="(tableItem, tableIndex) in formJson.subForm"
             :key="tableIndex + 'table'"
@@ -161,7 +157,7 @@
         </div>
       </li>
       <li v-if="data.payInfo" class="detail-item">
-        <p class="title">支付信息</p>
+        <p class="title">{{$t('member_order_detail_18')}}</p>
         <div
           class="item-list display-flex"
           :style="{
@@ -169,8 +165,7 @@
             'margin-top': data.goodsList[0].formJson == 'null' ? '20px' : '-10px',
           }"
         >
-          <p class="pr-10">
-            支付方式：<i class="col-grey-6">{{
+          <p class="pr-10">{{$t('member_order_detail_19')}}<i class="col-grey-6">{{
               data.payInfo.paymentTypeName
                 ? data.payInfo.paymentTypeName
                 : data.payInfo.payModeName
@@ -196,7 +191,7 @@
               class="slot-content"
             >
               <p class="payInfo-item">
-                <span>交易号：</span
+                <span>{{$t('member_order_detail_20')}}</span
                 ><span>{{
                   JSON.parse(data.payInfo.payOnline.tradeNo).tradeNo
                 }}</span>
@@ -276,7 +271,7 @@
               </p>
             </div>
             <el-button slot="reference" type="text" class="mt5"
-              >支付信息<SvgIcon name="icon-xia"
+              >{{$t('member_order_detail_18')}}<SvgIcon name="icon-xia"
             /></el-button>
           </el-popover>
         </div>
@@ -285,10 +280,10 @@
         v-if="data.logisticsInfo && data.goodsList[0].formJson == 'null'"
         class="detail-item"
       >
-        <p class="title">物流信息</p>
+        <p class="title">{{$t('member_order_detail_21')}}</p>
         <div class="item-list">
           <p v-if="data.logisticsInfo.distribution" class="consignee">
-            <span>配送方式：</span
+            <span>{{$t('member_order_detail_22')}}</span
             ><span>{{ data.logisticsInfo.distribution }}</span>
           </p>
           <p
@@ -296,11 +291,11 @@
             class="consignee"
             :datatype="data.logisticsInfo.courierCompanyCode"
           >
-            <span>快递公司：</span
+            <span>{{$t('member_order_detail_23')}}</span
             ><span>{{ data.logisticsInfo.courierCompany }}</span>
           </p>
           <p v-if="data.logisticsInfo.trackingNumber" class="consignee">
-            <span>运单号：</span
+            <span>{{$t('member_order_detail_24')}}</span
             ><span>{{ data.logisticsInfo.trackingNumber }}</span>
           </p>
           <p
@@ -308,7 +303,7 @@
             v-show="false"
             class="consignee"
           >
-            <span>物流查询：</span
+            <span>{{$t('member_order_detail_25')}}</span
             ><a
               target="_blank"
               :href="data.logisticsInfo.queryUrl"
@@ -322,7 +317,7 @@
 
     <!-- 商品清单 -->
     <div class="border">
-      <p class="title">商品清单/结算信息</p>
+      <p class="title">{{$t('member_order_detail_26')}}</p>
       <div class="product-list">
         <ProductList
           :product-list="data.goodsList"
@@ -330,23 +325,14 @@
         />
         <div class="message-board">
           <div>
-            <p v-if="data.sellerMsg">给卖家留言：</p>
+            <p v-if="data.sellerMsg">{{$t('member_order_detail_27')}}</p>
             <p v-if="data.sellerMsg" id="sellerMsg">{{ data.sellerMsg }}</p>
           </div>
           <div class="message-pay">
-            <p>
-              共 <span class="col-danger font-20">{{ inTotal }}</span> 件商品
-            </p>
-            <p class="col-grey-6">
-              商品总额： {{ data.currencySymbol }} {{ data.totalAmount }}
-            </p>
-            <p class="col-grey-6">
-              运费总计： {{ data.currencySymbol }}
-              {{ data.freight ? data.freight : 0 }}
-            </p>
-            <p class="col-danger font-20">
-              实付金额：
-              <span class="font-bold"
+            <p>{{$t('member_order_detail_28')}}<span class="col-danger font-20">{{ inTotal }}</span>{{$t('member_order_detail_29')}}</p>
+            <p class="col-grey-6">{{$t('member_order_detail_30', [ data.currencySymbol , data.totalAmount ])}}</p>
+            <p class="col-grey-6">{{$t('member_order_detail_31', [ data.currencySymbol , data.freight ? data.freight : 0 ])}}</p>
+            <p class="col-danger font-20">{{$t('member_order_detail_32')}}<span class="font-bold"
                 >{{ data.currencySymbol }} {{ data.sumPayable }}</span
               >
             </p>
@@ -365,25 +351,25 @@
     <el-dialog
       v-if="data.electronicInvoice"
       center
-      title="发票信息"
+      :title="$t('member_order_detail_33')"
       width="500px"
       :visible.sync="dialogTableVisible"
     >
       <div class="invoice">
         <p class="invoice-item">
-          <span>发票抬头</span
+          <span>{{$t('member_order_detail_34')}}</span
           ><span>{{ data.electronicInvoice.invoiceTitle }}</span>
         </p>
         <p v-if="data.electronicInvoice.invoiceType === 2" class="invoice-item">
-          <span>纳税人识别号</span
+          <span>{{$t('member_order_detail_35')}}</span
           ><span>{{ data.electronicInvoice.taxNum }}</span>
         </p>
         <p class="invoice-item">
-          <span>发票内容</span
+          <span>{{$t('member_order_detail_36')}}</span
           ><span>{{ data.electronicInvoice.invoiceContent }}</span>
         </p>
         <p class="invoice-item">
-          <span>收票人手机</span
+          <span>{{$t('member_order_detail_37')}}</span
           ><span
             >{{
               data.electronicInvoice.takerPhoneHead.substring(
@@ -394,7 +380,7 @@
           >
         </p>
         <p v-if="data.electronicInvoice.takerEmail" class="invoice-item">
-          <span>收票人邮箱</span
+          <span>{{$t('member_order_detail_38')}}</span
           ><span>{{ data.electronicInvoice.takerEmail }}</span>
         </p>
         <p
@@ -403,7 +389,7 @@
           "
           class="invoice-item-last"
         >
-          <span>电子发票</span>
+          <span>{{$t('member_order_detail_39')}}</span>
           <span class="invoice-list">
             <a
               v-for="(item, index) in data.electronicInvoice.invoiceDownLinks"
@@ -419,7 +405,7 @@
       <div slot="footer">
         <!-- 取消 -->
         <el-button type="info" size="medium" @click="dialogTableVisible = false"
-          >关闭</el-button
+          >{{$t('member_order_detail_40')}}</el-button
         >
         <!-- 确定 -->
         <el-button
@@ -427,7 +413,7 @@
           type="primary"
           size="medium"
           @click="showReceipt"
-          >修改</el-button
+          >{{$t('member_order_detail_41')}}</el-button
         >
       </div>
     </el-dialog>
@@ -467,7 +453,7 @@ export default {
     return {
       active: 0,
       data: null,
-      title: "订单详情",
+      title: this.$t('member_order_detail_42'),
       loading: true,
       current: {}, // 弹窗传值
       currencySymbol: null,
@@ -485,40 +471,40 @@ export default {
       // 订单状态
       statePayment: {
         10: {
-          type: "待付款",
+          type: this.$t('member_order_detail_43'),
         },
         20: {
-          type: "待确认收款",
+          type: this.$t('member_order_detail_44'),
         },
         30: {
-          type: "待发货",
+          type: this.$t('member_order_detail_45'),
         },
         40: {
-          type: "待收货",
+          type: this.$t('member_order_detail_46'),
         },
         50: {
-          type: "已完成",
+          type: this.$t('member_order_detail_47'),
         },
         60: {
-          type: "已关闭",
+          type: this.$t('member_order_detail_48'),
         },
       },
       stepsList: {
         0: {
           description: null,
-          title: "待发货",
+          title: this.$t('member_order_detail_45'),
         },
         1: {
           description: null,
-          title: "待收货",
+          title: this.$t('member_order_detail_46'),
         },
         2: {
           description: null,
-          title: "已完成",
+          title: this.$t('member_order_detail_47'),
         },
         3: {
           description: null,
-          title: "待确认付款",
+          title: this.$t('member_order_detail_49'),
         },
       },
       formJson: {
@@ -599,7 +585,7 @@ export default {
         })
         .catch((error) => {
           this.loading = false;
-          console.log("请求失败", error);
+          console.log(this.$t('member_order_detail_50'), error);
         });
     },
     // 修改发票弹窗
@@ -637,9 +623,9 @@ export default {
     },
     // 确认收货
     confirmOrder() {
-      this.$confirm("确认收到所有商品？", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
+      this.$confirm(this.$t('member_order_detail_51'), this.$t('member_order_detail_52'), {
+        confirmButtonText: this.$t('member_order_detail_53'),
+        cancelButtonText: this.$t('member_order_detail_54'),
       })
         .then(() => {
           confirmOrder({ orderId: this.data.orderId })
@@ -648,21 +634,21 @@ export default {
               location.reload();
             })
             .catch((error) => {
-              console.log("请求失败", error);
+              console.log(this.$t('member_order_detail_50'), error);
             });
         })
         .catch(() => {
           this.$message({
             type: "info",
-            message: "取消操作",
+            message: this.$t('member_order_detail_55'),
           });
         });
     },
     // 取消订单
     cancelOrder() {
-      this.$confirm("确定取消该订单？", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
+      this.$confirm(this.$t('member_order_detail_56'), this.$t('member_order_detail_52'), {
+        confirmButtonText: this.$t('member_order_detail_53'),
+        cancelButtonText: this.$t('member_order_detail_54'),
       })
         .then(() => {
           cancelOrder({ orderId: this.data.orderId })
@@ -671,13 +657,13 @@ export default {
               location.reload();
             })
             .catch((error) => {
-              console.log("请求失败", error);
+              console.log(this.$t('member_order_detail_50'), error);
             });
         })
         .catch(() => {
           this.$message({
             type: "info",
-            message: "取消操作",
+            message: this.$t('member_order_detail_55'),
           });
         });
     },
@@ -699,7 +685,7 @@ export default {
       const _this = this;
       const clipboard = new ClipboardJS("#orderNum");
       clipboard.on("success", (e) => {
-        _this.$message("复制成功");
+        _this.$message(this.$t('member_order_detail_57'));
         clipboard.destory();
       });
       clipboard.on("error", (e) => {
@@ -732,7 +718,7 @@ export default {
       clearInterval(this.setIntID);
       leftTime = leftTime - this.data.systemTime / 1000;
       if (leftTime <= 0) {
-        this.dataTime = "0秒";
+        this.dataTime = this.$t('member_order_detail_58');
         return;
       }
       this.setIntID = setInterval(() => {
@@ -747,21 +733,24 @@ export default {
         this.minute = this.toDou(parseInt((leftTime / 60) % 60));
         this.seconds = this.toDou(parseInt(leftTime % 60));
         if (this.day >= 1) {
-          this.dataTime = `${this.day}天${this.hour}时${this.minute}分${this.seconds}秒`;
+          this.dataTime = this.$t('member_order_detail_59', [this.day,this.hour,this.minute,this.seconds]);
         } else if (this.hour >= 1) {
-          this.dataTime = `${this.hour}时${this.minute}分${this.seconds}秒`;
+          this.dataTime = this.$t('member_order_detail_60', [this.hour,this.minute,this.seconds]);
         } else if (this.minute >= 1) {
-          this.dataTime = `${this.minute}分${this.seconds}秒`;
+          this.dataTime = this.$t('member_order_detail_61', [this.minute,this.seconds]);
         } else if (this.seconds >= 1) {
-          this.dataTime = `${this.seconds}秒`;
+          this.dataTime = this.$t('member_order_detail_62', [this.seconds]);
         } else {
-          this.dataTime = `0秒`;
+          this.dataTime = this.$t('member_order_detail_58');
         }
       }, 1000);
     },
     // 计算订单总数量
     sumTotal(data) {
-      this.inTotal = data.length;
+      for(let i=0;i<data.length;i++){
+        this.inTotal =+ data[i].quantity;
+      }
+      
     },
     invoiceDownload() {
       const files = this.data.electronicInvoice.invoiceDownLinks

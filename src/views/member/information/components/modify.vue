@@ -14,10 +14,10 @@
           <!-- 昵称 或 姓名 -->
           <el-form-item
             v-if="modifyType === 'name' || modifyType === 'nickName'"
-            :label="modifyType === 'nickName' ? '昵称' : '姓名'"
+            :label="modifyType === 'nickName' ? $t('member_information_components_modify_1') : $t('member_information_components_modify_2')"
             prop="nameValue"
             :rules="[
-              {required:true, message: '姓名必填',trigger:'blur'}
+              {required:true, message: $t('member_information_components_modify_3'),trigger:'blur'}
             ]"
           >
             <el-input v-model="form.nameValue" />
@@ -31,7 +31,7 @@
               :label="selfDefining.attrName"
               prop="modifyData"
               :rules="[
-                {required:selfDefining.required,message:selfDefining.attrName+'必填',trigger:'blur'},
+                {required:selfDefining.required,message:selfDefining.attrName+$t('member_information_components_modify_4'),trigger:'blur'},
                 rules.text
               ]"
             >
@@ -44,7 +44,7 @@
               :label="selfDefining.attrName"
               prop="modifyData"
               :rules="[
-                {required:selfDefining.required, message:selfDefining.attrName+'必填',trigger:'blur'},
+                {required:selfDefining.required, message:selfDefining.attrName+$t('member_information_components_modify_4'),trigger:'blur'},
                 rules.numberic
               ]"
             >
@@ -57,7 +57,7 @@
               :label="selfDefining.attrName"
               prop="modifyData"
               :rules="[
-                {required:selfDefining.required,message:selfDefining.attrName+'必填',trigger:'blur'},
+                {required:selfDefining.required,message:selfDefining.attrName+$t('member_information_components_modify_4'),trigger:'blur'},
                 rules.mobile
               ]"
             >
@@ -70,7 +70,7 @@
               :label="selfDefining.attrName"
               prop="modifyData"
               :rules="[
-                {required:selfDefining.required,message:selfDefining.attrName+'必填',trigger:'blur'},
+                {required:selfDefining.required,message:selfDefining.attrName+$t('member_information_components_modify_4'),trigger:'blur'},
                 rules.phone
               ]"
             >
@@ -83,7 +83,7 @@
               :label="selfDefining.attrName"
               prop="modifyData"
               :rules="[
-                {required:selfDefining.required,message:selfDefining.attrName+'必填',trigger:'blur'},
+                {required:selfDefining.required,message:selfDefining.attrName+$t('member_information_components_modify_4'),trigger:'blur'},
                 rules.email
               ]"
             >
@@ -120,7 +120,7 @@
             <el-input
               v-model="form.modifyData"
               type="textarea"
-              :placeholder="selfDefining.description|| '多行文本'"
+              :placeholder="selfDefining.description|| $t('member_information_components_modify_5')"
             />
           </el-form-item>
 
@@ -150,7 +150,7 @@
             </el-form-item>
             <!-- 下拉单选 -->
             <el-form-item v-if="modifyType === 'selSigle'" :label="selfDefining.attrName">
-              <el-select v-model="form.modifyData" placeholder="请选择">
+              <el-select v-model="form.modifyData" :placeholder="$t('member_information_components_modify_6')">
                 <el-option
                   v-for="item in selfDefining.optionsData"
                   :key="item.key"
@@ -161,7 +161,7 @@
             </el-form-item>
             <!-- 下拉多选 -->
             <el-form-item v-if="modifyType === 'selMulti'" :label="selfDefining.attrName">
-              <el-select v-model="form.type" multiple placeholder="请选择">
+              <el-select v-model="form.type" multiple :placeholder="$t('member_information_components_modify_6')">
                 <el-option
                   v-for="item in selfDefining.optionsData"
                   :key="item.key"
@@ -180,7 +180,7 @@
                     <!-- select选择器 -->
                     <el-select
                       v-model="addrForm.consigneeCountry"
-                      placeholder="请选择国家"
+                      :placeholder="$t('member_information_components_modify_7')"
                       @change="countryChange(addrForm.consigneeCountry)"
                     >
                       <el-option
@@ -212,9 +212,7 @@
           </div>
 
           <!-- 图片集 -->
-          <el-form-item v-else-if="selfDefining.attrType === 'image'" :label="selfDefining.attrName">
-            图片集 待定
-            <!-- <img
+          <el-form-item v-else-if="selfDefining.attrType === 'image'" :label="selfDefining.attrName">{{$t('member_information_components_modify_8')}}<!-- <img
                 v-for="item in selfDefining.optionsData"
                 :key="item.key"
                 :src="item.type"
@@ -226,9 +224,7 @@
           </el-form-item>
 
           <!-- 附件集 -->
-          <el-form-item v-else-if="selfDefining.attrType === 'file'" :label="selfDefining.attrName">
-            附件集 待定
-            <!-- <img
+          <el-form-item v-else-if="selfDefining.attrType === 'file'" :label="selfDefining.attrName">{{$t('member_information_components_modify_9')}}<!-- <img
               v-for="item in selfDefining.optionsData"
               :key="item.key"
               :src="item.type"
@@ -236,11 +232,11 @@
             > -->
           </el-form-item>
 
-          <div v-else>请选择正确的自定义类型</div>
+          <div v-else>{{$t('member_information_components_modify_10')}}</div>
           <!-- 按钮区 -->
           <el-form-item class="align-center">
-            <el-button plain type="primary" @click="off">取消</el-button>
-            <el-button type="primary" @click="onSubmit">保存</el-button>
+            <el-button plain type="primary" @click="off">{{$t('member_information_components_modify_11')}}</el-button>
+            <el-button type="primary" @click="onSubmit">{{$t('member_information_components_modify_12')}}</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -286,7 +282,7 @@ export default {
     // 数字
     var checkNumberic = (rule, value, callback) => {
       if (Number.isNaN(Number(value))) {
-        callback(new Error('请输入数值'))
+        callback(new Error(this.$t('member_information_components_modify_13')))
       } else {
         callback() // 输入正确
       }
@@ -296,7 +292,7 @@ export default {
       if (!value) return callback()
       var mobileReg = /^(((13[0-9]{1})|(14[0-9]{1})|(15[0-9]{1})|(16[0-9]{1})|(17[0-9]{1})|(18[0-9]{1})|(19[0-9]{1}))\d{8})$/
       if (!mobileReg.test(value)) {
-        callback(new Error('请输入正确的手机号'))
+        callback(new Error(this.$t('member_information_components_modify_14')))
       } else {
         callback()
       }
@@ -306,7 +302,7 @@ export default {
       if (!value) return callback()
       var mobileReg = /^(((13[0-9]{1})|(14[0-9]{1})|(15[0-9]{1})|(16[0-9]{1})|(17[0-9]{1})|(18[0-9]{1})|(19[0-9]{1}))\d{8})$/ // 缺少校验规则
       if (!mobileReg.test(value)) {
-        callback(new Error('请输入正确的电话号'))
+        callback(new Error(this.$t('member_information_components_modify_15')))
       } else {
         callback()
       }
@@ -316,7 +312,7 @@ export default {
       if (!value) return callback()
       var mobileReg = /^\s*\w+(?:\.{0,1}[\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\.[a-zA-Z]+\s*$/
       if (!mobileReg.test(value)) {
-        callback(new Error('请输入正确的邮箱'))
+        callback(new Error(this.$t('member_information_components_modify_16')))
       } else {
         callback()
       }
@@ -327,23 +323,23 @@ export default {
       editItem: {
         0: {
           type: 'nickName',
-          name: '昵称'
+          name: this.$t('member_information_components_modify_1')
         },
         1: {
           type: 'name',
-          name: '姓名'
+          name: this.$t('member_information_components_modify_2')
         },
         2: {
           type: 'phone',
-          name: '手机'
+          name: this.$t('member_information_components_modify_17')
         },
         3: {
           type: 'email',
-          name: '邮箱'
+          name: this.$t('member_information_components_modify_18')
         },
         4: {
           type: 'attrName',
-          name: '自定义'
+          name: this.$t('member_information_components_modify_19')
         }
       },
       // 弹窗表单信息
@@ -355,7 +351,7 @@ export default {
       },
       // 表单校验规则
       rules: {
-        text: { max: 128, message: '最大长度128个字符', trigger: 'blur' }, // 文字
+        text: { max: 128, message: this.$t('member_information_components_modify_20'), trigger: 'blur' }, // 文字
         numberic: { validator: checkNumberic, trigger: 'blur' }, // 数值
         mobile: { validator: checkMobile, trigger: 'blur' }, // 手机号
         phone: { validator: checkPhone, trigger: 'blur' }, // 电话
@@ -396,7 +392,7 @@ export default {
       if (this.modifyType !== 'nickName' && this.modifyType !== 'name') {
         headName = this.selfDefining.attrName
       } else {
-        this.modifyType === 'nickName' ? headName = '昵称' : headName = '姓名'
+        this.modifyType === 'nickName' ? headName = this.$t('member_information_components_modify_1') : headName = this.$t('member_information_components_modify_2')
       }
       return headName
     }
@@ -411,7 +407,7 @@ export default {
   },
   // 挂载时
   mounted() {
-    console.log('接收的信息', this.propname, this.selfDefining)
+    console.log(this.$t('member_information_components_modify_21'), this.propname, this.selfDefining)
   },
   methods: {
     // 弹窗关闭
@@ -486,7 +482,6 @@ export default {
             ]
           }
         }
-        console.log('编辑信息-->', subdata)
         if (subdata.name || subdata.nickname || subdata.itemValue[0].value) {
           try {
             const res = await updateMember(subdata)
@@ -494,7 +489,7 @@ export default {
             this.off() // 关闭弹窗
             location.reload() // 页面刷新
           } catch (error) {
-            console.log('请求失败', error)
+            console.log(this.$t('member_information_components_modify_23'), error)
           }
         } else {
           this.off() // 关闭弹窗
@@ -512,7 +507,7 @@ export default {
       const proviceValue = getCurrentData(code) // 获取没有格式化后的省数据
       const provinceFormateValue = addressFormateData(proviceValue) // 格式化 省市区数据
       this.frontData.addressData = provinceFormateValue
-      console.log('此时省市区数据为', this.frontData.addressData)
+      console.log(this.$t('member_information_components_modify_24'), this.frontData.addressData)
     }
   }
 }

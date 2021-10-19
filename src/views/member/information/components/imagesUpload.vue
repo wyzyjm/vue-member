@@ -2,7 +2,7 @@
   <div v-show="value" class="images-upload">
     <div class="vicp-wrap">
       <div class="vicp-header">
-        <span>头像上传</span>
+        <span>{{$t('member_information_components_imagesupload_1')}}</span>
         <span class="vicp-close" @click="off"><i class="vicp-icon4" /></span>
       </div>
       <div class="crop-upload">
@@ -39,11 +39,11 @@
         <el-dialog :visible.sync="dialogVisible">
           <img width="100%" :src="dialogImageUrl" alt="">
         </el-dialog>
-        <p>只支持JPG、PNGBMP,大小不超过3M</p>
+        <p>{{$t('member_information_components_imagesupload_2')}}</p>
       </div>
       <div class="vicp-button">
-        <el-button plain type="primary" @click="off">取消</el-button>
-        <el-button type="primary" @click="onSubmit">保存</el-button>
+        <el-button plain type="primary" @click="off">{{$t('member_information_components_imagesupload_3')}}</el-button>
+        <el-button type="primary" @click="onSubmit">{{$t('member_information_components_imagesupload_4')}}</el-button>
       </div>
     </div>
   </div>
@@ -97,10 +97,10 @@ export default {
       const isJPG = file.type === 'image/jpeg'
       const isLt3M = file.size / 1024 / 1024 < 3
       if (!isJPG) {
-        this.$message('上传头像图片只能是 JPG 格式!')
+        this.$message(this.$t('member_information_components_imagesupload_5'))
       }
       if (!isLt3M) {
-        this.$message('上传头像图片大小不能超过 3MB!')
+        this.$message(this.$t('member_information_components_imagesupload_6'))
       }
       return isJPG && isLt3M
     },

@@ -1,12 +1,10 @@
 <template>
   <div>
     <div class="order-info">
-      <span class="info">
-        订单提交成功，请尽快付款！
-        <!-- 订单号：{{ orderInfo.orderNo }} -->
+      <span class="info">{{$t('payment_components_orderinfo_1')}}<!-- 订单号：{{ orderInfo.orderNo }} -->
       </span>
       <span class="right"
-        >应付金额：<strong class="text-danger" style="font-size: 24px"
+        >{{$t('payment_components_orderinfo_2')}}<strong class="text-danger" style="font-size: 24px"
           >{{ orderInfo.currencySymbol }}{{ orderInfo.amount }}
         </strong></span
       >
@@ -14,9 +12,7 @@
 
     <div class="order-info">
       <template v-if="orderInfo.failureTime !== '0'">
-        <div style="line-height: 40px">
-          请您在
-          <span class="order-timer text-danger">
+        <div style="line-height: 40px">{{$t('payment_components_orderinfo_3')}}<span class="order-timer text-danger">
             <timer
               :endTime="parseInt(freshTime)"
               @timeEnd="
@@ -24,31 +20,27 @@
               "
               v-if="parseInt(freshTime) > 0"
             ></timer>
-          </span>
-          内完成支付，否则订单会被自动取消
-        </div>
+          </span>{{$t('payment_components_orderinfo_4')}}</div>
       </template>
     </div>
     <el-collapse accordion style="margin-top: 20px">
       <el-collapse-item v-for="item in orderItemList" :key="item.orderId">
-        <template slot="title">
-          订单号：<span style="font-weight: 700; margin-right: 30px"
+        <template slot="title">{{$t('payment_components_orderinfo_5')}}<span style="font-weight: 700; margin-right: 30px"
             >{{ item.orderNo }}
           </span>
-          <template v-if="orderItemList.length > 1">
-            支付金额：<span class="text-danger"
+          <template v-if="orderItemList.length > 1">{{$t('payment_components_orderinfo_6')}}<span class="text-danger"
               >{{ orderInfo.currencySymbol }}{{ item.payableTotalAmount }}</span
             >
           </template>
           <span class="text-blue" style="flex: 1; text-align: right"
-            >订单详情</span
+            >{{$t('payment_components_orderinfo_7')}}</span
           >
         </template>
         <p>
           <template v-if="orderDetail.reverseFlag">
             <span
-              >收货地址：{{ orderDetail.consigneeAddr
-              }}{{
+              >{{$t('payment_components_orderinfo_8', [ orderDetail.consigneeAddr
+              ,
                 getAddress(
                   orderDetail.consigneeCountry,
                   orderDetail.consigneeProvince,
@@ -56,13 +48,11 @@
                   orderDetail.consigneeCounty,
                   orderDetail.reverseFlag
                 )
-              }}
-            </span>
+              ])}}</span>
           </template>
           <template v-else>
             <span
-              >收货地址：
-              {{
+              >{{$t('payment_components_orderinfo_9', [
                 getAddress(
                   orderDetail.consigneeCountry,
                   orderDetail.consigneeProvince,
@@ -70,12 +60,10 @@
                   orderDetail.consigneeCounty,
                   orderDetail.reverseFlag
                 )
-              }}
-              {{ orderDetail.consigneeAddr }}
-            </span>
+              , orderDetail.consigneeAddr ])}}</span>
           </template>
 
-          <span style="margin-right:10px">收货人：{{ orderDetail.consigneeName }}</span>
+          <span style="margin-right:10px">{{$t('payment_components_orderinfo_10', [ orderDetail.consigneeName ])}}</span>
           
           <template v-if="orderDetail.consigneePhone !== ''">
             <template v-if="orderDetail.consigneePhoneHead !== undefined">
@@ -97,7 +85,7 @@
           </template>
         </p>
         <div>
-          <span class="product-name-title">商品名称：</span>
+          <span class="product-name-title">{{$t('payment_components_orderinfo_11')}}</span>
           <div class="product-name-list">
             <span v-for="name in item.productName" :key="name">{{ name }}</span>
           </div>

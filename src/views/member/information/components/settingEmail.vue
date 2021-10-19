@@ -8,16 +8,16 @@
     <!-- 中间图标 + 提示 -->
     <div v-show="submitedSuccess" class="step-icon">
       <svg-icon name="icon-anquanzhuye" class="icon" setsize="150" />
-      <p>为确认是您本人操作，请完成身份认证</p>
+      <p>{{$t('member_information_components_settingemail_1')}}</p>
     </div>
     <!-- 设置完成 -->
     <div v-show="!submitedSuccess" class="step-icon">
       <svg-icon name="icon-caozuochenggong" class="icon" setsize="150" />
-      <p>设置完成！</p>
+      <p>{{$t('member_information_components_settingemail_2')}}</p>
       <el-button
         type="primary"
         @click="goHome"
-      >返回首页</el-button>
+      >{{$t('member_information_components_settingemail_3')}}</el-button>
     </div>
     <div v-show="submitedSuccess" class="form-list">
       <!-- 修改邮箱 -->
@@ -26,35 +26,35 @@
         <el-form-item
           v-if="active === 1 || propData.emailType === 0"
           prop="email"
-          label="邮箱"
+          :label="$t('member_information_components_settingemail_4')"
           :rules="[
-            { required: propData.emailType !== 1 ? true : isCheck, message: '请输入邮箱地址', trigger: 'blur' },
-            { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+            { required: propData.emailType !== 1 ? true : isCheck, message: $t('member_information_components_settingemail_5'), trigger: 'blur' },
+            { type: 'email', message: $t('member_information_components_settingemail_6'), trigger: ['blur', 'change'] }
           ]"
         >
-          <el-input v-model="dynamicValidateForm.email" placeholder="请输入新的邮箱地址" />
+          <el-input v-model="dynamicValidateForm.email" :placeholder="$t('member_information_components_settingemail_7')" />
         </el-form-item>
         <!-- 有邮箱时 -->
-        <el-form-item v-else label="邮箱">
+        <el-form-item v-else :label="$t('member_information_components_settingemail_4')">
           <span>{{ propData.email }}</span>
         </el-form-item>
         <!-- 验证码 -->
         <el-form-item
-          label="验证码"
+          :label="$t('member_information_components_settingemail_8')"
           prop="yzm"
           class="item-get-code"
           :rules="{
-            required: true, message: '验证码不能为空', trigger: 'blur'
+            required: true, message: $t('member_information_components_settingemail_9'), trigger: 'blur'
           }"
         >
-          <el-input v-model="dynamicValidateForm.yzm" autocomplete="off" placeholder="邮箱验证码" />
+          <el-input v-model="dynamicValidateForm.yzm" autocomplete="off" :placeholder="$t('member_information_components_settingemail_10')" />
           <el-button class="get-code-btn" @click="getVerfyCode">{{ btnText }}</el-button>
         </el-form-item>
         <!-- 取消 下一步 提交 -->
         <el-form-item class="item-btn">
-          <el-button @click="goHome">取消</el-button>
-          <el-button v-show="!hasSubmited" type="primary" @click="next('dynamicValidateForm')">下一步</el-button>
-          <el-button v-show="active === 1" type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
+          <el-button @click="goHome">{{$t('member_information_components_settingemail_11')}}</el-button>
+          <el-button v-show="!hasSubmited" type="primary" @click="next('dynamicValidateForm')">{{$t('member_information_components_settingemail_12')}}</el-button>
+          <el-button v-show="active === 1" type="primary" @click="submitForm('dynamicValidateForm')">{{$t('member_information_components_settingemail_13')}}</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -97,7 +97,7 @@ export default {
       submitedSuccess: true,
       isConsistent: false, // 密码是否一致
       isGetVerfyCode: true,
-      btnText: '获取验证码',
+      btnText: this.$t('member_information_components_settingemail_14'),
       btnDisabled: false,
       isCheck: false,
       isCheckYzm: false,
@@ -105,11 +105,11 @@ export default {
         0: {
           list: [
             {
-              title: '绑定邮箱',
+              title: this.$t('member_information_components_settingemail_15'),
               description: ''
             },
             {
-              title: '绑定成功',
+              title: this.$t('member_information_components_settingemail_16'),
               description: ''
             }
           ]
@@ -117,15 +117,15 @@ export default {
         1: {
           list: [
             {
-              title: '验证身份',
+              title: this.$t('member_information_components_settingemail_17'),
               description: ''
             },
             {
-              title: '更换邮箱',
+              title: this.$t('member_information_components_settingemail_18'),
               description: ''
             },
             {
-              title: '更换成功',
+              title: this.$t('member_information_components_settingemail_19'),
               description: ''
             }
           ]
@@ -133,11 +133,11 @@ export default {
         2: {
           list: [
             {
-              title: '验证身份',
+              title: this.$t('member_information_components_settingemail_17'),
               description: ''
             },
             {
-              title: '解绑成功',
+              title: this.$t('member_information_components_settingemail_20'),
               description: ''
             }
           ]
@@ -166,14 +166,13 @@ export default {
               email: this.dynamicValidateForm.email,
               verifyCode: this.dynamicValidateForm.yzm
             }
-            console.log('bingling参数', data)
             bingling(data).then(res => {
-              res.data.code && res.data.code === '1001001022' && this.$message('此邮箱已存在!')
+              res.data.code && res.data.code === '1001001022' && this.$message(this.$t('member_information_components_settingemail_22'))
               if (res.data === 1) {
                 this.onSubmit()
               }
             }).catch(error => {
-              console.log('请求失败', error)
+              console.log(this.$t('member_information_components_settingemail_23'), error)
             })
           }
         } else {
@@ -185,7 +184,7 @@ export default {
     next(formName) {
       // 验证码 为空时
       if (this.dynamicValidateForm.yzm === '') {
-        this.$message('验证码不能为空！')
+        this.$message(this.$t('member_information_components_settingemail_24'))
         return
       }
       // 表单校验
@@ -202,11 +201,11 @@ export default {
           unbundling(data).then(res => { // 解除绑定
             this.$message(res.data.errorMsg ? res.data.errorMsg : res.msg)
             if (res.data === 1) {
-              this.$message.success('解绑成功！')
+              this.$message.success(this.$t('member_information_components_settingemail_25'))
               this.goHome()
             }
           }).catch(error => {
-            console.log('请求失败', error)
+            console.log(this.$t('member_information_components_settingemail_23'), error)
           })
         } else if (this.propData.emailType === 0) {
           //  修改邮箱提交
@@ -216,18 +215,17 @@ export default {
             email: this.dynamicValidateForm.email,
             verifyCode: this.dynamicValidateForm.yzm
           }
-          console.log('bingling参数', data)
           bingling(data).then(res => {
             this.$message(res.data.errorMsg ? res.data.errorMsg : res.msg)
             if (res.data === 1) {
               this.onSubmit()
             }
           }).catch(error => {
-            console.log('请求失败', error)
+            console.log(this.$t('member_information_components_settingemail_23'), error)
           })
         } else {
           if (!this.isCheckYzm) {
-            this.$message('验证失败！')
+            this.$message(this.$t('member_information_components_settingemail_26'))
             return
           }
           this.checkCode()
@@ -242,7 +240,7 @@ export default {
     getVerfyCode() {
       // 更换邮箱 & 第二步骤 & 页面没有邮箱
       if (this.propData.emailType === 1 && this.active === 1 && this.dynamicValidateForm.email === '') {
-        this.$message('请输入您的邮箱！')
+        this.$message(this.$t('member_information_components_settingemail_27'))
         return
       }
       this.queryData()
@@ -264,29 +262,29 @@ export default {
           bizType: this.propData.type
         }
       }
-      console.log('获取验证码传参', data)
+      console.log(this.$t('member_information_components_settingemail_28'), data)
       generateCode(data).then(res => {
         if (res.data) {
           this.isCheckYzm = true
           if (this.btnDisabled) return
           this.btnDisabled = true
-          this.btnText = '60s后重新获取'
+          this.btnText = this.$t('member_information_components_settingemail_29')
           let count = 60
           this.setIntID = setInterval(() => {
             count--
             if (count === 0) {
               clearInterval(this.setIntID)
-              this.btnText = '重获验证码'
+              this.btnText = this.$t('member_information_components_settingemail_30')
               this.btnDisabled = false
               return
             }
-            this.btnText = count < 10 ? `0${count}s后重新获取` : `${count}s后重新获取`
+            this.btnText = count < 10 ? this.$t('member_information_components_settingemail_31', [count]) : this.$t('member_information_components_settingemail_32', [count])
           }, 1000)
         } else {
-          this.$message('发送失败，请稍后重试！')
+          this.$message(this.$t('member_information_components_settingemail_33'))
         }
       }).catch(error => {
-        console.log('请求失败', error)
+        console.log(this.$t('member_information_components_settingemail_23'), error)
       })
     },
 
@@ -297,7 +295,7 @@ export default {
         console.log('2')
         if (this.active++ >= 0) this.hasSubmited = true
         clearInterval(this.setIntID)
-        this.btnText = '获取验证码'
+        this.btnText = this.$t('member_information_components_settingemail_14')
         this.btnDisabled = false
         this.isCheck = true
         this.dynamicValidateForm.yzm = ''
@@ -313,14 +311,14 @@ export default {
             if (this.active++ >= 0) this.hasSubmited = true
             // this.dynamicValidateForm.yzm = ''
             clearInterval(this.setIntID)
-            this.btnText = '获取验证码'
+            this.btnText = this.$t('member_information_components_settingemail_14')
             this.btnDisabled = false
             this.submitForm()
           } else {
-            this.$message('验证失败！')
+            this.$message(this.$t('member_information_components_settingemail_26'))
           }
         }).catch(error => {
-          console.log('请求失败', error)
+          console.log(this.$t('member_information_components_settingemail_23'), error)
         })
       }
     },

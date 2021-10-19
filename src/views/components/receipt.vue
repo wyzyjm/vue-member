@@ -1,44 +1,44 @@
 <template>
   <div class="app-container wrapper">
-    <el-dialog title="发票信息" :visible.sync="dialogVisible" width="550px">
+    <el-dialog :title="$t('components_receipt_1')" :visible.sync="dialogVisible" width="550px">
       <el-form ref="form" :rules="rules" :model="form" label-width="120px">
-        <el-form-item label="发票抬头">
+        <el-form-item :label="$t('components_receipt_2')">
           <el-radio-group v-model="form.type" @change="changeType">
-            <el-radio :label="1">个人</el-radio>
-            <el-radio :label="2">单位</el-radio>
+            <el-radio :label="1">{{$t('components_receipt_3')}}</el-radio>
+            <el-radio :label="2">{{$t('components_receipt_4')}}</el-radio>
           </el-radio-group>
         </el-form-item>
         <div v-show="form.type === 1">
-          <el-form-item label="个人名称" prop="name">
+          <el-form-item :label="$t('components_receipt_5')" prop="name">
             <el-input v-model="form.name" style="width: 310px"></el-input>
           </el-form-item>
         </div>
         <div v-show="form.type !== 1">
-          <el-form-item label="单位名称" prop="companyName">
+          <el-form-item :label="$t('components_receipt_6')" prop="companyName">
             <el-input
               v-model="form.companyName"
               style="width: 310px"
             ></el-input>
           </el-form-item>
-          <el-form-item label="纳税人识别号" prop="companyNumber">
+          <el-form-item :label="$t('components_receipt_7')" prop="companyNumber">
             <el-input
               v-model="form.companyNumber"
               style="width: 310px"
             ></el-input>
           </el-form-item>
         </div>
-        <el-form-item label="发票内容">
+        <el-form-item :label="$t('components_receipt_8')">
           <el-radio-group v-model="form.catalog">
-            <el-radio label="商品明细">商品明细</el-radio>
+            <el-radio :label="$t('components_receipt_9')">{{$t('components_receipt_9')}}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="收票人手机" prop="phone">
+        <el-form-item :label="$t('components_receipt_10')" prop="phone">
           <!-- 手机区号+手机号 -->
           <el-col :span="6">
             <el-form-item>
               <el-select
                 v-model="form.phonePrefix"
-                placeholder="请选择"
+                :placeholder="$t('components_receipt_11')"
                 filterable
                 style="width: 100px"
               >
@@ -62,14 +62,14 @@
             </el-form-item>
           </el-col>
         </el-form-item>
-        <el-form-item label="收票人邮箱" prop="mail">
+        <el-form-item :label="$t('components_receipt_12')" prop="mail">
           <el-input v-model="form.mail" style="width: 310px"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogVisible = false">{{$t('components_receipt_13')}}</el-button>
         <el-button type="primary" @click="submit" :loading="loading"
-          >确 定</el-button
+          >{{$t('components_receipt_14')}}</el-button
         >
       </span>
     </el-dialog>
@@ -107,7 +107,7 @@ computed:{
     const telFormValidate = (rule, value, callback) => {
       if (value !== "") {
         if (!/^\d{6,12}$/.test(value)) {
-          callback(new Error("请输入正确的手机号"));
+          callback(new Error(this.$t('components_receipt_15')));
         } else {
           callback();
         }
@@ -119,7 +119,7 @@ computed:{
         invoiceId: "",
         type: 1,
         name: "",
-        catalog: "商品明细",
+        catalog: this.$t('components_receipt_9'),
         phone: "",
         mail: "",
         phonePrefix: "",
@@ -127,15 +127,15 @@ computed:{
         companyNumber: "",
       },
       rules: {
-        name: [{ required: true, message: "请输入个人名称", trigger: "blur" }],
+        name: [{ required: true, message: this.$t('components_receipt_16'), trigger: "blur" }],
         companyName: [
-          { required: true, message: "请输入单位名称", trigger: "blur" },
+          { required: true, message: this.$t('components_receipt_17'), trigger: "blur" },
         ],
         companyNumber: [
-          { required: true, message: "请输入纳税人识别号", trigger: "blur" },
+          { required: true, message: this.$t('components_receipt_18'), trigger: "blur" },
         ],
         mail: [
-          { type: "email", message: "请输入正确的邮箱地址", trigger: "blur" },
+          { type: "email", message: this.$t('components_receipt_19'), trigger: "blur" },
         ],
         phone: [{ validator: telFormValidate, trigger: "change" }],
       },

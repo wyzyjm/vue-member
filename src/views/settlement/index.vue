@@ -1,7 +1,7 @@
 <template>
   <div class="app-container wrapper">
     <div class="order-title">
-      <span class="order-subtitle">订单结算</span>
+      <span class="order-subtitle">{{$t('settlement_index_1')}}</span>
       <div class="steps-wrapper">
         <ce-steps
           :active="stepActive"
@@ -10,22 +10,20 @@
         />
       </div>
     </div>
-    <p class="order-subtitle">填写并核对订单信息</p>
+    <p class="order-subtitle">{{$t('settlement_index_2')}}</p>
 
     <div class="order-details">
       <template v-if="!hasFormJson">
-        <p><strong>收货人信息</strong></p>
+        <p><strong>{{$t('settlement_index_3')}}</strong></p>
         <el-button
           style="float: right; margin-top: -45px"
           type="text"
           @click="openAddress('create')"
-          >新增收货地址</el-button
+          >{{$t('settlement_index_4')}}</el-button
         >
         <div :class="['address-list', { 'show-detail': showAInfo }]">
           <!-- {{ logisticsInfoList }} -->
-          <p v-if="logisticsInfoList.length == 0" style="color: #f56c6c">
-            请添加收货信息
-          </p>
+          <p v-if="logisticsInfoList.length == 0" style="color: #f56c6c">{{$t('settlement_index_5')}}</p>
 
           <div v-else class="address-group">
             <template v-if="logisticsInfoList.length > 0">
@@ -84,7 +82,7 @@
                   </template>
                 </div>
                 <span v-if="item.isDefault" class="default-address-icon"
-                  >默认地址</span
+                  >{{$t('settlement_index_6')}}</span
                 >
                 <div class="address-btns">
                   <el-button
@@ -92,19 +90,19 @@
                     type="text"
                     size="mini"
                     @click.stop="setDefault(item.id)"
-                    >设为默认</el-button
+                    >{{$t('settlement_index_7')}}</el-button
                   >
                   <el-button
                     type="text"
                     size="mini"
                     @click.stop="eidtAddress(item)"
-                    >编辑</el-button
+                    >{{$t('settlement_index_8')}}</el-button
                   >
                   <el-button
                     type="text"
                     size="mini"
                     @click.stop="deleteAddress(item)"
-                    >删除</el-button
+                    >{{$t('settlement_index_9')}}</el-button
                   >
                 </div>
               </div>
@@ -116,15 +114,13 @@
           class="show-more"
           @click="showAddress"
         >
-          <span v-show="showAInfo">
-            收起地址<i class="el-icon-d-arrow-right" />
+          <span v-show="showAInfo">{{$t('settlement_index_10')}}<i class="el-icon-d-arrow-right" />
           </span>
-          <span v-show="!showAInfo">
-            更多地址<i class="el-icon-d-arrow-left" />
+          <span v-show="!showAInfo">{{$t('settlement_index_11')}}<i class="el-icon-d-arrow-left" />
           </span>
         </p>
         <el-divider />
-        <p><strong>配送方式</strong></p>
+        <p><strong>{{$t('settlement_index_12')}}</strong></p>
 
         <el-radio-group v-model="distributionVal">
           <el-radio
@@ -137,7 +133,7 @@
       </template>
       <template v-else>
         <div class="form-wrapper text-normal">
-          <p><strong>表单信息</strong></p>
+          <p><strong>{{$t('settlement_index_13')}}</strong></p>
           <div
             v-for="(tableItem, tableIndex) in formJson.subForm"
             :key="tableIndex + 'table'"
@@ -162,7 +158,7 @@
         </div>
       </template>
       <el-divider />
-      <p><strong>支付方式</strong></p>
+      <p><strong>{{$t('settlement_index_14')}}</strong></p>
       <el-radio-group v-model="payVal">
         <el-radio
           v-for="item in payList"
@@ -186,39 +182,34 @@
           :product-list="item.shoppingCartList"
           :currency-symbol="currency"
         />
-        <p><strong>发票信息</strong></p>
-        <div>
-          电子发票
-          <template v-if="receiptList[index].receiptInfo.invoiceTitle == ''">
+        <p><strong>{{$t('settlement_index_15')}}</strong></p>
+        <div>{{$t('settlement_index_16')}}<template v-if="receiptList[index].receiptInfo.invoiceTitle == ''">
             <el-button type="text" @click="openReceipt('new', index)"
-              >开发票</el-button
+              >{{$t('settlement_index_17')}}</el-button
             >
           </template>
           <template v-else>
             {{ receiptList[index].receiptInfo.invoiceTitle }}
             {{ receiptList[index].receiptInfo.invoiceContent }}
             <el-button type="text" @click="openReceipt('edit', index)"
-              >修改</el-button
+              >{{$t('settlement_index_18')}}</el-button
             >
           </template>
         </div>
         <el-divider />
-        <p><strong>给卖家留言</strong></p>
+        <p><strong>{{$t('settlement_index_19')}}</strong></p>
         <el-input
           v-model="remarkAttrs[index].value"
           type="textarea"
-          placeholder="订单有要求，请先与商家协商，选填"
+          :placeholder="$t('settlement_index_20')"
           maxlength="255"
           show-word-limit
           style="width: 520px"
         />
 
         <el-divider />
-        <div style="float: right; text-align: right; line-height: 24px">
-          共 <span class="text-danger">{{ item.totalNum }}</span> 件商品<br />
-          商品总额： <span>{{ currency }} {{ item.payableGoodsAmount }}</span
-          ><br />
-          运费总计： <span>{{ currency }} {{ item.freightPrice }}</span>
+        <div style="float: right; text-align: right; line-height: 24px">{{$t('settlement_index_21')}}<span class="text-danger">{{ item.totalNum }}</span>{{$t('settlement_index_22')}}<br />{{$t('settlement_index_23')}}<span>{{ currency }} {{ item.payableGoodsAmount }}</span
+          ><br />{{$t('settlement_index_24')}}<span>{{ currency }} {{ item.freightPrice }}</span>
         </div>
 
         <div style="clear: both" />
@@ -229,13 +220,11 @@
     </div>
     <div class="order-foot background-grey text-grey">
       <div class="foot-price">
-        <strong class="text-normal">实付：</strong
+        <strong class="text-normal">{{$t('settlement_index_25')}}</strong
         ><span class="text-danger">{{ currency }}{{ realPayment }}</span>
       </div>
 
-      <div v-if="JSON.stringify(addressInfo) != '{}'">
-        寄送至：
-        <template v-if="addressInfo.reverseFlag">
+      <div v-if="JSON.stringify(addressInfo) != '{}'">{{$t('settlement_index_26')}}<template v-if="addressInfo.reverseFlag">
           {{ addressInfo.consigneeAddr }}
           {{
             getAddress(
@@ -259,9 +248,7 @@
           }}
           {{ addressInfo.consigneeAddr }}
         </template>
-        <div>
-          收货人：{{ addressInfo.consigneeName }}
-          <template v-if="addressInfo.consigneePhone !== ''">
+        <div>{{$t('settlement_index_27', [ addressInfo.consigneeName ])}}<template v-if="addressInfo.consigneePhone !== ''">
             <template v-if="addressInfo.consigneePhoneHead != undefined">
               +{{ addressInfo.consigneePhoneHead.split("+")[1] }}-{{
                 addressInfo.consigneePhone
@@ -285,8 +272,8 @@
         :disabled="orderDisabled"
         @click="submit"
       >
-        <template v-if="orderLoading"> 订单正在提交中</template>
-        <template v-else>提交订单</template></el-button
+        <template v-if="orderLoading">{{$t('settlement_index_28')}}</template>
+        <template v-else>{{$t('settlement_index_29')}}</template></el-button
       >
     </div>
     <receipt ref="getReceipt" :save-libray="false" @formData="getReceiptData" />
@@ -298,32 +285,32 @@
       @addressFormDialogClose="addressFormDialogClose"
     />
 
-    <el-dialog title="提示" :visible.sync="messageVisible" width="30%">
+    <el-dialog :title="$t('settlement_index_30')" :visible.sync="messageVisible" width="30%">
       <span>{{ msgContent }}</span>
       <span slot="footer" class="dialog-footer">
         <!-- 价格有变动时候 -->
         <template v-if="msgCode === '10004' || msgCode === '10005'">
           <!-- <el-button type="default" @click="$router.push('/cart')"
-            >返回购物车</el-button
+            >{{$t('settlement_index_31')}}</el-button
           > -->
           <!-- todo query?? -->
           <el-button type="primary" @click="submit('continue')"
-            >继续结算</el-button
+            >{{$t('settlement_index_32')}}</el-button
           >
         </template>
         <!-- //运费有变动时候 -->
         <template v-else-if="msgCode === '10006'">
           <!-- <el-button type="default" @click="$router.push('/cart')"
-            >返回购物车</el-button
+            >{{$t('settlement_index_31')}}</el-button
           > -->
           <!-- 刷新运费价格 -->
           <el-button type="primary" @click="getProductList('pop')"
-            >刷新运费价格</el-button
+            >{{$t('settlement_index_33')}}</el-button
           >
         </template>
         <template v-else>
           <!-- <el-button type="primary" @click="$router.push('/cart')"
-            >返回购物车</el-button
+            >{{$t('settlement_index_31')}}</el-button
           > -->
         </template>
       </span>
@@ -363,15 +350,15 @@ export default {
     return {
       datalist: [
         {
-          title: "我的购物车",
+          title: this.$t('settlement_index_34'),
           description: "",
         },
         {
-          title: "填写核对订单信息",
+          title: this.$t('settlement_index_35'),
           description: "",
         },
         {
-          title: "成功提交订单",
+          title: this.$t('settlement_index_36'),
           description: "",
         },
       ],
@@ -524,7 +511,7 @@ export default {
           this.getProductList();
         
       } catch (error) {
-        console.log("获取收货地址失败", error);
+        console.log(this.$t('settlement_index_37'), error);
       }
     },
     // 设为默认地址
@@ -566,11 +553,11 @@ export default {
        */
       try {
         const result = await this.$confirm(
-          "您确定要删除该收货地址吗?",
-          "提示",
+          this.$t('settlement_index_38'),
+          this.$t('settlement_index_30'),
           {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
+            confirmButtonText: this.$t('settlement_index_39'),
+            cancelButtonText: this.$t('settlement_index_40'),
             type: "warning",
           }
         );
@@ -587,10 +574,10 @@ export default {
           }
           this.getList(); // 重新获取收货地址列表
         } catch (error) {
-          console.log("删除失败", error);
+          console.log(this.$t('settlement_index_41'), error);
         }
       } catch (error) {
-        console.log("取消,不删除");
+        console.log(this.$t('settlement_index_42'));
       }
     },
     // 弹窗 显示
@@ -618,7 +605,7 @@ export default {
     openAddress(type) {
       if (type === "create" && this.logisticsInfoList.length === 10) {
         this.$message({
-          message: "抱歉，地址信息最多可创建10条，请删除一条在创建吧!",
+          message: this.$t('settlement_index_43'),
           type: "warning",
         });
         return;
@@ -756,7 +743,8 @@ export default {
           if (res.data.orderSplitResponseVOList.length > 0) {
             this.productlist = res.data.orderSplitResponseVOList;
             this.currency = res.data.currencySymbol;
-            this.totalNum = res.data.totalNum;
+            // this.totalNum = res.data.totalNum;//需求变更
+            this.totalNum = res.data.selectedPieces;
             this.totalPrice = res.data.totalPrice;
             this.realPayment = res.data.totalPrice;
             if (type == "pop") {
@@ -873,18 +861,18 @@ export default {
               this.msgContent = res.data.msg;
 
               if (res.data.code === "10001") {
-                this.msgContent = "存在失效商品，不能结算哦！";
+                this.msgContent = this.$t('settlement_index_44');
               } else if (res.data.code === "10002") {
-                this.msgContent = "存在商品未达到最低起订量，不能结算哦！";
+                this.msgContent = this.$t('settlement_index_45');
               } else if (res.data.code === "10003") {
-                this.msgContent = "商品库存不足，不能结算哦！";
+                this.msgContent = this.$t('settlement_index_46');
               } else if (res.data.code === "10004") {
-                this.msgContent = "商品价格有变动，将以实际价格参与结算！";
+                this.msgContent = this.$t('settlement_index_47');
               } else if (res.data.code === "10005") {
-                this.msgContent = "商品币种有变动，将以实际币种参与结算";
+                this.msgContent = this.$t('settlement_index_48');
               } else if (res.data.code === "10006") {
                 this.msgContent =
-                  "运费价格有变动，请获取最新运费价格后再提交订单！";
+                  this.$t('settlement_index_49');
               }
 
               this.messageVisible = true;
@@ -914,7 +902,7 @@ export default {
         });
       } catch (error) {
         console.log("ordererror", error);
-        this.$message.error("对不起，系统异常，请稍后再试");
+        this.$message.error(this.$t('settlement_index_50'));
       }
     },
   },

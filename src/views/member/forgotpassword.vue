@@ -8,14 +8,12 @@
       <!-- 第一步: 验证 -->
       <div v-if="active == 0" style="text-align: center; line-height: 40px">
         <svg-icon name="icon-anquanzhuye" class="icon" setsize="60" />
-        <p v-if="type == 'phone'">请输入您常用手机号</p>
-        <p v-else>请输入您常用邮箱</p>
+        <p v-if="type == 'phone'">{{$t('member_forgotpassword_1')}}</p>
+        <p v-else>{{$t('member_forgotpassword_2')}}</p>
       </div>
       <!-- 第二步: 重置 -->
       <div v-if="active == 1">
-        <p style="color: rgb(230, 162, 60)">
-          密码设置为8-20位，并且由字母，数字和符号两种以上组合
-        </p>
+        <p style="color: rgb(230, 162, 60)">{{$t('member_forgotpassword_3')}}</p>
       </div>
       <!-- 第一步 -->
       <el-form
@@ -26,7 +24,7 @@
         label-width="100px"
       >
         <!-- 手机 -->
-        <el-form-item v-if="type == 'phone'" label="手机" prop="name">
+        <el-form-item v-if="type == 'phone'" :label="$t('member_forgotpassword_4')" prop="name">
           <el-input
             v-model="validateForm.name"
             placeholder=""
@@ -36,7 +34,7 @@
               slot="prepend"
               v-model="validateForm.prename"
               filterable
-              placeholder="请选择"
+              :placeholder="$t('member_forgotpassword_5')"
               style="width: 90px"
             >
               <el-option
@@ -52,12 +50,12 @@
           </el-input>
         </el-form-item>
         <!-- 邮箱 -->
-        <el-form-item v-else label="邮箱" prop="mail">
-          <el-input v-model="validateForm.mail" placeholder="请输入邮箱" />
+        <el-form-item v-else :label="$t('member_forgotpassword_6')" prop="mail">
+          <el-input v-model="validateForm.mail" :placeholder="$t('member_forgotpassword_7')" />
         </el-form-item>
         <!-- 验证码 -->
-        <el-form-item label="验证码" prop="code">
-          <el-input v-model="validateForm.code" placeholder="请输入验证码">
+        <el-form-item :label="$t('member_forgotpassword_8')" prop="code">
+          <el-input v-model="validateForm.code" :placeholder="$t('member_forgotpassword_9')">
             <!-- 获取验证码 -->
             <span
               v-show="!showTimer"
@@ -75,7 +73,7 @@
             type="primary"
             style="width: 100%; margin: 0 auto"
             @click="goNext()"
-          >下一步</el-button>
+          >{{$t('member_forgotpassword_10')}}</el-button>
         </div>
       </el-form>
       <!-- 第二步: 表单 -->
@@ -87,20 +85,20 @@
         status-icon
         :rules="rules"
       >
-        <el-form-item label="设置新密码" prop="pass">
+        <el-form-item :label="$t('member_forgotpassword_11')" prop="pass">
           <el-input
             v-model="ruleForm.pass"
             type="password"
             autocomplete="off"
-            placeholder="请输入新密码"
+            :placeholder="$t('member_forgotpassword_12')"
           />
         </el-form-item>
-        <el-form-item label="确认新密码" prop="checkPass">
+        <el-form-item :label="$t('member_forgotpassword_13')" prop="checkPass">
           <el-input
             v-model="ruleForm.checkPass"
             type="password"
             autocomplete="off"
-            placeholder="请输入新密码"
+            :placeholder="$t('member_forgotpassword_12')"
           />
         </el-form-item>
         <div style="width: 300px; margin: 0 auto">
@@ -109,12 +107,12 @@
             type="primary"
             style="width: 130px"
             @click="goPre()"
-          >上一步</el-button>
+          >{{$t('member_forgotpassword_14')}}</el-button>
           <el-button
             type="primary"
             style="width: 130px; margin-left: 20px"
             @click="submitForm('ruleForm')"
-          >确 认</el-button>
+          >{{$t('member_forgotpassword_15')}}</el-button>
         </div>
       </el-form>
       <!-- 第二步: 完成 -->
@@ -128,13 +126,13 @@
         "
       >
         <svg-icon name="icon-caozuochenggong" class="icon" setsize="60" />
-        <p style="margin-top: 20px">找回密码成功</p>
+        <p style="margin-top: 20px">{{$t('member_forgotpassword_16')}}</p>
         <div>
           <el-button
             type="primary"
             style="width: 100%"
             @click="goLogin"
-          >重新登录</el-button>
+          >{{$t('member_forgotpassword_17')}}</el-button>
         </div>
       </div>
     </div>
@@ -148,7 +146,7 @@
           :w="310"
           :h="155"
           :imgs="codeImgs"
-          slider-text="向右滑动"
+          slider-:text="$t('member_forgotpassword_18')"
           @success="onSuccess"
           @fail="onFail"
           @refresh="onRefresh"
@@ -184,10 +182,10 @@ export default {
     // 手机号校验
     var validateName = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('手机号不能为空'))
+        return callback(new Error(this.$t('member_forgotpassword_19')))
       } else {
         if (!/^\d{6,12}$/.test(value)) {
-          return callback(new Error('请输入正确的手机号格式'))
+          return callback(new Error(this.$t('member_forgotpassword_20')))
         } else {
           callback()
         }
@@ -196,10 +194,10 @@ export default {
     // 邮箱校验
     var validateMail = (rule, value, callback) => {
       if (value == '') {
-        return callback(new Error('邮箱不能为空'))
+        return callback(new Error(this.$t('member_forgotpassword_21')))
       } else {
         if (!emailValidate(value)) {
-          return callback(new Error('邮箱格式不正确！'))
+          return callback(new Error(this.$t('member_forgotpassword_22')))
         } else {
           callback()
         }
@@ -208,7 +206,7 @@ export default {
     // 验证码校验
     var validateCode = (rule, value, callback) => {
       if (value === '') {
-        return callback(new Error('验证码不能为空'))
+        return callback(new Error(this.$t('member_forgotpassword_23')))
       } else {
         callback()
       }
@@ -217,10 +215,10 @@ export default {
     var validatePass = (rule, value, callback) => {
       console.log(rule, value)
       if (value === '') {
-        callback(new Error('请输入密码'))
+        callback(new Error(this.$t('member_forgotpassword_24')))
       } else {
         if (!validatePassType(value)) {
-          callback(new Error('8-20位，并且由字母，数字和符号两种以上组合'))
+          callback(new Error(this.$t('member_forgotpassword_25')))
         } else if (this.ruleForm.checkPass !== '') {
           this.$refs.ruleForm.validateField('checkPass')
           callback()
@@ -232,15 +230,15 @@ export default {
     // 校验两次密码是否相同
     var validatePass2 = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请再次输入密码'))
+        callback(new Error(this.$t('member_forgotpassword_26')))
       } else if (value !== this.ruleForm.pass) {
-        callback(new Error('两次输入密码不一致!'))
+        callback(new Error(this.$t('member_forgotpassword_27')))
       } else {
         callback()
       }
     }
     return {
-      btntxt: '获取验证码',
+      btntxt: this.$t('member_forgotpassword_28'),
       active: 0, // 默认为0,
       // 表单值
       validateForm: {
@@ -253,15 +251,15 @@ export default {
       countries: countries,
       dataPwd: [
         {
-          title: '验证身份',
+          title: this.$t('member_forgotpassword_29'),
           description: ''
         },
         {
-          title: '重置密码',
+          title: this.$t('member_forgotpassword_30'),
           description: ''
         },
         {
-          title: '完成',
+          title: this.$t('member_forgotpassword_31'),
           description: ''
         }
       ],
@@ -343,7 +341,7 @@ export default {
             this.getRandomCaptcha()
           } else {
             this.$message({
-              message: '账号不存在',
+              message: this.$t('member_forgotpassword_32'),
               type: 'error'
             })
           }
@@ -380,16 +378,16 @@ export default {
             } else {
               clearInterval(timer)
               this.showTimer = false // 计时去除
-              this.btntxt = '重获验证码' // 设置文件
+              this.btntxt = this.$t('member_forgotpassword_33') // 设置文件
             }
           }, 1000)
           this.$message({
-            message: '验证码发送成功',
+            message: this.$t('member_forgotpassword_34'),
             type: 'success'
           })
         } else {
           this.$message({
-            message: '验证码发送失败',
+            message: this.$t('member_forgotpassword_35'),
             type: 'error'
           })
         }
@@ -444,7 +442,7 @@ export default {
             this.$refs['validateForm'].clearValidate()
             this.$refs['ruleForm'].clearValidate()
             this.active = 1
-            this.btntxt = '获取验证码'
+            this.btntxt = this.$t('member_forgotpassword_28')
           } else {
             this.$message({
               message: res.data.msg,

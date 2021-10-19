@@ -4,7 +4,7 @@
       <span style="cursor:pointer" @click="$router.push('/information/')"
         >{{ orderInfo.userName }}</span
       >
-      | <span style="cursor:pointer" @click="$router.push('/order/list')">我的订单</span>
+      | <span style="cursor:pointer" @click="$router.push('/order/list')">{{$t('payment_pay_1')}}</span>
     </p>
 
     <el-card class="box-card text-normal" style="clear: both">
@@ -16,8 +16,8 @@
       ></corderinfo>
       <el-card style="margin-top: 20px">
         <div>
-          <p v-if="orderInfo.payType === 0"><strong>在线支付</strong></p>
-          <p v-if="orderInfo.payType === 1"><strong>线下支付</strong></p>
+          <p v-if="orderInfo.payType === 0"><strong>{{$t('payment_pay_2')}}</strong></p>
+          <p v-if="orderInfo.payType === 1"><strong>{{$t('payment_pay_3')}}</strong></p>
           <div class="online">
             <div
               v-for="item in payList"
@@ -64,19 +64,16 @@
     <el-dialog title="" :visible.sync="dialogVisible" width="530px">
       <div class="text-normal" style="text-align: center">
         <div class="pop-title">{{PayCodeName}}</div>
-        <p class="pop-info">
-          1、如果未完成付款，请点击继续付款
-          <br />2、如果您已完成，请点击“已完成付款”
-        </p>
+        <p class="pop-info">{{$t('payment_pay_4')}}<br />{{$t('payment_pay_5')}}</p>
         <p>
           <!-- todo -->
           <el-button
             type="primary"
             style="margin-right: 30px"
             @click="openPay(payCode)"
-            >重新支付</el-button
+            >{{$t('payment_pay_6')}}</el-button
           >
-          <el-button type="primary" plain @click="confirmPay">已完成付款</el-button>
+          <el-button type="primary" plain @click="confirmPay">{{$t('payment_pay_7')}}</el-button>
         </p>
       </div>
     </el-dialog>

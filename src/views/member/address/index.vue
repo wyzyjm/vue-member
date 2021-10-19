@@ -1,7 +1,7 @@
 <template>
   <div class="app-container address-container">
     <!-- 头部 开始-->
-    <PageTitle pagetitle="我的收货地址" />
+    <PageTitle :pagetitle="$t('member_address_index_1')" />
     <!-- 头部 结束-->
 
     <!-- 新增+ 提示 开始 -->
@@ -11,23 +11,18 @@
         type="primary"
         size="mini"
         @click="showAddressform('create')"
-      >新增收货地址</el-button>
+      >{{$t('member_address_index_2')}}</el-button>
       <!-- 提示区域 -->
       <span
         class="ml15"
-      >您已创建
-        <span class="text-danger"> {{ logisticsInfoList.length }} </span>
-        个,最多创建 <span class="text-danger"> {{ mostNum }} </span>个
-      </span>
+      >{{$t('member_address_index_3')}}<span class="text-danger"> {{ logisticsInfoList.length }} </span>{{$t('member_address_index_4')}}<span class="text-danger"> {{ mostNum }} </span>{{$t('member_address_index_5')}}</span>
     </div>
     <!-- 新增+ 提示 结束 -->
 
     <!-- 收货地址列表 开始 -->
 
     <!-- 无收货地址 -->
-    <div v-if="logisticsInfoList.length === 0" class="no-content-tip">
-      还没有任何收货地址~
-    </div>
+    <div v-if="logisticsInfoList.length === 0" class="no-content-tip">{{$t('member_address_index_6')}}</div>
     <el-card
       v-for="(item, index) in logisticsInfoList"
       v-else
@@ -40,16 +35,16 @@
       <ul>
         <!-- 收货人 -->
         <li>
-          <span class="attrName text-grey"> 收货人: </span>
+          <span class="attrName text-grey">{{$t('member_address_index_7')}}</span>
           <span class="attrValue">
             {{ item.consigneeName }}
-            <span v-if="item.isDefault" class="default"> 默认地址 </span>
+            <span v-if="item.isDefault" class="default">{{$t('member_address_index_8')}}</span>
           </span>
         </li>
         <li :class="{ reverse: item.reverseFlag }">
           <!-- 所在地区 -->
           <div v-if="item.consigneeProvince" class="reverseDiv">
-            <span class="attrName text-grey"> 所在地区: </span>
+            <span class="attrName text-grey">{{$t('member_address_index_9')}}</span>
             <span class="attrValue">
               {{
                 getAddress(
@@ -64,26 +59,26 @@
           </div>
           <!-- 详细地址 -->
           <div class="reverseDiv">
-            <span class="attrName text-grey"> 详情地址: </span>
+            <span class="attrName text-grey">{{$t('member_address_index_10')}}</span>
             <span class="attrValue"> {{ item.consigneeAddr }} </span>
           </div>
         </li>
         <!-- 手机区号 + 手机号 -->
         <li v-if="item.consigneePhone">
-          <span class="attrName text-grey"> 手机: </span>
+          <span class="attrName text-grey">{{$t('member_address_index_11')}}</span>
           <span class="attrValue">
             {{ '+'+item.consigneePhoneHead.split('+')[1] }} {{ item.consigneePhone }}</span>
         </li>
         <!-- 固定电话 -->
         <li v-if="item.consigneeTel">
-          <span class="attrName text-grey"> 固定电话: </span>
+          <span class="attrName text-grey">{{$t('member_address_index_12')}}</span>
           <span class="attrValue">
             {{ '+'+item.consigneeTelHead.split('+')[1] }} - {{ item.consigneeTel }}
           </span>
         </li>
         <!-- 邮编 -->
         <li v-if="item.consigneeZipCode">
-          <span class="attrName text-grey"> 邮编: </span>
+          <span class="attrName text-grey">{{$t('member_address_index_13')}}</span>
           <span class="attrValue"> {{ item.consigneeZipCode }} </span>
         </li>
       </ul>
@@ -94,11 +89,11 @@
           v-if="!item.isDefault"
           type="text"
           @click="setDefault(item.id)"
-        >设为默认地址</el-button>
+        >{{$t('member_address_index_14')}}</el-button>
         <!-- 编辑 -->
-        <el-button type="text" @click="eidtAddress(item)">编辑</el-button>
+        <el-button type="text" @click="eidtAddress(item)">{{$t('member_address_index_15')}}</el-button>
         <!-- 删除 -->
-        <el-button type="text" @click="deleteAddress(item)">删除</el-button>
+        <el-button type="text" @click="deleteAddress(item)">{{$t('member_address_index_16')}}</el-button>
       </div>
     </el-card>
     <!-- 收货地址列表 结束 -->
@@ -117,7 +112,7 @@
     />
     <!-- 收货人地址弹窗 结束 -->
 
-    <!-- <el-button type="primary" @click="addAddress">添加收货地址</el-button> -->
+    <!-- <el-button type="primary" @click="addAddress">{{$t('member_address_index_17')}}</el-button> -->
   </div>
 </template>
 <script>
@@ -172,12 +167,12 @@ export default {
       try {
         const res = await getAddressList()
 
-        console.log('收货地址信息', res)
+        console.log(this.$t('member_address_index_18'), res)
         if (res.status !== 200) return
         this.logisticsInfoList = res.data.addressList
         this.isLoading = false
       } catch (error) {
-        console.log('获取收货地址失败', error)
+        console.log(this.$t('member_address_index_19'), error)
       }
     },
 
@@ -200,7 +195,7 @@ export default {
       // 是默认 地址, 进行提示,不可删除
       if (item.isDefault) {
         return this.$message({
-          message: '默认地址不可删除，建议将其他地址设为默认后再删除此地址',
+          message: this.$t('member_address_index_20'),
           type: 'warning'
         })
       }
@@ -213,11 +208,11 @@ export default {
        */
       try {
         const result = await this.$confirm(
-          '您确定要删除该收货地址吗?',
-          '提示',
+          this.$t('member_address_index_21'),
+          this.$t('member_address_index_22'),
           {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
+            confirmButtonText: this.$t('member_address_index_23'),
+            cancelButtonText: this.$t('member_address_index_24'),
             type: 'warning'
           }
         )
@@ -230,10 +225,10 @@ export default {
           if (res.status !== 200) return
           this.getList() // 重新获取收货地址列表
         } catch (error) {
-          console.log('删除失败', error)
+          console.log(this.$t('member_address_index_25'), error)
         }
       } catch (error) {
-        console.log('取消,不删除')
+        console.log(this.$t('member_address_index_26'))
       }
     },
 
@@ -251,7 +246,7 @@ export default {
     showAddressform(status) {
       if (status === 'create' && this.logisticsInfoList.length === 10) {
         return this.$message({
-          message: '抱歉，地址信息最多可创建10条，请删除一条在创建吧!',
+          message: this.$t('member_address_index_27'),
           type: 'warning'
         })
       }

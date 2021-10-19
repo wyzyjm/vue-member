@@ -6,31 +6,31 @@
     />
     <div v-show="submitedSuccess" class="step-icon">
       <svg-icon name="icon-anquanzhuye" class="icon" setsize="150" />
-      <p>请将密码设置为8-20位，并且由字母，数字和符号两种以上组合</p>
+      <p>{{$t('member_information_components_settingpwd_1')}}</p>
     </div>
     <div v-show="!submitedSuccess" class="step-icon">
       <svg-icon name="icon-caozuochenggong" class="icon" setsize="150" />
-      <p>设置完成！</p>
+      <p>{{$t('member_information_components_settingpwd_2')}}</p>
       <el-button
         type="primary"
         @click="goHome"
-      >返回首页</el-button>
+      >{{$t('member_information_components_settingpwd_3')}}</el-button>
     </div>
     <div v-show="submitedSuccess" class="form-list">
       <!-- 修改密码 -->
       <el-form ref="ruleForm" :model="ruleForm" status-icon :rules="rules" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="旧密码" prop="oldPwd">
-          <el-input v-model="ruleForm.oldPwd" placeholder="请输入旧密码" />
+        <el-form-item :label="$t('member_information_components_settingpwd_4')" prop="oldPwd">
+          <el-input v-model="ruleForm.oldPwd" :placeholder="$t('member_information_components_settingpwd_5')" />
         </el-form-item>
-        <el-form-item label="新密码" prop="pass">
-          <el-input v-model="ruleForm.pass" type="password" autocomplete="off" placeholder="请输入新密码" />
+        <el-form-item :label="$t('member_information_components_settingpwd_6')" prop="pass">
+          <el-input v-model="ruleForm.pass" type="password" autocomplete="off" :placeholder="$t('member_information_components_settingpwd_7')" />
         </el-form-item>
-        <el-form-item label="确认密码" prop="checkPass">
-          <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" placeholder="请确定新密码" />
+        <el-form-item :label="$t('member_information_components_settingpwd_8')" prop="checkPass">
+          <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" :placeholder="$t('member_information_components_settingpwd_9')" />
         </el-form-item>
         <el-form-item class="item-btn">
-          <el-button @click="cancel">取消</el-button>
-          <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+          <el-button @click="cancel">{{$t('member_information_components_settingpwd_10')}}</el-button>
+          <el-button type="primary" @click="submitForm('ruleForm')">{{$t('member_information_components_settingpwd_11')}}</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -56,7 +56,7 @@ export default {
   data() {
     var checkOldpwd = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('旧密码不能为空'))
+        return callback(new Error(this.$t('member_information_components_settingpwd_12')))
       }
       setTimeout(() => {
         callback()
@@ -64,7 +64,7 @@ export default {
     }
     var validatePass = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请输入密码'))
+        callback(new Error(this.$t('member_information_components_settingpwd_13')))
       } else {
         if (this.ruleForm.checkPass !== '') {
           this.$refs.ruleForm.validateField('checkPass')
@@ -74,9 +74,9 @@ export default {
     }
     var validatePass2 = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请再次输入密码'))
+        callback(new Error(this.$t('member_information_components_settingpwd_14')))
       } else if (value !== this.ruleForm.pass) {
-        callback(new Error('两次输入密码不一致!'))
+        callback(new Error(this.$t('member_information_components_settingpwd_15')))
       } else {
         callback()
       }
@@ -89,11 +89,11 @@ export default {
       submitedSuccess: true,
       dataPwd: [
         {
-          title: '重设密码',
+          title: this.$t('member_information_components_settingpwd_16'),
           description: ''
         },
         {
-          title: '重设成功',
+          title: this.$t('member_information_components_settingpwd_17'),
           description: ''
         }
       ],
@@ -135,7 +135,7 @@ export default {
               this.onSubmit()
             }
           }).catch(error => {
-            console.log('请求失败', error)
+            console.log(this.$t('member_information_components_settingpwd_18'), error)
           })
         } else {
           return false

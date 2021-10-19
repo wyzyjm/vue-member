@@ -36,7 +36,7 @@ const getAddressName = (country, province, city, county, reverseFlag) => {
               d = c['-Name'] // 获取区
             })
           } else {
-            if (v.Region['-Code'] !== area) return
+            if (v.Region['-Code'] !== county) return
             d = v.Region['-Name']
           }
         })

@@ -8,8 +8,8 @@
     <div v-show="submitedSuccess" class="step-icon">
       <svg-icon name="icon-anquanzhuye" class="icon" setsize="100" />
       <p>
-        <span v-if="propData.phoneType === 0">请绑定您的手机号码</span>
-        <span v-else>为确认是您本人操作，请完成身份认证</span>
+        <span v-if="propData.phoneType === 0">{{$t('member_information_components_settingphone_1')}}</span>
+        <span v-else>{{$t('member_information_components_settingphone_2')}}</span>
       </p>
     </div>
 
@@ -17,18 +17,18 @@
     <div v-show="submitedSuccess" class="form-list">
       <el-form ref="formLabelAlign" label-width="80px" :model="formLabelAlign" class="demo-dynamic">
         <!-- 绑定手机号 -->
-        <el-form-item v-if="phoneType === 0 || active === 1" label="手机号">
+        <el-form-item v-if="phoneType === 0 || active === 1" :label="$t('member_information_components_settingphone_3')">
           <!-- select选择器+文本框 -->
           <el-col :span="7">
             <el-form-item
               prop="consigneePhoneHead"
               :rules="{
-                required: phoneType === 0 ? true : isConsigneePhoneHead, message: '请选择', trigger: 'blur'
+                required: phoneType === 0 ? true : isConsigneePhoneHead, message: $t('member_information_components_settingphone_4'), trigger: 'blur'
               }"
             >
               <el-select
                 v-model="formLabelAlign.consigneePhoneHead"
-                placeholder="请选择"
+                :placeholder="$t('member_information_components_settingphone_4')"
                 filterable
               >
                 <el-option
@@ -48,13 +48,13 @@
             <el-form-item
               prop="consigneePhone"
               :rules="{
-                required: phoneType === 0 ? true : isConsigneePhone, message: '请输入您的手机号码', trigger: 'blur'
+                required: phoneType === 0 ? true : isConsigneePhone, message: $t('member_information_components_settingphone_5'), trigger: 'blur'
               }"
             >
               <el-input
                 v-model.trim="formLabelAlign.consigneePhone"
                 type="tel"
-                placeholder="请输入您的手机号码"
+                :placeholder="$t('member_information_components_settingphone_5')"
                 @input="checkInputValue('consigneePhone')"
               />
             </el-form-item>
@@ -62,22 +62,22 @@
         </el-form-item>
 
         <!-- 更换 手机号 -->
-        <el-form-item v-else label="手机号">
+        <el-form-item v-else :label="$t('member_information_components_settingphone_3')">
           <span>{{ getPhone }}</span>
         </el-form-item>
 
         <!-- 验证码 -->
         <el-form-item
-          label="验证码"
+          :label="$t('member_information_components_settingphone_6')"
           prop="phoneYzm"
           class="item-get-code"
           :rules="{
-            required: true, message: '验证码不能为空', trigger: 'blur'
+            required: true, message: $t('member_information_components_settingphone_7'), trigger: 'blur'
           }"
         >
           <el-input
             v-model="formLabelAlign.phoneYzm"
-            placeholder="短信验证码"
+            :placeholder="$t('member_information_components_settingphone_8')"
           />
           <el-button class="get-code-btn" @click="getVerfyCode">{{ btnText }}</el-button>
         </el-form-item>
@@ -89,19 +89,19 @@
             type="primary"
             plain
             @click="cancel"
-          >取消</el-button>
+          >{{$t('member_information_components_settingphone_9')}}</el-button>
           <!-- 下一步 -->
           <el-button
             v-show="!hasSubmited"
             type="primary"
             @click="next('formLabelAlign')"
-          >下一步</el-button>
+          >{{$t('member_information_components_settingphone_10')}}</el-button>
           <!-- 保存 -->
           <el-button
             v-show="hasSubmited"
             type="primary"
             @click="submitForm('formLabelAlign')"
-          >保存</el-button>
+          >{{$t('member_information_components_settingphone_11')}}</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -109,8 +109,8 @@
     <!-- 设置完成 -->
     <div v-show="!submitedSuccess" class="step-icon">
       <svg-icon name="icon-caozuochenggong" class="icon" setsize="100" />
-      <p>设置完成！</p>
-      <el-button type="primary" @click="goHome">返回</el-button>
+      <p>{{$t('member_information_components_settingphone_12')}}</p>
+      <el-button type="primary" @click="goHome">{{$t('member_information_components_settingphone_13')}}</el-button>
     </div>
   </div>
 </template>
@@ -147,7 +147,7 @@ export default {
     var checkPhone = (rule, value, callback) => {
       if (!value || value.indexOf('*') > 0) return callback()
       if (value && !/^\d{0,11}$/.test(value)) {
-        return callback(new Error('请输入正确的手机号码'))
+        return callback(new Error(this.$t('member_information_components_settingphone_14')))
       } else {
         callback()
       }
@@ -158,7 +158,7 @@ export default {
       active: 0, // ?
       hasSubmited: false,
       submitedSuccess: true, // 页面布局 显示与隐藏
-      btnText: '获取验证码', // 获取验证码文字
+      btnText: this.$t('member_information_components_settingphone_15'), // 获取验证码文字
       btnDisabled: false, // 禁止点击
       isConsigneePhone: false, // 是否验证手机号
       isConsigneePhoneHead: false, // 验证手机区号
@@ -172,11 +172,11 @@ export default {
         0: {
           item: [
             {
-              title: '绑定手机',
+              title: this.$t('member_information_components_settingphone_16'),
               description: ''
             },
             {
-              title: '更换成功',
+              title: this.$t('member_information_components_settingphone_17'),
               description: ''
             }
           ]
@@ -184,15 +184,15 @@ export default {
         1: {
           item: [
             {
-              title: '验证身份',
+              title: this.$t('member_information_components_settingphone_18'),
               description: ''
             },
             {
-              title: '更换手机',
+              title: this.$t('member_information_components_settingphone_19'),
               description: ''
             },
             {
-              title: '更换成功',
+              title: this.$t('member_information_components_settingphone_17'),
               description: ''
             }
           ]
@@ -200,11 +200,11 @@ export default {
         2: {
           item: [
             {
-              title: '验证身份',
+              title: this.$t('member_information_components_settingphone_18'),
               description: ''
             },
             {
-              title: '解绑成功',
+              title: this.$t('member_information_components_settingphone_20'),
               description: ''
             }
           ]
@@ -240,7 +240,7 @@ export default {
     getPhone() {
       let phone = ''
       if (!this.propData.phone) {
-        phone = '还没有手机号'
+        phone = this.$t('member_information_components_settingphone_21')
         return phone
       }
       if (this.propData.phoneHead) {
@@ -256,13 +256,13 @@ export default {
   },
   // 创建
   created() {
-    console.log('接收的参数', this.setdata)
+    console.log(this.$t('member_information_components_settingphone_22'), this.setdata)
   },
   methods: {
     // 修改密码
     submitForm(formName) {
       if (this.formLabelAlign.consigneePhoneHead === '') {
-        this.$message('区号不能为空1！')
+        this.$message(this.$t('member_information_components_settingphone_23'))
         return
       }
       this.$refs[formName].validate((valid) => {
@@ -275,14 +275,13 @@ export default {
             mobile: this.formLabelAlign.consigneePhone, // 手机号
             verifyCode: this.formLabelAlign.phoneYzm // 短信验证码
           }
-          console.log('bingling参数--->', data)
           bingling(data).then(res => {
             this.$message(res.data.errorMsg ? res.data.errorMsg : res.msg) // 后端提示信息
             if (res.data === 1) {
               this.onSubmit()
             }
           }).catch(error => {
-            console.log('请求失败', error)
+            console.log(this.$t('member_information_components_settingphone_25'), error)
           })
         } else {
           return false
@@ -306,7 +305,7 @@ export default {
                 this.goHome()
               }
             }).catch(error => {
-              console.log('请求失败', error)
+              console.log(this.$t('member_information_components_settingphone_25'), error)
             })
           } else {
             this.checkCode()
@@ -342,15 +341,15 @@ export default {
             this.formLabelAlign.consigneePhone = '' // 清空手机号
             this.formLabelAlign.consigneePhoneHead = '' // 清空手机号头部
             clearInterval(this.setIntID) // 清除定时器
-            this.btnText = '获取验证码' // 重置按钮文字
+            this.btnText = this.$t('member_information_components_settingphone_15') // 重置按钮文字
             this.btnDisabled = false // 可以点击
             this.isConsigneePhone = true
             this.isConsigneePhoneHead = true
           } else {
-            this.$message('验证失败！')
+            this.$message(this.$t('member_information_components_settingphone_26'))
           }
         }).catch(error => {
-          console.log('请求失败', error)
+          console.log(this.$t('member_information_components_settingphone_25'), error)
         })
       }
     },
@@ -422,28 +421,28 @@ export default {
           mobile: this.formLabelAlign.consigneePhone // 手机号
         }
       }
-      console.log('获取验证码参数', data)
+      console.log(this.$t('member_information_components_settingphone_27'), data)
       generateCode(data).then(res => {
         if (res.data) {
           if (this.btnDisabled) return
           this.btnDisabled = true
-          this.btnText = '60s后重新获取'
+          this.btnText = this.$t('member_information_components_settingphone_28')
           let count = 60
           this.setIntID = setInterval(() => {
             count--
             if (count === 0) {
               clearInterval(this.setIntID)
-              this.btnText = '获取验证码'
+              this.btnText = this.$t('member_information_components_settingphone_15')
               this.btnDisabled = false
               return
             }
-            this.btnText = count < 10 ? `0${count}s后重新获取` : `${count}s后重新获取`
+            this.btnText = count < 10 ? this.$t('member_information_components_settingphone_29', [count]) : this.$t('member_information_components_settingphone_30', [count])
           }, 1000)
         } else {
-          this.$message('发送失败，请稍后重试！')
+          this.$message(this.$t('member_information_components_settingphone_31'))
         }
       }).catch(error => {
-        console.log('请求失败', error)
+        console.log(this.$t('member_information_components_settingphone_25'), error)
       })
     },
     goHome() {

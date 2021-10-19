@@ -1,13 +1,13 @@
 <template>
   <div class="item-card">
     <div class="item-card-title">
-      <span>商品信息</span>
-      <span>单价</span>
-      <span>数量</span>
-      <span>收货人</span>
-      <span>实付款</span>
-      <span>订单状态</span>
-      <span class="operate">操作</span>
+      <span>{{$t('member_order_components_list_item_1')}}</span>
+      <span>{{$t('member_order_components_list_item_2')}}</span>
+      <span>{{$t('member_order_components_list_item_3')}}</span>
+      <span>{{$t('member_order_components_list_item_4')}}</span>
+      <span>{{$t('member_order_components_list_item_5')}}</span>
+      <span>{{$t('member_order_components_list_item_6')}}</span>
+      <span class="operate">{{$t('member_order_components_list_item_7')}}</span>
     </div>
     <ul class="item-card-content" :data="list">
       <li
@@ -17,7 +17,7 @@
         class="order"
       >
         <div class="color-9 order-id">
-          <span>下单时间：{{ formatDate(data.createTime) }}</span><span class="ml-20">订单号：{{ data.orderNumber }}</span>
+          <span>{{$t('member_order_components_list_item_8', [ formatDate(data.createTime) ])}}</span><span class="ml-20">{{$t('member_order_components_list_item_9', [ data.orderNumber ])}}</span>
         </div>
         <ul class="order-list">
           <li class="order-item">
@@ -51,7 +51,7 @@
             <div><span>{{ data.consigneeName }}</span></div>
             <div class="actual-payment">
               <p>{{ data.currencySymbol }}{{ data.sumPayable }}</p>
-              <p class="color-9 border-bottom p-y m-y text-overflow">含运费{{ data.currencySymbol }}{{ data.freight }}</p>
+              <p class="color-9 border-bottom p-y m-y text-overflow">{{$t('member_order_components_list_item_10', [ data.currencySymbol , data.freight ])}}</p>
               <p class="color-9 text-overflow">{{ data.paymentTypeName ? data.paymentTypeName : payModeType[data.payMode].type }}</p>
             </div>
             <div :class="{'col-danger':data.orderStatus < 50}">
@@ -61,10 +61,10 @@
               <div v-if="data.orderStatus == 10">
                 <!-- 1、永久有效    0、不是永久有效 -->
                 <CountDown v-if="data.forever === 0" class="p-y col-danger" :counttime="data.failureTime" :createtime="data.createTime" :systemtime="data.systemTime" />
-                <el-button type="primary" @click="paymentOrder(data)">付款</el-button>
+                <el-button type="primary" @click="paymentOrder(data)">{{$t('member_order_components_list_item_11')}}</el-button>
               </div>
-              <el-button v-if="data.orderStatus == 40" type="primary" @click.prevent="confirmReceipt(data.id)">确认收货</el-button>
-              <el-button type="text" @click.prevent="viewOrder(data.id)">查看订单</el-button>
+              <el-button v-if="data.orderStatus == 40" type="primary" @click.prevent="confirmReceipt(data.id)">{{$t('member_order_components_list_item_12')}}</el-button>
+              <el-button type="text" @click.prevent="viewOrder(data.id)">{{$t('member_order_components_list_item_13')}}</el-button>
               <el-popover
                 v-if="data.orderStatus == 40"
                 placement="bottom-end"
@@ -80,9 +80,9 @@
                     {{ activity.content }}
                   </el-timeline-item>
                 </el-timeline>
-                <!-- <el-button slot="reference" type="text" @click.prevent="checkLogistics">查看物流</el-button> -->
+                <!-- <el-button slot="reference" type="text" @click.prevent="checkLogistics">{{$t('member_order_components_list_item_14')}}</el-button> -->
               </el-popover>
-              <el-button v-else-if="data.orderStatus != 20 && data.orderStatus != 30 && data.orderStatus != 50 && data.orderStatus != 60" type="text" @click.prevent="cancel(data.id)">取消订单</el-button>
+              <el-button v-else-if="data.orderStatus != 20 && data.orderStatus != 30 && data.orderStatus != 50 && data.orderStatus != 60" type="text" @click.prevent="cancel(data.id)">{{$t('member_order_components_list_item_15')}}</el-button>
             </div>
           </li>
         </ul>
@@ -119,42 +119,42 @@ export default {
       // 订单状态
       statePayment: {
         10: {
-          type: '待付款'
+          type: this.$t('member_order_components_list_item_16')
         },
         20: {
-          type: '待确认收款'
+          type: this.$t('member_order_components_list_item_17')
         },
         30: {
-          type: '待发货'
+          type: this.$t('member_order_components_list_item_18')
         },
         40: {
-          type: '待收货'
+          type: this.$t('member_order_components_list_item_19')
         },
         50: {
-          type: '已完成'
+          type: this.$t('member_order_components_list_item_20')
         },
         60: {
-          type: '已关闭'
+          type: this.$t('member_order_components_list_item_21')
         }
       },
       // 支付状态
       payModeType: {
         0: {
-          type: '在线支付'
+          type: this.$t('member_order_components_list_item_22')
         },
         1: {
-          type: '线下支付'
+          type: this.$t('member_order_components_list_item_23')
         },
         2: {
-          type: '货到付款'
+          type: this.$t('member_order_components_list_item_24')
         }
       },
       reverse: true,
       activities: [{
-        content: '活动按期开始',
+        content: this.$t('member_order_components_list_item_25'),
         timestamp: '2018-04-15'
       }, {
-        content: '创建成功',
+        content: this.$t('member_order_components_list_item_26'),
         timestamp: '2018-04-11'
       }]
     }
@@ -163,38 +163,38 @@ export default {
   },
   methods: {
     confirmReceipt(id) {
-      this.$confirm('确认收到所有商品吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
+      this.$confirm(this.$t('member_order_components_list_item_27'), this.$t('member_order_components_list_item_28'), {
+        confirmButtonText: this.$t('member_order_components_list_item_29'),
+        cancelButtonText: this.$t('member_order_components_list_item_30')
       }).then(() => {
         confirmOrder({ orderId: id }).then(res => {
           if (res.data.code !== '0') return
           location.reload()
         }).catch(error => {
-          console.log('请求失败', error)
+          console.log(this.$t('member_order_components_list_item_31'), error)
         })
       }).catch(() => {
         this.$message({
           type: 'info',
-          message: '取消操作'
+          message: this.$t('member_order_components_list_item_32')
         })
       })
     },
     cancel(id) {
-      this.$confirm('确定取消该订单吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
+      this.$confirm(this.$t('member_order_components_list_item_33'), this.$t('member_order_components_list_item_28'), {
+        confirmButtonText: this.$t('member_order_components_list_item_29'),
+        cancelButtonText: this.$t('member_order_components_list_item_30')
       }).then(() => {
         cancelOrder({ orderId: id }).then(res => {
           if (res.data.code !== '0') return
           location.reload()
         }).catch(error => {
-          console.log('请求失败', error)
+          console.log(this.$t('member_order_components_list_item_31'), error)
         })
       }).catch(() => {
         this.$message({
           type: 'info',
-          message: '取消操作'
+          message: this.$t('member_order_components_list_item_32')
         })
       })
     },

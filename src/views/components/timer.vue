@@ -40,13 +40,13 @@ export default {
       }
       
       if(d>=1){
-        this.time = `${d}天${h}时${m}分${s}秒`; 
+        this.time = this.$t('components_timer_1', [d,h,m,s]); 
       }else if(h>=1){
-        this.time = `${h}时${m}分${s}秒`; 
+        this.time = this.$t('components_timer_2', [h,m,s]); 
       }else if(m>=1){
-        this.time = `${m}分${s}秒`;
+        this.time = this.$t('components_timer_3', [m,s]);
       }else if(s>=1){
-          this.time = `${s}秒`;
+          this.time = this.$t('components_timer_4', [s]);
       }
       // this.time = `${h}:${m}:${s}`; // 需要修改时间样式的话 ，比如需要什么30分钟倒计时，就只保留分和秒
     },

@@ -8,7 +8,7 @@
             style="color: #1989fa"
             setsize="60"
           ></svg-icon>
-          <p class="tips">购买成功，我们尽快为您处理！</p>
+          <p class="tips">{{$t('payment_result_1')}}</p>
         </template>
         <template v-else>
            <svg-icon
@@ -16,11 +16,10 @@
             style="color: #1989fa"
             setsize="60"
           ></svg-icon>
-          <p class="tips">支付失败，支付遇到问题，请尝试重新支付！</p>
+          <p class="tips">{{$t('payment_result_2')}}</p>
         </template>
         <div class="detail">
-          <div v-for="item in resultInfo.orderNumberList" :key="item">
-            订单号：{{ item }}<br />
+          <div v-for="item in resultInfo.orderNumberList" :key="item">{{$t('payment_result_3', [ item ])}}<br />
           </div>
 
           {{ resultInfo.payName }}：<span class="text-danger"
@@ -28,17 +27,17 @@
           >
         </div>
         <div v-if="resultInfo.isSuccess">
-          <el-button type="primary" @click="linkTo">查看订单</el-button>
+          <el-button type="primary" @click="linkTo">{{$t('payment_result_4')}}</el-button>
           <el-button type="primary" plain @click="linkToHome"
-            >返回首页</el-button
+            >{{$t('payment_result_5')}}</el-button
           >
         </div>
         <div v-else>
-          <el-button type="primary" @click="rePay">重新支付</el-button>
-          <el-button type="primary" plain @click="linkTo">查看订单</el-button>
+          <el-button type="primary" @click="rePay">{{$t('payment_result_6')}}</el-button>
+          <el-button type="primary" plain @click="linkTo">{{$t('payment_result_4')}}</el-button>
         </div>
         <el-divider></el-divider>
-        <p>重要提醒：不点击陌生链接、不泄露银行卡和验证码信息，谨防诈骗！</p>
+        <p>{{$t('payment_result_7')}}</p>
       </div>
     </div>
   </div>

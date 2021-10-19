@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <PageTitle :pagetitle="title">
-    <!-- <slot slot="slot">搜索</slot> -->
+    <!-- <slot slot="slot">{{$t('member_information_index_1')}}</slot> -->
     </PageTitle>
     <!-- 页面 -->
     <div v-if="isShow" v-loading="loading">
@@ -23,50 +23,50 @@
           <!-- 昵称 -->
           <div class="item">
             <p>
-              <span>昵称</span>
-              <span>{{ data.user.nickName ? data.user.nickName : '还没有昵称' }}</span>
+              <span>{{$t('member_information_index_2')}}</span>
+              <span>{{ data.user.nickName ? data.user.nickName : $t('member_information_index_3') }}</span>
             </p>
-            <el-button type="text" @click="modify('nickName')">编辑</el-button>
+            <el-button type="text" @click="modify('nickName')">{{$t('member_information_index_4')}}</el-button>
           </div>
           <!-- 姓名 -->
           <div class="item">
             <p>
-              <span>姓名</span>
-              <span>{{ data.user.name ? data.user.name : '还没有姓名' }}</span>
+              <span>{{$t('member_information_index_5')}}</span>
+              <span>{{ data.user.name ? data.user.name : $t('member_information_index_6') }}</span>
             </p>
-            <el-button type="text" @click="modify('name')">编辑</el-button>
+            <el-button type="text" @click="modify('name')">{{$t('member_information_index_4')}}</el-button>
           </div>
           <!-- 手机 -->
           <div class="item">
             <p>
-              <span>手机</span>
+              <span>{{$t('member_information_index_7')}}</span>
               <span>{{ getPhone }}</span>
             </p>
             <div>
-              <el-button v-if="!data.user.phone" type="text" @click="updatePhone(0)">绑定手机</el-button>
-              <el-button v-if="data.user.phone" type="text" @click="updatePhone(1)">更换手机</el-button>
-              <el-button v-if="data.user.phone && data.user.email" type="text" @click="updatePhone(2)">解绑手机</el-button>
+              <el-button v-if="!data.user.phone" type="text" @click="updatePhone(0)">{{$t('member_information_index_8')}}</el-button>
+              <el-button v-if="data.user.phone" type="text" @click="updatePhone(1)">{{$t('member_information_index_9')}}</el-button>
+              <el-button v-if="data.user.phone && data.user.email" type="text" @click="updatePhone(2)">{{$t('member_information_index_10')}}</el-button>
             </div>
           </div>
           <!-- 邮箱 -->
           <div class="item">
             <p>
-              <span>邮箱</span>
-              <span>{{ data.user.email ? data.user.email : '还没有添加邮箱' }}</span>
+              <span>{{$t('member_information_index_11')}}</span>
+              <span>{{ data.user.email ? data.user.email : $t('member_information_index_12') }}</span>
             </p>
             <div>
-              <el-button v-if="!data.user.email" type="text" @click="updateEmail(0)">绑定邮箱</el-button>
-              <el-button v-if="data.user.email" type="text" @click="updateEmail(1)">更换邮箱</el-button>
-              <el-button v-if="data.user.email && data.user.phone" type="text" @click="updateEmail(2)">解绑邮箱</el-button>
+              <el-button v-if="!data.user.email" type="text" @click="updateEmail(0)">{{$t('member_information_index_13')}}</el-button>
+              <el-button v-if="data.user.email" type="text" @click="updateEmail(1)">{{$t('member_information_index_14')}}</el-button>
+              <el-button v-if="data.user.email && data.user.phone" type="text" @click="updateEmail(2)">{{$t('member_information_index_15')}}</el-button>
             </div>
           </div>
           <!-- 密码 -->
           <div class="item">
             <p>
-              <span>密码</span>
+              <span>{{$t('member_information_index_16')}}</span>
               <span>{{ data.user.pwd ? '******' : '' }}</span>
             </p>
-            <el-button type="text" @click="updatePwd(data.user.pwd)">重设密码</el-button>
+            <el-button type="text" @click="updatePwd(data.user.pwd)">{{$t('member_information_index_17')}}</el-button>
           </div>
           <!-- 自定义项 -->
           <div
@@ -79,7 +79,7 @@
               <span> {{ getAttrValue(item) }}</span>
             </p>
             <div>
-              <el-button type="text" @click="selfDefiningTerm(item)">编辑</el-button>
+              <el-button type="text" @click="selfDefiningTerm(item)">{{$t('member_information_index_4')}}</el-button>
             </div>
           </div>
         </div>
@@ -138,7 +138,7 @@ export default {
     return {
       avatar: '',
       loading: false,
-      title: '我的资料',
+      title: this.$t('member_information_index_18'),
       vicpWarpShow: false, // 上传头像弹窗 显示与隐藏
       modifyShow: false, // modify 组件显示 与隐藏
       modifyType: '',
@@ -161,7 +161,7 @@ export default {
     getPhone() {
       let phone = ''
       if (!this.data.user.phone) {
-        phone = '还没有手机号'
+        phone = this.$t('member_information_index_19')
         return phone
       }
       if (this.data.user.phoneHead) {
@@ -209,7 +209,7 @@ export default {
         console.log('this.data', this.data)
       } catch (error) {
         this.loading = false // 关闭loading效果
-        console.log('请求失败', error)
+        console.log(this.$t('member_information_index_20'), error)
       }
     },
     cropSuccess(resData) {
@@ -227,13 +227,13 @@ export default {
       } else {
         this.cname = this.user.name
       }
-      console.log('修改名称传值', this.cname)
+      console.log(this.$t('member_information_index_21'), this.cname)
     },
     // 自定义项
     selfDefiningTerm(item) {
       // 图片类型,正在开发
       if (item.attrType === 'image') {
-        this.$message('开发中!')
+        this.$message(this.$t('member_information_index_22'))
         return
       }
       this.modifyShow = true // 弹窗展示

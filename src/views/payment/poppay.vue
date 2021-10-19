@@ -2,7 +2,7 @@
   <div
     class="app-container wrapper"
     v-loading="loading"
-    element-loading-text="加载中..."
+    element-loading-:text="$t('payment_poppay_1')"
     element-loading-spinner="el-icon-loading"
   >
     <p class="title text-normal">
@@ -11,7 +11,7 @@
       }}</span>
       |
       <span style="cursor: pointer" @click="$router.push('/order/list')"
-        >我的订单</span
+        >{{$t('payment_poppay_2')}}</span
       >
     </p>
     <el-card class="text-normal" style="clear: both">
@@ -25,27 +25,21 @@
         <template v-if="$route.query.payMode === '0'">
           <template v-if="$route.query.payCode == 'Wechat'">
             <p class="pay-title">
-              <strong>微信支付</strong>
+              <strong>{{$t('payment_poppay_3')}}</strong>
               <template v-if="!failTime">
-                <span class="v-tip-tip">
-                  距离二维码过期还剩
-                  <span class="text-danger">
+                <span class="v-tip-tip">{{$t('payment_poppay_4')}}<span class="text-danger">
                     <timer
                       :endTime="codeTimer"
                       @timeEnd="failTime = true"
                       v-if="codeTimer != ''"
                     ></timer>
-                  </span>
-
-                  ，过期后请刷新页面重新获取二维码
-                </span>
+                  </span>{{$t('payment_poppay_5')}}</span>
               </template>
               <template v-else>
                 <span class="text-danger"
-                  >二维码已过期，<el-button type="text" @click="createPay"
-                    >刷新</el-button
-                  >
-                  页面重新获取二维码</span
+                  >{{$t('payment_poppay_6')}}<el-button type="text" @click="createPay"
+                    >{{$t('payment_poppay_7')}}</el-button
+                  >{{$t('payment_poppay_8')}}</span
                 >
               </template>
             </p>
@@ -58,14 +52,14 @@
                     </template>
                     <template v-else>
                       <div class="bg-wrapper" @click="createPay"></div>
-                      <div class="c-fail">获取失败 点击重新获取二维码</div>
+                      <div class="c-fail">{{$t('payment_poppay_9')}}</div>
                     </template>
                   </div>
 
                   <div class="vchat-bg">
                     <img src="../../assets/images/icon-red.png" /><span
                       class="text"
-                      >请使用微信扫一扫<br />扫描二维码支付</span
+                      >{{$t('payment_poppay_10')}}<br />{{$t('payment_poppay_11')}}</span
                     >
                   </div>
                 </div>
@@ -247,7 +241,7 @@
           </div>
         </template>
         <span class="el-icon-arrow-left"></span>
-        <el-button type="text" @click="backToPay">选择其他支付方式</el-button>
+        <el-button type="text" @click="backToPay">{{$t('payment_poppay_12')}}</el-button>
       </el-card>
     </el-card>
   </div>
@@ -268,86 +262,86 @@ export default {
     return {
       rules: {
         firstname: [
-          { required: true, message: "请输入名字", trigger: "blur" },
+          { required: true, message: this.$t('payment_poppay_13'), trigger: "blur" },
           {
             min: 1,
             max: 25,
-            message: "长度在 1 到 25 个字符",
+            message: this.$t('payment_poppay_14'),
             trigger: "blur",
           },
         ],
         lastname: [
-          { required: true, message: "请输入姓", trigger: "blur" },
+          { required: true, message: this.$t('payment_poppay_15'), trigger: "blur" },
           {
             min: 1,
             max: 25,
-            message: "长度在 1 到 25 个字符",
+            message: this.$t('payment_poppay_14'),
             trigger: "blur",
           },
         ],
         money: [
-          { required: true, message: "请输入汇款金额", trigger: "blur" },
+          { required: true, message: this.$t('payment_poppay_16'), trigger: "blur" },
           {
             min: 1,
             max: 15,
-            message: "长度在 1 到 15 个字符",
+            message: this.$t('payment_poppay_17'),
             trigger: "blur",
           },
         ],
         number: [
-          { required: true, message: "请输入MTCN#号", trigger: "blur" },
+          { required: true, message: this.$t('payment_poppay_18'), trigger: "blur" },
           {
             min: 1,
             max: 30,
-            message: "长度在 1 到 30 个字符",
+            message: this.$t('payment_poppay_19'),
             trigger: "blur",
           },
         ],
         currency: [
-          { required: true, message: "请输入币种", trigger: "blur" },
+          { required: true, message: this.$t('payment_poppay_20'), trigger: "blur" },
           {
             min: 1,
             max: 10,
-            message: "长度在 1 到 10 个字符",
+            message: this.$t('payment_poppay_21'),
             trigger: "blur",
           },
         ],
         country: [
-          { required: true, message: "请输入国家", trigger: "blur" },
+          { required: true, message: this.$t('payment_poppay_22'), trigger: "blur" },
           {
             min: 1,
             max: 25,
-            message: "长度在 1 到 25 个字符",
+            message: this.$t('payment_poppay_14'),
             trigger: "blur",
           },
         ],
       },
       bankrules: {
         number: [
-          { required: true, message: "请输入银行交易号", trigger: "blur" },
+          { required: true, message: this.$t('payment_poppay_23'), trigger: "blur" },
           {
             min: 1,
             max: 25,
-            message: "长度在 1 到 25 个字符",
+            message: this.$t('payment_poppay_14'),
             trigger: "blur",
           },
         ],
         money: [
-          { required: true, message: "请输入汇款金额", trigger: "blur" },
+          { required: true, message: this.$t('payment_poppay_16'), trigger: "blur" },
           {
             min: 1,
             max: 25,
-            message: "长度在 1 到 25 个字符",
+            message: this.$t('payment_poppay_14'),
             trigger: "blur",
           },
         ],
 
         currency: [
-          { required: true, message: "请输入币种", trigger: "blur" },
+          { required: true, message: this.$t('payment_poppay_20'), trigger: "blur" },
           {
             min: 1,
             max: 10,
-            message: "长度在 1 到 10 个字符",
+            message: this.$t('payment_poppay_21'),
             trigger: "blur",
           },
         ],
@@ -419,7 +413,7 @@ export default {
             }
           });
         } else {
-          this.$message.warning("请检查表单项！");
+          this.$message.warning(this.$t('payment_poppay_24'));
           return false;
         }
       });

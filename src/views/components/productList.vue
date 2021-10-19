@@ -1,18 +1,16 @@
 <template>
   <div class="app-container">
-    <div v-if="showBack" class="title">
-      商品信息
-      <template>
+    <div v-if="showBack" class="title">{{$t('components_productlist_1')}}<template>
         <span
           style="flex: 1; text-align: right; font-size: 10px"
           class="text-blue"
           @click="$router.push('/cart/')"
-        >&laquo;修改购买商品</span>
+        >{{$t('components_productlist_2')}}</span>
       </template>
     </div>
 
     <el-table :data="productList" style="width: 100%">
-      <el-table-column label="商品信息">
+      <el-table-column :label="$t('components_productlist_1')">
         <template slot-scope="{ row }">
           <div class="product">
             <div class="productImg">
@@ -35,17 +33,17 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="单价" width="180">
+      <el-table-column :label="$t('components_productlist_3')" width="180">
         <template slot-scope="{ row }">
           <span class="col-danger">{{ currencySymbol }}{{ row.skuPrice }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="数量" width="180">
+      <el-table-column :label="$t('components_productlist_4')" width="180">
         <template slot-scope="{ row }">
           <span>{{ row.quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="小计" width="180">
+      <el-table-column :label="$t('components_productlist_5')" width="180">
         <template slot-scope="{ row }">
           <span class="col-danger">{{ currencySymbol }}{{ row.subtotal }}</span>
         </template>

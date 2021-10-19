@@ -47,7 +47,8 @@ service.interceptors.response.use(
 
   response => {
     if (response.status === 200) {
-      if (response.data.data != undefined & response.data.data.code != undefined & response.data.data.code == '401') {
+      if (response.data.data != undefined && response.data.data.code != undefined && response.data.data.code == '401') {
+       
         if (!isDesignMode()) {
           window.location = window.location.origin + '/login.html'
         }

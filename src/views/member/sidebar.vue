@@ -1,6 +1,6 @@
 <template>
 	<div class="sidebar">
-		<div class="title">个人中心</div>
+		<div class="title">{{$t('member_sidebar_1')}}</div>
 		<ul class="menu" v-if="dataList.length>0">
 			<li
 				v-for="(item, index) in dataList"

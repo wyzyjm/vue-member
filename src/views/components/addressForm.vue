@@ -2,7 +2,7 @@
 <template>
   <el-dialog
     center
-    :title="formType === 'create' ? `新增收货地址` : `修改收货地址`"
+    :title="formType === 'create' ? $t('components_addressform_1') : $t('components_addressform_2')"
     :visible.sync="dialogFormVisible"
     width="620px"
     @open="handleOpen"
@@ -11,9 +11,9 @@
     <div>
       <el-form ref="addrFormRef" label-width="90px" size="medium" :model="addrForm" :rules="addrFormRules">
         <!-- 国家/地区 必填 -->
-        <el-form-item label="国家/地区" prop="consigneeCountry">
+        <el-form-item :label="$t('components_addressform_3')" prop="consigneeCountry">
           <!-- select选择器 -->
-          <el-select v-model="addrForm.consigneeCountry" placeholder="请选择国家" @change="countryChange">
+          <el-select v-model="addrForm.consigneeCountry" :placeholder="$t('components_addressform_4')" @change="countryChange">
             <el-option
               v-for="(item, index) in frontData.conuntryOptions"
               :key="index"
@@ -23,13 +23,13 @@
           </el-select>
         </el-form-item>
         <!-- 收货人 必填 -->
-        <el-form-item label="收货人" prop="consigneeName">
+        <el-form-item :label="$t('components_addressform_5')" prop="consigneeName">
           <!-- 文本框 -->
-          <el-input v-model.trim="addrForm.consigneeName" placeholder="请输入收货人姓名" maxlength="128" />
+          <el-input v-model.trim="addrForm.consigneeName" :placeholder="$t('components_addressform_6')" maxlength="128" />
         </el-form-item>
         <div class="addressBox" :class="{ reverse: isReverse }">
           <!-- 州/省/地区 必填-->
-          <el-form-item :label="isReverse ? '州/省/地区' : '区域'" prop="addressABC">
+          <el-form-item :label="isReverse ? $t('components_addressform_7') : $t('components_addressform_8')" prop="addressABC">
             <el-cascader
               :key="addressKey"
               v-model="addrForm.addressABC"
@@ -41,7 +41,7 @@
             />
           </el-form-item>
           <!-- 详情地址 必填-->
-          <el-form-item :label="isReverse ? '街道地址' : '详情地址'" prop="consigneeAddr">
+          <el-form-item :label="isReverse ? $t('components_addressform_9') : $t('components_addressform_10')" prop="consigneeAddr">
             <!-- textarea -->
             <el-input
               v-model.trim="addrForm.consigneeAddr"
@@ -49,19 +49,19 @@
               :autosize="{ minRows: 2, maxRows: 3 }"
               :placeholder="
                 isReverse
-                  ? '街道地址，邮政信箱，公司名称，转交方，公寓，套房，单元，大厦，楼层等'
-                  : '街道、楼牌号等'
+                  ? $t('components_addressform_11')
+                  : $t('components_addressform_12')
               "
               maxlength="255"
             />
           </el-form-item>
         </div>
         <!-- 手机区号 + 手机号 -->
-        <el-form-item label="手机">
+        <el-form-item :label="$t('components_addressform_13')">
           <!-- select选择器+文本框 -->
           <el-col :span="6">
             <el-form-item prop="consigneePhoneHead">
-              <el-select v-model="addrForm.consigneePhoneHead" placeholder="请选择" filterable>
+              <el-select v-model="addrForm.consigneePhoneHead" :placeholder="$t('components_addressform_14')" filterable>
                 <el-option
                   v-for="(item, index) in frontData.phoneCode"
                   :key="index"
@@ -80,7 +80,7 @@
               <el-input
                 v-model.trim="addrForm.consigneePhone"
                 type="tel"
-                placeholder="请输入您的手机号码"
+                :placeholder="$t('components_addressform_15')"
                 @input="checkInputValue('consigneePhone')"
                 @focus="phoneFocus($event, true)"
               />
@@ -88,11 +88,11 @@
           </el-col>
         </el-form-item>
         <!-- 固定电话 -->
-        <el-form-item label="固定电话" class="telBox" :class="{ mb0: errorMsg }">
+        <el-form-item :label="$t('components_addressform_16')" class="telBox" :class="{ mb0: errorMsg }">
           <!-- 下拉+文本框 -->
           <el-col :span="6">
             <el-form-item prop="consigneeTelHead">
-              <el-select v-model="addrForm.consigneeTelHead" placeholder="请选择" filterable>
+              <el-select v-model="addrForm.consigneeTelHead" :placeholder="$t('components_addressform_14')" filterable>
                 <el-option
                   v-for="(item, index) in frontData.phoneCode"
                   :key="index"
@@ -111,22 +111,22 @@
               <el-input
                 v-model.trim="addrForm.consigneeTel"
                 type="tel"
-                placeholder="请输入您的固定电话"
+                :placeholder="$t('components_addressform_17')"
                 @input="checkInputValue('consigneeTel')"
                 @focus="phoneFocus"
               />
             </el-form-item>
           </el-col>
-          <p v-show="errorMsg">温馨提示：手机号和固定电话不能同时为空</p>
+          <p v-show="errorMsg">{{$t('components_addressform_18')}}</p>
         </el-form-item>
 
         <!-- 邮政编码 必填 -->
-        <el-form-item label="邮政编码" class="zipCode" prop="consigneeZipCode">
+        <el-form-item :label="$t('components_addressform_19')" class="zipCode" prop="consigneeZipCode">
           <!-- 文本框 -->
           <el-input
             v-model="addrForm.consigneeZipCode"
             type="text"
-            placeholder="请输入邮政编码"
+            :placeholder="$t('components_addressform_20')"
             @input="checkInputValue(`consigneeZipCode`)"
           />
         </el-form-item>
@@ -134,9 +134,9 @@
     </div>
     <div slot="footer">
       <!-- 取消 -->
-      <el-button type="info" size="medium" @click="dialogFormVisible = false">取消</el-button>
+      <el-button type="info" size="medium" @click="dialogFormVisible = false">{{$t('components_addressform_21')}}</el-button>
       <!-- 确定 -->
-      <el-button type="primary" size="medium" @click="saveAddrForm">确定</el-button>
+      <el-button type="primary" size="medium" @click="saveAddrForm">{{$t('components_addressform_22')}}</el-button>
     </div>
   </el-dialog>
 </template>
@@ -199,25 +199,25 @@ export default {
         // 国家
         consigneeCountry: [{
           required: true,
-          message: '请选择国家',
+          message: this.$t('components_addressform_4'),
           trigger: 'change'
         }],
         // 收货人
         consigneeName: [{
           required: true,
-          message: '请输入收件人名称',
+          message: this.$t('components_addressform_23'),
           trigger: 'blur'
         }],
         // 收货地址
         consigneeAddr: [{
           required: true,
-          message: '请输入详细地址',
+          message: this.$t('components_addressform_24'),
           trigger: 'blur'
         }],
         // 省市区
         addressABC: [{
           required: true,
-          message: '请输入详细地址',
+          message: this.$t('components_addressform_24'),
           trigger: 'blur'
         }],
         // 手机号头部
@@ -231,11 +231,11 @@ export default {
           validator: (rule, value, callback) => {
             if (!value || value.indexOf('*') > 0) return callback()
             if (value && !/^\d{6,12}$/.test(value)) {
-              return callback(new Error('请输入正确的手机号码'))
+              return callback(new Error(this.$t('components_addressform_25')))
             } else {
               this.addrFormRules.consigneePhoneHead = [{
                 required: true,
-                message: '请选择手机区号',
+                message: this.$t('components_addressform_26'),
                 trigger: 'change'
               }]
               callback()
@@ -246,7 +246,7 @@ export default {
         // 电话号头部
         consigneeTelHead: [{
           required: false,
-          message: '请输入固话区号',
+          message: this.$t('components_addressform_27'),
           trigger: 'change'
         }],
         // 电话号
@@ -255,11 +255,11 @@ export default {
           validator: (rule, value, callback) => {
             if (!value || value.indexOf('*') > 0) return callback()
             if (!/^\d{6,12}$/.test(value)) {
-              return callback(new Error('请输入正确的电话号码'))
+              return callback(new Error(this.$t('components_addressform_28')))
             } else {
               this.addrFormRules.consigneeTelHead = [{
                 required: true,
-                message: '请输入固话区号',
+                message: this.$t('components_addressform_27'),
                 trigger: 'change'
               }]
               callback()
@@ -273,7 +273,7 @@ export default {
           validator: (rule, value, callback) => {
             if (!value) return callback() // 为空不校验
             if (!/^\d{3,12}$/.test(value)) {
-              return callback(new Error('请输入正确的邮政编码'))
+              return callback(new Error(this.$t('components_addressform_29')))
             } else {
               callback()
             }
@@ -320,7 +320,7 @@ export default {
       this.addressKey = this.addressKey + 1
       if (this.addressFormProp && this.formType === 'edit') {
         const propData = JSON.parse(JSON.stringify(this.addressFormProp)) // 拷贝传过来的值
-        console.log('编辑地址,子组件接收到值了', propData)
+        console.log(this.$t('components_addressform_30'), propData)
 
         this.receiverCode = propData.id // 收货地址id
         this.isReverse = !!propData.reverseFlag // 设置是否反转
@@ -393,7 +393,7 @@ export default {
           data.defaultFlag = this.defaultFlag // 设置是否为默认地址
           delete data.receiverCode // 删除收货地址id
         }
-        console.log('请求参数', data)
+        console.log(this.$t('components_addressform_31'), data)
 
         try {
           let res
@@ -405,13 +405,12 @@ export default {
               res = this.orderId ? await editOrderAddress(data) : await eidtAddressList(data)
               break
           }
-          console.info('响应结果--->', res.data)
           if (res.status !== 200) return
           this.dialogFormVisible = false // 关闭弹窗
           this.$emit('confirm', data) // 派发父组件事件
           this.$emit('getAddrId', res.data.data)// 订单结算派发事件传addressId
         } catch (error) {
-          console.log('失败', error)
+          console.log(this.$t('components_addressform_33'), error)
         }
       })
     },

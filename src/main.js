@@ -16,14 +16,13 @@ import '../static/js/environment.js'
 // import '@/resource'
 
 import './utils/get-app-id'
-import './utils/get-tenent'
 import './utils/set-site-css'
 import CustomImg from '@/components/CustomImg'
 Vue.component('custom-img', CustomImg)
 
 import '@/icons' // icon
 import '@/permission' // permission control
-import i18n from '@/i18n/index'
+import i18nPro from '@/i18n/index'
 Vue.use(ElementUI, { enlocale })
 
 Vue.use(ElementUI)
@@ -59,10 +58,12 @@ router.beforeEach((to, from, next) => {
 })
 window.pageType = 'vue'//在线客服屏蔽
 
-new Vue({
-  el: '#app',
-  router,
-  store,
-  i18n,
-  render: h => h(App)
+i18nPro.then((i18n)=>{
+  new Vue({
+    el: '#app',
+    router,
+    store,
+    i18n,
+    render: h => h(App)
+  })
 })

@@ -16,31 +16,31 @@ export default {
 		return {
 			dataList: [
 				{
-					title: "我的资料",
+					title: this.$t('member_index_1'),
 					path: "/information",
 				},
 				{
-					title: "我的订单",
+					title: this.$t('member_index_2'),
 					path: "/order/list",
 				},
 				{
-					title: "我的表单",
+					title: this.$t('member_index_3'),
 					path: "/form",
 				},
 				{
-					title: "我的收藏",
+					title: this.$t('member_index_4'),
 					path: "/collection",
 				},
 				{
-					title: "收货地址",
+					title: this.$t('member_index_5'),
 					path: "/address",
 				},
 				{
-					title: "购物车",
+					title: this.$t('member_index_6'),
 					path: "/memberCart",
 				},
 				{
-					title: "自行增加数据",
+					title: this.$t('member_index_7'),
 					path: "/jsonHtml",
 				},
 				

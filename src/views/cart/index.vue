@@ -19,7 +19,7 @@
               align="center"
               :selectable="selectInit"
             />
-            <el-table-column label="商品信息">
+            <el-table-column :label="$t('cart_index_1')">
               <template slot-scope="scope">
                 <div class="product">
                   <div class="productImg">
@@ -48,7 +48,7 @@
             </el-table-column>
             <el-table-column
               prop="skuName"
-              label="单价"
+              :label="$t('cart_index_2')"
               width="150"
               align="center"
             >
@@ -61,7 +61,7 @@
             </el-table-column>
             <el-table-column
               prop="skuName"
-              label="数量"
+              :label="$t('cart_index_3')"
               width="150"
               align="center"
             >
@@ -73,20 +73,16 @@
                   :class="{'is-disabledmin':scope.row.moq > scope.row.quantity ,'is-disabledmax': scope.row.stock<scope.row.quantity}"
                   @change="((val,oldVal)=>{changeQuantity(val,oldVal, scope)})"
                 />
-                <span v-if="scope.row['stock'] == undefined ||(scope.row['stock'] <scope.row.quantity)" class="span-danger">
-                  库存不足
-                </span>
+                <span v-if="scope.row['stock'] == undefined ||(scope.row['stock'] <scope.row.quantity)" class="span-danger">{{$t('cart_index_4')}}</span>
                 <template v-else>
-                  <span v-if="scope.row['moq']== undefined || (scope.row['moq'] > scope.row.quantity)" class="span-danger">
-                    最少起订量为{{ scope.row.moq }}
-                  </span>
+                  <span v-if="scope.row['moq']== undefined || (scope.row['moq'] > scope.row.quantity)" class="span-danger">{{$t('cart_index_5', [ scope.row.moq ])}}</span>
                 </template>
 
               </template>
             </el-table-column>
             <el-table-column
               prop="skuName"
-              label="小计"
+              :label="$t('cart_index_6')"
               width="150"
               align="center"
             >
@@ -99,7 +95,7 @@
             </el-table-column>
             <el-table-column
               prop="skuName"
-              label="操作"
+              :label="$t('cart_index_7')"
               width="100"
               align="center"
             >
@@ -107,13 +103,13 @@
                 <el-button
                   type="text"
                   @click="removeProduct(scope)"
-                >删除</el-button>
+                >{{$t('cart_index_8')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
         </div>
         <div v-if="unvalidList.length > 0">
-          <p>失效商品</p>
+          <p>{{$t('cart_index_9')}}</p>
           <el-table
             :data="unvalidList"
             class="productTable unvalidTable"
@@ -124,10 +120,10 @@
               align="center"
             >
               <template>
-                <span class="unvalide">失效</span>
+                <span class="unvalide">{{$t('cart_index_10')}}</span>
               </template>
             </el-table-column>
-            <el-table-column label="商品信息">
+            <el-table-column :label="$t('cart_index_1')">
               <template slot-scope="scope">
                 <div class="product">
                   <div class="productImg">
@@ -156,7 +152,7 @@
             </el-table-column>
             <el-table-column
               prop="skuName"
-              label="单价"
+              :label="$t('cart_index_2')"
               width="150"
               align="center"
             >
@@ -169,7 +165,7 @@
             </el-table-column>
             <el-table-column
               prop="skuName"
-              label="数量"
+              :label="$t('cart_index_3')"
               width="150"
               align="center"
             >
@@ -185,7 +181,7 @@
             </el-table-column>
             <el-table-column
               prop="skuName"
-              label="小计"
+              :label="$t('cart_index_6')"
               width="150"
               align="center"
             >
@@ -198,7 +194,7 @@
             </el-table-column>
             <el-table-column
               prop="skuName"
-              label="操作"
+              :label="$t('cart_index_7')"
               width="100"
               align="center"
             >
@@ -206,7 +202,7 @@
                 <el-button
                   type="text"
                   @click="removeProduct(scope)"
-                >删除</el-button>
+                >{{$t('cart_index_8')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -220,21 +216,19 @@
             class="selectAll"
             :indeterminate="isIndeterminate"
             @change="selectAllFun"
-          >全选</el-checkbox>
-          <el-button type="text" :disabled="plDisabled" @click="delectMore(selectProduct,1)">批量删除</el-button>
-          <el-button type="text" :disabled="plUntileDisabled" @click="delectMore(unvalidList,0)">清除失效商品</el-button>
+          >{{$t('cart_index_11')}}</el-checkbox>
+          <el-button type="text" :disabled="plDisabled" @click="delectMore(selectProduct,1)">{{$t('cart_index_12')}}</el-button>
+          <el-button type="text" :disabled="plUntileDisabled" @click="delectMore(unvalidList,0)">{{$t('cart_index_13')}}</el-button>
         </div>
         <div class="tjop">
           <span
             class="totalCount"
-          >已选商品
-            <span class="strongMark">{{
+          >{{$t('cart_index_14')}}<span class="strongMark">{{
               selectProduct.length
-            }}</span>
-            件</span>
+            }}</span>{{$t('cart_index_15')}}</span>
           <span
             class="totalPrice"
-          >合计（不含运费）：<span
+          >{{$t('cart_index_16')}}<span
             class="strongMark"
           >{{ data.currencySymbol
           }}{{ data.totalPrice }}</span></span>
@@ -243,7 +237,7 @@
             type="primary"
             :disabled="plDisabled"
             @click="submit()"
-          >去结算</el-button>
+          >{{$t('cart_index_17')}}</el-button>
         </div>
       </div>
     </div>
@@ -252,9 +246,9 @@
         <div class="icon">
           <svg-icon name="icon-qicheqianlian-" setsize="76" />
         </div>
-        <p>购物车内暂时没有商品，登录后显示已加入的商品</p>
+        <p>{{$t('cart_index_18')}}</p>
 
-        <el-button type="primary" size="small" plain @click="backHome">去逛逛</el-button>
+        <el-button type="primary" size="small" plain @click="backHome">{{$t('cart_index_19')}}</el-button>
       </div>
     </div>
   </div>
@@ -268,7 +262,7 @@ export default {
   },
   data() {
     return {
-      title: '购物车',
+      title: this.$t('cart_index_20'),
       checkAll: false,
       isIndeterminate: false,
       selectProduct: [],
@@ -279,104 +273,6 @@ export default {
         totalNum: 8,
         currencySymbol: '',
         shoppingCartList: [
-          {
-            productId: 143,
-            skuId: 260,
-            quantity: 11, // 购买数量
-            skuName:
-							'货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称', // 货品名称
-            skuImg:
-							'https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-36350aae.jpg', // 货品图片
-            skuSpec: [
-              {
-                specName: '规格名称',
-                specValue: '规格值'
-              }
-            ],
-            price: 110.0, // 货品单价
-            moq: 10, // 起订量
-            stock: 10000, // 库存
-            productUrl: '/product/144. html', // 链接
-            statusTip: 3 // 货品状态 0:下架 1: 库存不足 2:价格变动 3:正常有货
-          },
-          {
-            productId: 143,
-            skuId: 260,
-            quantity: 11, // 购买数量
-            skuName: '库存不足库存不足库存不足库存不足', // 货品名称
-            skuImg:
-							'https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-363c59550aae.jpg', // 货品图片
-            skuSpec: [
-              {
-                specName: '规格名称',
-                specValue: '规格值'
-              }
-            ],
-            price: 110.0, // 货品单价
-            moq: 10, // 起订量
-            stock: 10000, // 库存
-            productUrl: '/product/144. html', // 链接
-            statusTip: 1 // 货品状态 0:下架  1:正常有货
-          },
-          {
-            shoppingCartCode: 143,
-            skuId: 260,
-            quantity: 11, // 购买数量
-            skuName: '货品已下架货品已下架货品已下架', // 货品名称
-            skuImg:
-							'https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-363c59550aae.jpg', // 货品图片
-            skuSpec: [
-              {
-                specName: '规格名称',
-                specValue: '规格值'
-              }
-            ],
-            price: 110.0, // 货品单价
-            moq: 10, // 起订量
-            stock: 10000, // 库存
-            productUrl: '/product/144. html', // 链接
-            statusTip: 0 // 货品状态 0:下架 1: 库存不足 2:价格变动 3:正常有货
-          },
-          {
-            shoppingCartCode: 143,
-            skuId: 260,
-            quantity: 11, // 购买数量
-            skuName:
-							'货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称', // 货品名称
-            skuImg:
-							'https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-363c59550aae.jpg', // 货品图片
-            skuSpec: [
-              {
-                specName: '规格名称',
-                specValue: '规格值'
-              }
-            ],
-            price: 110.0, // 货品单价
-            moq: 10, // 起订量
-            stock: 10000, // 库存
-            productUrl: '/product/144. html', // 链接
-            statusTip: 3 // 货品状态 0:下架 1: 库存不足 2:价格变动 3:正常有货
-          },
-          {
-            shoppingCartCode: 145,
-            skuId: 260,
-            quantity: 11, // 购买数量
-            skuName:
-							'货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称货品名称', // 货品名称
-            skuImg:
-							'https://pre-omo-oss-image.site.cn/shop/PDEMO_OqZHU87nTlMB/cms/image/624d3f0d-bcfc-4d90-b5eb-363c59550aae.jpg', // 货品图片
-            skuSpec: [
-              {
-                specName: '规格名称',
-                specValue: '规格值'
-              }
-            ],
-            price: 110.0, // 货品单价
-            moq: 10, // 起订量
-            stock: 10000, // 库存
-            productUrl: '/product/144. html', // 链接
-            statusTip: 1 // 货品状态 0:下架 1: 库存不足 2:价格变动 3:正常有货
-          }
         ]
       }
     }
@@ -431,9 +327,9 @@ export default {
     },
     // 删除
     removeProduct(obj) {
-      this.$confirm('确定删除该商品？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('cart_index_26'), this.$t('cart_index_27'), {
+        confirmButtonText: this.$t('cart_index_28'),
+        cancelButtonText: this.$t('cart_index_29'),
         type: 'warning'
       }).then(async() => {
         const a_shoppingCartCode = obj.row.shoppingCartCode.replace(/^\"|\"$/g, '')
@@ -442,7 +338,7 @@ export default {
         if (res.status === 200) {
           this.$message({
             type: 'success',
-            message: '删除成功!'
+            message: this.$t('cart_index_30')
           })
           this.renderData()
         }
@@ -452,17 +348,17 @@ export default {
     },
     // 批量删除
     delectMore(list, titleNum) {
-      const title = titleNum == 1 ? '确定删除所有选中商品？' : '确定清空所有失效商品？'
+      const title = titleNum == 1 ? this.$t('cart_index_31') : this.$t('cart_index_32')
       const arrSelect = list
       if (arrSelect.length === 0) {
         this.$message({
           type: 'info',
-          message: '请选择删除的数据'
+          message: this.$t('cart_index_33')
         })
       } else {
-        this.$confirm(title, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
+        this.$confirm(title, this.$t('cart_index_27'), {
+          confirmButtonText: this.$t('cart_index_28'),
+          cancelButtonText: this.$t('cart_index_29'),
           type: 'warning'
         }).then(async() => {
           let arr_shoppingCartCode = ''
@@ -474,14 +370,14 @@ export default {
           if (res.status == 200) {
             this.$message({
               type: 'success',
-              message: '删除成功!'
+              message: this.$t('cart_index_30')
             })
             this.renderData()
           }
         }).catch((err) => {
           this.$message({
             type: 'info',
-            message: '删除失败'
+            message: this.$t('cart_index_34')
           })
         })
       }
@@ -579,7 +475,7 @@ export default {
         timer = setTimeout(() => {
           this.$message({
             type: 'info',
-            message: '最少起订量为' + obj.moq + '！'
+            message: this.$t('cart_index_35') + obj.moq + '！'
           })
           this.$set(this.cartList[item.$index], 'quantity', oldValue)
         }, 0)
@@ -589,7 +485,7 @@ export default {
         timer = setTimeout(() => {
           this.$message({
             type: 'info',
-            message: '库存不足！'
+            message: this.$t('cart_index_36')
 
           })
           this.$set(this.cartList[item.$index], 'quantity', oldValue)
@@ -649,7 +545,7 @@ export default {
         if (item.moq > item.quantity || item.stock < item.quantity) {
           this.$message({
             type: 'info',
-            message: '存在失效货品！'
+            message: this.$t('cart_index_37')
           })
           btnDis = true
         }
@@ -672,31 +568,31 @@ export default {
         case '10001':
           this.$message({
             type: 'info',
-            message: '存在失效货品！'
+            message: this.$t('cart_index_37')
           })
           break
         case '10002':
           this.$message({
             type: 'info',
-            message: '存在未达到起订量的货品！'
+            message: this.$t('cart_index_38')
           })
           break
         case '10003':
           this.$message({
             type: 'info',
-            message: '存在库存不足的货品！'
+            message: this.$t('cart_index_39')
           })
           break
         case '10004':
           this.$message({
             type: 'info',
-            message: '存在价格变动的货品！'
+            message: this.$t('cart_index_40')
           })
           break
         case '10005':
           this.$message({
             type: 'info',
-            message: '币种有变动'
+            message: this.$t('cart_index_41')
           })
           break
         case '200':
