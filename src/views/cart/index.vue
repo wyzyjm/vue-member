@@ -70,6 +70,8 @@
                   v-model="scope.row.quantity"
                   :step="1"
                   size="small"
+                  :min="scope.row.moq || 1"
+                  :max="scope.row.stock"
                   :class="{'is-disabledmin':scope.row.moq > scope.row.quantity ,'is-disabledmax': scope.row.stock<scope.row.quantity}"
                   @change="((val,oldVal)=>{changeQuantity(val,oldVal, scope)})"
                 />
