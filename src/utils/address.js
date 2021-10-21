@@ -11,7 +11,7 @@ import addressData from '@/views/components/resource/locList_zh_CN'
  * 1. @return  {Object | a + ' - ' + b + c + d}  分别对应: 国家, 省, 市, 区
  * 2. @return  {String | b + c + d + ' - ' + a} 分别对应: 省, 市, 区, - 国家
  */
-const getAddressName = (country, province, city, county, reverseFlag) => {
+const getAddressName = (country,province,city,county,reverseFlag) => {
   if (!country) return // 没有国家编码不执行
   let a = '' // 国家
   let b = '' // 省
@@ -31,18 +31,18 @@ const getAddressName = (country, province, city, county, reverseFlag) => {
           c = v['-Name'] // 获取市
           if (!v.Region) return // 不存在区
           if (Array.isArray(v.Region)) {
-            v.Region.map((c) => {
+            v.Region.map(c => {
               if (c['-Code'] !== county) return
               d = c['-Name'] // 获取区
             })
           } else {
-            if (v.Region['-Code'] !== area) return
+            if (v.Region['-Code'] !== county) return
             d = v.Region['-Name']
           }
         })
       })
     } else {
-      item.State.City.map((i) => {
+      item.State.City.map(i => {
         if (i['-Code'] !== province) return
         b = i['-Name'] // 获取省
       })
@@ -62,7 +62,7 @@ const getAddressName = (country, province, city, county, reverseFlag) => {
  *
  * @return {Array} 当前省市区数据
  */
-const getCurrentData = (country) => {
+const getCurrentData = country => {
   let currentAreaData = []
   addressData.Location.CountryRegion.map(item => {
     if (item['-Code'] !== country) return
@@ -82,10 +82,10 @@ const getCurrentData = (country) => {
  *
  * @return {Array | [{name:"", code:"", children:[] }]}
  */
-const addressFormateData = (state) => {
+const addressFormateData = state => {
   if (!state) return
   const area = []
-  state.map((item) => {
+  state.map(item => {
     const a = {
       name: item['-Name'],
       code: item['-Code']
@@ -94,7 +94,7 @@ const addressFormateData = (state) => {
     if (item.City) {
       a.children = []
       if (Array.isArray(item.City)) {
-        item.City.map((i) => {
+        item.City.map(i => {
           const b = {
             name: i['-Name'],
             code: i['-Code']
@@ -103,7 +103,7 @@ const addressFormateData = (state) => {
           if (i.Region) {
             b.children = []
             if (Array.isArray(i.Region)) {
-              i.Region.map((val) => {
+              i.Region.map(val => {
                 b.children.push({
                   name: val['-Name'],
                   code: val['-Code']
@@ -131,9 +131,9 @@ const addressFormateData = (state) => {
  *
  * @return {Array} 国家下拉数据
  */
-const getCountryData = (country) => {
+const getCountryData = country => {
   const countryData = []
-  addressData.Location.CountryRegion.map((item) => {
+  addressData.Location.CountryRegion.map(item => {
     countryData.push({
       name: item['-Name'],
       code: item['-Code']
