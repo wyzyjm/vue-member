@@ -486,7 +486,7 @@ export default {
             this.choseAddress(newIndex);
           }
           
-          if (JSON.stringify(this.addressInfo)=='{}' ) {
+          if (JSON.stringify(this.addressInfo)=='{}'&&!this.hasFormJson) {
             this.addressInfo = this.logisticsInfoList[0];
             this.choseAddress(0);
           } else {
