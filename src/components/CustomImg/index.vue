@@ -2,7 +2,7 @@
   <span>
     <el-image
       class="customImg"
-      :src="src ? 'https://pre-omo-oss-image.site.cn/' + src : ''"
+      :src="src ? prefix + src : ''"
       fit="cover"
       lazy
     >
@@ -18,12 +18,26 @@ import errorImg from '@/assets/images/no-img.svg'
 export default {
   data() {
     return {
-      errorImg: errorImg
+      errorImg: errorImg,
+      isProduction:false,
+      prefix:''
     }
   },
   name: 'CustomImg',
   props: ['src', 'alt', 'title'],
-  components: {}
+  components: {},
+  
+  
+  mounted(){
+    let makeDomain = tenantInfo.makeDomain;
+    if(makeDomain.indexOf('pre-')>0||makeDomain.indexOf('test-')>0){
+      this.isProduction = false
+      this.prefix = 'https://pre-omo-oss-image.thefastimg.com/'
+    }else{
+      this.isProduction = true;
+      this.prefix = 'https://omo-oss-image.thefastimg.com/'
+    }
+  }
 }
 </script>
 
