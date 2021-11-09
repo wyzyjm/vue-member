@@ -45,6 +45,9 @@ router.afterEach((to, from) => {
 router.beforeEach((to, from, next) => {
   const reg = new RegExp('(^| )' + 'psession' + '=([^;]*)(;|$)')
   const res = document.cookie.match(reg)
+  if(to.matched.length==0){
+    window.location.href = window.location.origin+'/404.html';
+  }
   if (res === null && to.name !== 'forgotpassword') {
     if (!isDesignMode()) {
       let backurl = window.location.href;

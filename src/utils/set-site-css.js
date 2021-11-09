@@ -8,7 +8,7 @@ import { isDesignMode } from './index'
     }).then(function (result) {
       // console.log(result.replace(/[\r\n ]/g,""))
       let cssStr = result.replace(/[\r\n ]/g, "")
-      console.log(cssStr)
+      // console.log(cssStr)
       let resCss = cssToObject(cssStr)
       let bgColor = ''
       let textColor = ''
@@ -108,7 +108,7 @@ import { isDesignMode } from './index'
     let dom = document.getElementById('siteLink');
     let config = { attributes: true }
     let observe = new MutationObserver(() => {
-      console.log('dom变化了')
+      // console.log('dom变化了')
       markeCss();
     })
     observe.observe(dom, config)
