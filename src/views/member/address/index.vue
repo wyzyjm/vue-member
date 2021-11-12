@@ -167,12 +167,10 @@ export default {
       try {
         const res = await getAddressList()
 
-        console.log(this.$t('member_address_index_18'), res)
         if (res.status !== 200) return
         this.logisticsInfoList = res.data.addressList
         this.isLoading = false
       } catch (error) {
-        console.log(this.$t('member_address_index_19'), error)
       }
     },
 
@@ -225,10 +223,8 @@ export default {
           if (res.status !== 200) return
           this.getList() // 重新获取收货地址列表
         } catch (error) {
-          console.log(this.$t('member_address_index_25'), error)
         }
       } catch (error) {
-        console.log(this.$t('member_address_index_26'))
       }
     },
 

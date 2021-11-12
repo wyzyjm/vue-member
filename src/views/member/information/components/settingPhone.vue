@@ -256,7 +256,6 @@ export default {
   },
   // 创建
   created() {
-    console.log(this.$t('member_information_components_settingphone_22'), this.setdata)
   },
   methods: {
     // 修改密码
@@ -281,7 +280,6 @@ export default {
               this.onSubmit()
             }
           }).catch(error => {
-            console.log(this.$t('member_information_components_settingphone_25'), error)
           })
         } else {
           return false
@@ -305,7 +303,6 @@ export default {
                 this.goHome()
               }
             }).catch(error => {
-              console.log(this.$t('member_information_components_settingphone_25'), error)
             })
           } else {
             this.checkCode()
@@ -349,7 +346,6 @@ export default {
             this.$message(this.$t('member_information_components_settingphone_26'))
           }
         }).catch(error => {
-          console.log(this.$t('member_information_components_settingphone_25'), error)
         })
       }
     },
@@ -421,7 +417,6 @@ export default {
           mobile: this.formLabelAlign.consigneePhone // 手机号
         }
       }
-      console.log(this.$t('member_information_components_settingphone_27'), data)
       generateCode(data).then(res => {
         if (res.data) {
           if (this.btnDisabled) return
@@ -442,7 +437,6 @@ export default {
           this.$message(this.$t('member_information_components_settingphone_31'))
         }
       }).catch(error => {
-        console.log(this.$t('member_information_components_settingphone_25'), error)
       })
     },
     goHome() {

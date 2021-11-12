@@ -172,8 +172,7 @@ export default {
                 this.onSubmit()
               }
             }).catch(error => {
-              console.log(this.$t('member_information_components_settingemail_23'), error)
-            })
+           })
           }
         } else {
           return false
@@ -205,7 +204,6 @@ export default {
               this.goHome()
             }
           }).catch(error => {
-            console.log(this.$t('member_information_components_settingemail_23'), error)
           })
         } else if (this.propData.emailType === 0) {
           //  修改邮箱提交
@@ -221,7 +219,6 @@ export default {
               this.onSubmit()
             }
           }).catch(error => {
-            console.log(this.$t('member_information_components_settingemail_23'), error)
           })
         } else {
           if (!this.isCheckYzm) {
@@ -262,7 +259,6 @@ export default {
           bizType: this.propData.type
         }
       }
-      console.log(this.$t('member_information_components_settingemail_28'), data)
       generateCode(data).then(res => {
         if (res.data) {
           this.isCheckYzm = true
@@ -284,7 +280,6 @@ export default {
           this.$message(this.$t('member_information_components_settingemail_33'))
         }
       }).catch(error => {
-        console.log(this.$t('member_information_components_settingemail_23'), error)
       })
     },
 
@@ -318,7 +313,6 @@ export default {
             this.$message(this.$t('member_information_components_settingemail_26'))
           }
         }).catch(error => {
-          console.log(this.$t('member_information_components_settingemail_23'), error)
         })
       }
     },

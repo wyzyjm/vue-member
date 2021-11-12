@@ -511,7 +511,6 @@ export default {
           this.getProductList();
         
       } catch (error) {
-        console.log(this.$t('settlement_index_37'), error);
       }
     },
     // 设为默认地址
@@ -574,10 +573,8 @@ export default {
           }
           this.getList(); // 重新获取收货地址列表
         } catch (error) {
-          console.log(this.$t('settlement_index_41'), error);
         }
       } catch (error) {
-        console.log(this.$t('settlement_index_42'));
       }
     },
     // 弹窗 显示

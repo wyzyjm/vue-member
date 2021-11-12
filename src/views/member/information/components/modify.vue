@@ -407,8 +407,7 @@ export default {
   },
   // 挂载时
   mounted() {
-    console.log(this.$t('member_information_components_modify_21'), this.propname, this.selfDefining)
-  },
+    },
   methods: {
     // 弹窗关闭
     off() {
@@ -489,7 +488,6 @@ export default {
             this.off() // 关闭弹窗
             location.reload() // 页面刷新
           } catch (error) {
-            console.log(this.$t('member_information_components_modify_23'), error)
           }
         } else {
           this.off() // 关闭弹窗
@@ -507,7 +505,6 @@ export default {
       const proviceValue = getCurrentData(code) // 获取没有格式化后的省数据
       const provinceFormateValue = addressFormateData(proviceValue) // 格式化 省市区数据
       this.frontData.addressData = provinceFormateValue
-      console.log(this.$t('member_information_components_modify_24'), this.frontData.addressData)
     }
   }
 }

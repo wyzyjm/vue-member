@@ -171,7 +171,6 @@ export default {
           if (res.data.code !== '0') return
           location.reload()
         }).catch(error => {
-          console.log(this.$t('member_order_components_list_item_31'), error)
         })
       }).catch(() => {
         this.$message({
@@ -189,7 +188,6 @@ export default {
           if (res.data.code !== '0') return
           location.reload()
         }).catch(error => {
-          console.log(this.$t('member_order_components_list_item_31'), error)
         })
       }).catch(() => {
         this.$message({

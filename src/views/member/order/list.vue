@@ -134,7 +134,6 @@ export default {
         this.initorderStatus()
       }).catch(error => {
         this.loading = false
-        console.log(this.$t('member_order_list_11'), error)
       })
     },
     initorderStatus() {
@@ -143,7 +142,6 @@ export default {
         this.loading = false
       }).catch(error => {
         this.loading = false
-        console.log(this.$t('member_order_list_11'), error)
       })
     },
     // tab事件
@@ -160,7 +158,6 @@ export default {
     },
     // 监听页码 变化
     handleCurrentChange(val) {
-      console.log(this.$t('member_order_list_12', [val]))
       this.currentPage = val
       this.initList()
     },

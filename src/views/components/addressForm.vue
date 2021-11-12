@@ -320,7 +320,6 @@ export default {
       this.addressKey = this.addressKey + 1
       if (this.addressFormProp && this.formType === 'edit') {
         const propData = JSON.parse(JSON.stringify(this.addressFormProp)) // 拷贝传过来的值
-        console.log(this.$t('components_addressform_30'), propData)
 
         this.receiverCode = propData.id // 收货地址id
         this.isReverse = !!propData.reverseFlag // 设置是否反转
@@ -393,7 +392,6 @@ export default {
           data.defaultFlag = this.defaultFlag // 设置是否为默认地址
           delete data.receiverCode // 删除收货地址id
         }
-        console.log(this.$t('components_addressform_31'), data)
 
         try {
           let res
@@ -410,7 +408,6 @@ export default {
           this.$emit('confirm', data) // 派发父组件事件
           this.$emit('getAddrId', res.data.data)// 订单结算派发事件传addressId
         } catch (error) {
-          console.log(this.$t('components_addressform_33'), error)
         }
       })
     },

@@ -209,7 +209,6 @@ export default {
         console.log('this.data', this.data)
       } catch (error) {
         this.loading = false // 关闭loading效果
-        console.log(this.$t('member_information_index_20'), error)
       }
     },
     cropSuccess(resData) {
@@ -227,7 +226,6 @@ export default {
       } else {
         this.cname = this.user.name
       }
-      console.log(this.$t('member_information_index_21'), this.cname)
     },
     // 自定义项
     selfDefiningTerm(item) {

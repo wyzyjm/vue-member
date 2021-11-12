@@ -135,7 +135,6 @@ export default {
               this.onSubmit()
             }
           }).catch(error => {
-            console.log(this.$t('member_information_components_settingpwd_18'), error)
           })
         } else {
           return false

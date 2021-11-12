@@ -585,7 +585,6 @@ export default {
         })
         .catch((error) => {
           this.loading = false;
-          console.log(this.$t('member_order_detail_50'), error);
         });
     },
     // 修改发票弹窗
@@ -634,7 +633,6 @@ export default {
               location.reload();
             })
             .catch((error) => {
-              console.log(this.$t('member_order_detail_50'), error);
             });
         })
         .catch(() => {
@@ -657,7 +655,6 @@ export default {
               location.reload();
             })
             .catch((error) => {
-              console.log(this.$t('member_order_detail_50'), error);
             });
         })
         .catch(() => {

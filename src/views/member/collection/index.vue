@@ -202,7 +202,6 @@ export default {
         this.isLoading = false // 取消loading效果
       } catch (error) {
         this.isLoading = false
-        console.log(this.$t('member_collection_index_12'), error)
       }
     },
     // 取消收藏
